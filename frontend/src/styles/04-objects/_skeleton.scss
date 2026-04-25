@@ -1,0 +1,33 @@
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  display: grid;
+  gap: var(--space-1);
+
+  &__line {
+    position: relative;
+    overflow: hidden;
+    height: 0.875rem;
+    border-radius: 999rem;
+    background: #e2e8f0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, #ffffff, transparent);
+      animation: shimmer 1.2s infinite;
+    }
+
+    &--short {
+      width: 70%;
+    }
+  }
+}

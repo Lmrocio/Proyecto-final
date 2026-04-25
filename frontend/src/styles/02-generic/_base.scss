@@ -1,0 +1,14 @@
+@use '../00-settings/variables' as *;
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: $font-main;
+  background: radial-gradient(circle at 10% 10%, #ccfbf1, var(--surface) 45%);
+  color: var(--text-main);
+}

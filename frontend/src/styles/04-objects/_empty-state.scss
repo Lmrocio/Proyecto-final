@@ -1,0 +1,24 @@
+.empty-state {
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  background: #ecfeff;
+  border: 0.0625rem solid #99f6e4;
+
+  &__title {
+    margin-bottom: 0.25rem;
+  }
+
+  &__text {
+    color: var(--text-muted);
+  }
+
+  &--error {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  &--ok {
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+}

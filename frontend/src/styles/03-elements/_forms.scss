@@ -1,0 +1,8 @@
+@use '../01-tools/mixins' as mx;
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  @include mx.focus-ring;
+}

@@ -1,0 +1,45 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.hero {
+  display: grid;
+  gap: 0.5rem;
+
+  &__kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  &__title {
+    font-family: $font-display;
+  }
+
+  &__subtitle {
+    color: var(--text-muted);
+  }
+}
+
+.button {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #e2e8f0;
+  color: var(--text-main);
+  transition: transform 0.2s ease, background 0.2s ease;
+  @include mx.focus-ring;
+
+  &:hover {
+    transform: translateY(-0.125rem);
+    background: #cbd5e1;
+  }
+
+  &--primary {
+    background: var(--primary);
+    color: var(--primary-contrast);
+
+    &:hover {
+      background: color-mix(in srgb, var(--primary) 88%, black);
+    }
+  }
+}

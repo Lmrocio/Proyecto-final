@@ -1,0 +1,22 @@
+$font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$font-display: 'Georgia', 'Times New Roman', serif;
+
+$bp-sm: 36em;
+$bp-md: 48em;
+$bp-lg: 64em;
+
+:root {
+  --primary: #0f766e;
+  --primary-contrast: #ecfeff;
+  --surface: #f8fafc;
+  --surface-strong: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --danger: #b91c1c;
+  --ok: #166534;
+  --radius: 0.75rem;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+}

@@ -94,7 +94,7 @@ class User extends Authenticatable
     public function receivedMessages(): BelongsToMany
     {
         return $this->belongsToMany(Message::class, 'message_recipient', 'recipient_id', 'message_id')
-            ->withPivot('read_at')
+            ->withPivot('is_read', 'read_at')
             ->withTimestamps();
     }
 }

@@ -43,3 +43,41 @@
     }
   }
 }
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-2);
+}
+
+.course-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  background: rgb(255 255 255 / 0.72);
+  border: 0.0625rem solid rgb(15 23 42 / 0.08);
+  box-shadow: 0 1rem 2rem rgb(15 23 42 / 0.08);
+
+  &__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: 1.125rem;
+  }
+
+  &__meta {
+    color: var(--text-muted);
+  }
+
+  &__link {
+    width: fit-content;
+    font-weight: 600;
+    color: var(--primary);
+  }
+}

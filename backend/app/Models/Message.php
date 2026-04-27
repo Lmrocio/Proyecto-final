@@ -32,7 +32,7 @@ class Message extends Model
     public function recipients(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'message_recipient', 'message_id', 'recipient_id')
-            ->withPivot('read_at')
+            ->withPivot('is_read', 'read_at')
             ->withTimestamps();
     }
 }

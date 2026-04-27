@@ -1,30 +1,40 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { apiClient } from './services/apiClient'
 
 function App() {
   const [uiState, setUiState] = useState('loading')
+  const [courses, setCourses] = useState([])
 
-  const statusText = useMemo(() => {
-    if (uiState === 'loading') return 'Cargando datos iniciales...'
-    if (uiState === 'empty') return 'Todavia no hay contenido para mostrar.'
-    if (uiState === 'error') return 'No se pudo conectar con la API.'
-    return 'Frontend inicializado con React + Vite + SASS + Axios.'
-  }, [uiState])
+  useEffect(() => {
+    const loadDemoData = async () => {
+      try {
+        const { data } = await apiClient.get('/demo-data')
+        const demoCourses = data?.courses ?? []
 
-  const pingApi = async () => {
-    try {
-      await apiClient.get('/up')
-      setUiState('ready')
-    } catch {
-      setUiState('error')
+        setCourses(demoCourses)
+        setUiState(demoCourses.length > 0 ? 'ready' : 'empty')
+      } catch {
+        setUiState('error')
+      }
     }
-  }
+
+    loadDemoData()
+  }, [])
+
+  const statusText =
+    uiState === 'loading'
+      ? 'Cargando cursos de ejemplo...'
+      : uiState === 'empty'
+        ? 'Todavia no hay cursos demo para mostrar.'
+        : uiState === 'error'
+          ? 'No se pudo conectar con la API.'
+          : 'Demo técnica cargada desde Laravel.'
 
   return (
     <main className="app-shell">
       <header className="hero hero--openclassy">
         <p className="hero__kicker">OpenClassy</p>
-        <h1 className="hero__title">Frontend SPA</h1>
+        <h1 className="hero__title">Academia de Inglés</h1>
         <p className="hero__subtitle">{statusText}</p>
       </header>
 
@@ -51,26 +61,27 @@ function App() {
         )}
 
         {uiState === 'ready' && (
-          <div className="empty-state empty-state--ok">
-            <h2 className="empty-state__title">Todo listo</h2>
-            <p className="empty-state__text">Puedes empezar a construir modulos.</p>
+          <div className="course-grid">
+            {courses.map((course) => (
+              <article key={course.id} className="course-card">
+                <p className="course-card__eyebrow">Curso demo</p>
+                <h2 className="course-card__title">{course.title}</h2>
+                <p className="course-card__meta">Profesor: {course.teacher_name ?? 'Sin asignar'}</p>
+                <p className="course-card__meta">
+                  {course.start_date} - {course.end_date}
+                </p>
+                {course.meeting_link ? (
+                  <a className="course-card__link" href={course.meeting_link} target="_blank" rel="noreferrer">
+                    Ver enlace
+                  </a>
+                ) : null}
+              </article>
+            ))}
           </div>
         )}
       </section>
 
-      <section className="actions">
-        <button type="button" className="button button--primary" onClick={pingApi}>
-          Probar API Laravel
-        </button>
-        <button type="button" className="button" onClick={() => setUiState('empty')}>
-          Simular Empty
-        </button>
-        <button type="button" className="button" onClick={() => setUiState('loading')}>
-          Simular Loading
-        </button>
-      </section>
-
-      <footer className="app-footer">Base inicial alineada con FRONTEND.md</footer>
+      <footer className="app-footer">Demo técnica conectada con Laravel 11</footer>
     </main>
   )
 }

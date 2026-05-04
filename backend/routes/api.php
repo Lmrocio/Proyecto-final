@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\SiteConfigController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Database\QueryException;
@@ -34,7 +35,7 @@ Route::get('/demo-data', function () {
             [
                 'id' => 'demo-general-english-b1',
                 'title' => 'General English B1',
-                'teacher_name' => 'Teacher OpenClassy',
+                'teacher_name' => 'Teacher Oliva',
                 'start_date' => now()->startOfWeek()->toDateString(),
                 'end_date' => now()->addMonths(3)->toDateString(),
                 'meeting_link' => 'https://meet.example.com/general-english-b1',
@@ -64,6 +65,7 @@ Route::get('/demo-data', function () {
 });
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::get('/site-config', [SiteConfigController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);
@@ -93,6 +95,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('users', UserController::class);
+
+        Route::put('/admin/settings', [SiteConfigController::class, 'update']);
 
         Route::post('/courses', [CourseController::class, 'store']);
         Route::put('/courses/{course}', [CourseController::class, 'update']);

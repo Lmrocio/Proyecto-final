@@ -1,0 +1,102 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.login-form {
+  display: grid;
+  gap: var(--space-2);
+
+  &__header {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  &__kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__title {
+    font-family: $font-display;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  &__field {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  &__label {
+    font-weight: 600;
+  }
+
+  &__input {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    border: 0.0625rem solid color-mix(in srgb, var(--text-main) 10%, transparent);
+    background: var(--surface);
+    color: var(--text-main);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    @include mx.focus-ring;
+
+    &:focus-visible {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+  }
+
+  &__error {
+    font-size: 0.875rem;
+    color: var(--danger);
+  }
+
+  &__actions {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+  }
+
+  &__submit {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--primary-contrast);
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover:enabled {
+      transform: translateY(-0.08rem);
+      box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--primary) 24%, transparent);
+    }
+  }
+
+  &__ghost {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 80%, var(--text-main));
+    color: var(--text-main);
+  }
+
+  &__loading {
+    margin-top: var(--space-1);
+  }
+
+  &__alert {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--danger) 15%, transparent);
+    color: var(--text-main);
+    border: 0.0625rem solid color-mix(in srgb, var(--danger) 35%, transparent);
+
+    &--ok {
+      background: color-mix(in srgb, var(--ok) 15%, transparent);
+      border-color: color-mix(in srgb, var(--ok) 35%, transparent);
+    }
+  }
+}

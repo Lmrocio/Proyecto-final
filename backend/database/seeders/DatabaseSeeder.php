@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
+use App\Models\SiteConfig;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,6 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleUsersSeeder::class,
         ]);
+
+        $this->seedSiteConfig();
 
         $teacher = User::query()->where('role', 'teacher')->first();
 
@@ -54,5 +57,35 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+    }
+
+    private function seedSiteConfig(): void
+    {
+        $existingConfig = SiteConfig::query()->first();
+
+        if ($existingConfig) {
+            if (!$existingConfig->login_variant) {
+                $existingConfig->update([
+                    'login_variant' => 'v1',
+                ]);
+            }
+
+            return;
+        }
+
+        SiteConfig::create([
+            'theme_name' => 'openclassy',
+            'colors' => [
+                'primary' => '#0f766e',
+                'primary_contrast' => '#ecfeff',
+                'surface' => '#f8fafc',
+                'surface_strong' => '#ffffff',
+                'text_main' => '#0f172a',
+                'text_muted' => '#475569',
+                'danger' => '#b91c1c',
+                'ok' => '#166534',
+            ],
+            'login_variant' => 'v1',
+        ]);
     }
 }

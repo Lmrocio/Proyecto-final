@@ -14,13 +14,3 @@
   gap: var(--space-1);
 }
 
-.state-panel {
-  @include mx.glass-card;
-  border-radius: var(--radius);
-  padding: var(--space-2);
-}
-
-.app-footer {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-}

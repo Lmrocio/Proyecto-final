@@ -6,3 +6,11 @@ button {
   border: 0;
   @include mx.focus-ring;
 }
+
+input,
+select,
+textarea {
+  font: inherit;
+  border: 0;
+  outline: none;
+}

@@ -1,11 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { apiClient } from './services/apiClient'
+import EmptyState from './components/EmptyState'
+import AdminSettings from './pages/AdminSettings'
+import Login from './pages/Login'
 
 function App() {
+  const initialPath = typeof window === 'undefined' ? '/' : window.location.pathname
+  const [pathname, setPathname] = useState(initialPath)
   const [uiState, setUiState] = useState('loading')
   const [courses, setCourses] = useState([])
 
   useEffect(() => {
+    if (pathname !== '/') {
+      return
+    }
+
     const loadDemoData = async () => {
       try {
         const { data } = await apiClient.get('/demo-data')
@@ -19,7 +28,38 @@ function App() {
     }
 
     loadDemoData()
+  }, [pathname])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setPathname(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  const handleNavigate = useCallback(
+    (event, nextPath) => {
+      event.preventDefault()
+
+      if (nextPath === pathname) {
+        return
+      }
+
+      window.history.pushState({}, '', nextPath)
+      setPathname(nextPath)
+    },
+    [pathname],
+  )
+
+  if (pathname === '/login') {
+    return <Login />
+  }
+
+  if (pathname === '/admin/settings') {
+    return <AdminSettings />
+  }
 
   const statusText =
     uiState === 'loading'
@@ -28,10 +68,33 @@ function App() {
         ? 'Todavia no hay cursos demo para mostrar.'
         : uiState === 'error'
           ? 'No se pudo conectar con la API.'
-          : 'Demo técnica cargada desde Laravel.'
+          : 'Demo tecnica cargada desde Laravel.'
 
   return (
     <main className="app-shell">
+      <nav className="app-nav" aria-label="Principal">
+        <a
+          className="app-nav__link"
+          href="/"
+          onClick={(event) => handleNavigate(event, '/')}
+        >
+          Inicio
+        </a>
+        <a
+          className="app-nav__link"
+          href="/login"
+          onClick={(event) => handleNavigate(event, '/login')}
+        >
+          Login
+        </a>
+        <a
+          className="app-nav__link"
+          href="/admin/settings"
+          onClick={(event) => handleNavigate(event, '/admin/settings')}
+        >
+          Admin
+        </a>
+      </nav>
       <header className="hero hero--openclassy">
         <p className="hero__kicker">OpenClassy</p>
         <h1 className="hero__title">Academia de Inglés</h1>
@@ -47,17 +110,19 @@ function App() {
         )}
 
         {uiState === 'empty' && (
-          <div className="empty-state">
-            <h2 className="empty-state__title">Estado vacio</h2>
-            <p className="empty-state__text">No se encontraron recursos.</p>
-          </div>
+          <EmptyState
+            title="Estado vacio"
+            text="No se encontraron recursos."
+            tone="ok"
+          />
         )}
 
         {uiState === 'error' && (
-          <div className="empty-state empty-state--error">
-            <h2 className="empty-state__title">Error de conexion</h2>
-            <p className="empty-state__text">Revisa backend y VITE_API_URL.</p>
-          </div>
+          <EmptyState
+            title="Error de conexion"
+            text="Revisa backend y VITE_API_URL."
+            tone="error"
+          />
         )}
 
         {uiState === 'ready' && (

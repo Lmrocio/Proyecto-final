@@ -13,6 +13,7 @@ use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/demo-data', function () {
     try {
@@ -67,61 +68,82 @@ Route::get('/demo-data', function () {
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/site-config', [SiteConfigController::class, 'show']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/auth/user', [AuthController::class, 'user']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
+try {
+    DB::connection()->getPdo();
+    $dbOk = true;
+} catch (\Throwable $e) {
+    $dbOk = false;
+}
 
-    Route::get('/courses', [CourseController::class, 'index']);
-    Route::get('/courses/{course}', [CourseController::class, 'show']);
-
-    Route::get('/enrollments', [EnrollmentController::class, 'index']);
-    Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show']);
-
-    Route::get('/attendances', [AttendanceController::class, 'index']);
-
-    Route::get('/bonuses', [BonusController::class, 'index']);
-    Route::get('/bonuses/{bonus}', [BonusController::class, 'show']);
-
-    Route::get('/materials', [MaterialController::class, 'index']);
-    Route::get('/materials/{material}', [MaterialController::class, 'show']);
-
-    Route::get('/submissions', [SubmissionController::class, 'index']);
-    Route::get('/submissions/{submission}', [SubmissionController::class, 'show']);
-
-    Route::get('/messages', [MessageController::class, 'index']);
-    Route::get('/messages/sent', [MessageController::class, 'sent']);
-    Route::post('/messages', [MessageController::class, 'store']);
-    Route::patch('/messages/{message}/read', [MessageController::class, 'markAsRead']);
-
-    Route::middleware('role:admin')->group(function () {
-        Route::apiResource('users', UserController::class);
-
-        Route::put('/admin/settings', [SiteConfigController::class, 'update']);
-
-        Route::post('/courses', [CourseController::class, 'store']);
-        Route::put('/courses/{course}', [CourseController::class, 'update']);
-        Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
-
-        Route::post('/enrollments', [EnrollmentController::class, 'store']);
-        Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
-        Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy']);
-
-        Route::post('/bonuses', [BonusController::class, 'store']);
-        Route::put('/bonuses/{bonus}', [BonusController::class, 'update']);
-        Route::delete('/bonuses/{bonus}', [BonusController::class, 'destroy']);
+if (! $dbOk) {
+    // Fallback routes when DB driver is missing to avoid 500s in dev/demo environments.
+    Route::get('/auth/user', function () {
+        return response()->json(['user' => null]);
     });
 
-    Route::middleware('role:admin,teacher')->group(function () {
-        Route::post('/attendances', [AttendanceController::class, 'store']);
-        Route::patch('/attendances/{attendance}', [AttendanceController::class, 'update']);
-
-        Route::post('/materials', [MaterialController::class, 'store']);
-        Route::delete('/materials/{material}', [MaterialController::class, 'destroy']);
-
-        Route::patch('/submissions/{submission}/grade', [SubmissionController::class, 'grade']);
+    Route::post('/auth/logout', function () {
+        return response()->json(['message' => 'ok']);
     });
 
-    Route::middleware('role:student')->group(function () {
-        Route::post('/submissions', [SubmissionController::class, 'store']);
+    // Keep public demo-data route active; other protected routes will still be unavailable
+    // but this prevents the frontend from failing on the auth check.
+} else {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/auth/user', [AuthController::class, 'user']);
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+        Route::get('/courses', [CourseController::class, 'index']);
+        Route::get('/courses/{course}', [CourseController::class, 'show']);
+
+        Route::get('/enrollments', [EnrollmentController::class, 'index']);
+        Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show']);
+
+        Route::get('/attendances', [AttendanceController::class, 'index']);
+
+        Route::get('/bonuses', [BonusController::class, 'index']);
+        Route::get('/bonuses/{bonus}', [BonusController::class, 'show']);
+
+        Route::get('/materials', [MaterialController::class, 'index']);
+        Route::get('/materials/{material}', [MaterialController::class, 'show']);
+
+        Route::get('/submissions', [SubmissionController::class, 'index']);
+        Route::get('/submissions/{submission}', [SubmissionController::class, 'show']);
+
+        Route::get('/messages', [MessageController::class, 'index']);
+        Route::get('/messages/sent', [MessageController::class, 'sent']);
+        Route::post('/messages', [MessageController::class, 'store']);
+        Route::patch('/messages/{message}/read', [MessageController::class, 'markAsRead']);
+
+        Route::middleware('role:admin')->group(function () {
+            Route::apiResource('users', UserController::class);
+
+            Route::put('/admin/settings', [SiteConfigController::class, 'update']);
+
+            Route::post('/courses', [CourseController::class, 'store']);
+            Route::put('/courses/{course}', [CourseController::class, 'update']);
+            Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
+
+            Route::post('/enrollments', [EnrollmentController::class, 'store']);
+            Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
+            Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy']);
+
+            Route::post('/bonuses', [BonusController::class, 'store']);
+            Route::put('/bonuses/{bonus}', [BonusController::class, 'update']);
+            Route::delete('/bonuses/{bonus}', [BonusController::class, 'destroy']);
+        });
+
+        Route::middleware('role:admin,teacher')->group(function () {
+            Route::post('/attendances', [AttendanceController::class, 'store']);
+            Route::patch('/attendances/{attendance}', [AttendanceController::class, 'update']);
+
+            Route::post('/materials', [MaterialController::class, 'store']);
+            Route::delete('/materials/{material}', [MaterialController::class, 'destroy']);
+
+            Route::patch('/submissions/{submission}/grade', [SubmissionController::class, 'grade']);
+        });
+
+        Route::middleware('role:student')->group(function () {
+            Route::post('/submissions', [SubmissionController::class, 'store']);
+        });
     });
-});
+}

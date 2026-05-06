@@ -1,0 +1,54 @@
+@use '../00-settings/variables' as *;
+
+// Included via 06-components/_index.scss imported by styles/main.scss.
+
+.student-dashboard {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.student-dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.student-dashboard__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.student-dashboard__cta {
+  border: none;
+  background: #e6e1dd;
+  color: #2f2523;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.student-dashboard__loading {
+  padding: 1rem 0;
+}
+
+.student-dashboard__classroom {
+  display: grid;
+  gap: 1rem;
+}
+
+.student-dashboard__classroom-text {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.student-dashboard__classroom-link {
+  width: fit-content;
+  text-decoration: none;
+}

@@ -1,0 +1,63 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+// Included via 05-layout/_index.scss imported by styles/main.scss.
+
+.student-layout {
+  --student-topbar-bg: var(--primary);
+  --student-topbar-text: var(--primary-contrast);
+  --student-topbar-border: none;
+  --student-topbar-backdrop: none;
+  --student-sidebar-bg: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  --student-sidebar-border: none;
+  --student-sidebar-backdrop: none;
+  --student-panel-bg: var(--surface-strong);
+  --student-panel-border: none;
+  --student-panel-backdrop: none;
+  --student-main-bg: color-mix(in srgb, var(--surface) 90%, #ffffff);
+  --student-sidebar-calendar-height: 22rem;
+  --student-sidebar-tasks-height: 24rem;
+
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--student-main-bg);
+}
+
+.student-layout[data-variant='v2'] {
+  --student-topbar-bg: var(--surface-strong);
+  --student-topbar-text: var(--text-main);
+  --student-sidebar-bg: var(--surface);
+  --student-panel-bg: var(--surface-strong);
+}
+
+.student-layout[data-variant='v3'] {
+  --student-topbar-bg: rgba(255, 255, 255, 0.6);
+  --student-topbar-text: var(--text-main);
+  --student-topbar-border: 1px solid rgba(255, 255, 255, 0.35);
+  --student-topbar-backdrop: blur(12px);
+  --student-sidebar-bg: rgba(255, 255, 255, 0.5);
+  --student-sidebar-border: 1px solid rgba(255, 255, 255, 0.3);
+  --student-sidebar-backdrop: blur(12px);
+  --student-panel-bg: rgba(255, 255, 255, 0.7);
+  --student-panel-border: 1px solid rgba(255, 255, 255, 0.4);
+  --student-panel-backdrop: blur(10px);
+}
+
+.student-layout__body {
+  display: grid;
+  grid-template-columns: minmax(15rem, 18rem) 1fr;
+  min-height: 0;
+}
+
+.student-layout__main {
+  background: var(--student-main-bg);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  overflow: hidden;
+}
+
+@include mx.media-down($bp-lg) {
+  .student-layout__body {
+    grid-template-columns: 1fr;
+  }
+}

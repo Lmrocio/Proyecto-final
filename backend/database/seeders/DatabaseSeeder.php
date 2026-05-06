@@ -30,13 +30,13 @@ class DatabaseSeeder extends Seeder
         $courses = [
             [
                 'title' => 'General English B1',
-                'meeting_link' => 'https://meet.example.com/general-english-b1',
+                'meeting_link' => 'https://meet.google.com/abc-defg-hij',
                 'start_date' => now()->startOfWeek()->toDateString(),
                 'end_date' => now()->addMonths(3)->toDateString(),
             ],
             [
                 'title' => 'First Certificate Prep',
-                'meeting_link' => 'https://meet.example.com/fce-prep',
+                'meeting_link' => null,
                 'start_date' => now()->addWeek()->toDateString(),
                 'end_date' => now()->addMonths(4)->toDateString(),
             ],
@@ -57,6 +57,10 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        $this->call([
+            StudentDashboardDemoSeeder::class,
+        ]);
     }
 
     private function seedSiteConfig(): void
@@ -64,9 +68,9 @@ class DatabaseSeeder extends Seeder
         $existingConfig = SiteConfig::query()->first();
 
         if ($existingConfig) {
-            if (!$existingConfig->login_variant) {
+            if (!$existingConfig->ui_variant) {
                 $existingConfig->update([
-                    'login_variant' => 'v1',
+                    'ui_variant' => 'v1',
                 ]);
             }
 
@@ -85,7 +89,7 @@ class DatabaseSeeder extends Seeder
                 'danger' => '#b91c1c',
                 'ok' => '#166534',
             ],
-            'login_variant' => 'v1',
+            'ui_variant' => 'v1',
         ]);
     }
 }

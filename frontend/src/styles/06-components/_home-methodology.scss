@@ -1,0 +1,123 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.home-methodology {
+  padding: 1rem 0 4rem;
+}
+
+.home-methodology__title {
+  grid-column: 1 / -1;
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-family: $font-display;
+  font-size: clamp(2rem, 3vw, 3rem);
+}
+
+.home-methodology__wrapper {
+  align-items: stretch;
+}
+
+.home-methodology__card {
+  grid-column: 2 / span 10;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(34, 31, 29, 0.08);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.2rem;
+}
+
+.home-methodology__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+  gap: 1.25rem;
+}
+
+.home-methodology__copy {
+  display: grid;
+  align-content: center;
+  gap: 0.9rem;
+  padding: 1rem 0.5rem;
+}
+
+.home-methodology__eyebrow {
+  margin: 0;
+  color: var(--home-taupe-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-methodology__heading {
+  margin: 0;
+  font-family: $font-display;
+  font-size: clamp(1.8rem, 2.4vw, 2.8rem);
+  line-height: 1.05;
+}
+
+.home-methodology__text {
+  margin: 0;
+  color: var(--home-muted);
+  line-height: 1.7;
+}
+
+.home-methodology__visual {
+  min-height: 19rem;
+  border-radius: 1.6rem;
+  background: linear-gradient(180deg, rgba(223, 212, 203, 0.95), rgba(247, 242, 236, 0.85));
+  display: grid;
+  place-items: center;
+}
+
+.home-methodology__visual-label {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.home-methodology__tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.home-methodology__tab {
+  min-height: 3.2rem;
+  border: 1px solid rgba(34, 31, 29, 0.1);
+  border-radius: 1rem;
+  background: rgba(245, 239, 232, 0.66);
+  color: var(--home-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.8rem 0.9rem;
+}
+
+.home-methodology__tab--active {
+  background: var(--home-taupe-dark);
+  border-color: var(--home-taupe-dark);
+  color: #fff9f2;
+}
+
+@include mx.media-down($bp-lg) {
+  .home-methodology__card {
+    grid-column: 1 / -1;
+  }
+
+  .home-methodology__top {
+    grid-template-columns: 1fr;
+  }
+
+  .home-methodology__tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include mx.media-down($bp-md) {
+  .home-methodology__tabs {
+    grid-template-columns: 1fr;
+  }
+}

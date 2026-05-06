@@ -17,7 +17,7 @@ class UpdateSiteConfigRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login_variant' => ['required', 'string', 'in:v1,v2,v3'],
+            'ui_variant' => ['required', 'string', 'in:v1,v2,v3'],
         ];
     }
 }

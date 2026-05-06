@@ -1,0 +1,124 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.home-courses {
+  padding: 1rem 0 4rem;
+}
+
+.home-courses__header-row {
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.home-courses__controls {
+  grid-column: 1 / span 2;
+  display: inline-flex;
+  gap: 0.75rem;
+}
+
+.home-courses__control {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(34, 31, 29, 0.12);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--home-ink);
+  display: grid;
+  place-items: center;
+}
+
+.home-courses__title {
+  grid-column: 3 / span 8;
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+
+.home-courses__grid {
+  align-items: stretch;
+}
+
+.landing-course-card {
+  grid-column: span 3;
+  min-height: 100%;
+  border: 1px solid rgba(34, 31, 29, 0.1);
+  border-radius: 1.6rem;
+  background: rgba(255, 255, 255, 0.58);
+  display: grid;
+  overflow: hidden;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.landing-course-card:hover {
+  border-color: var(--home-accent);
+  box-shadow: 0 1rem 2.5rem rgba(76, 124, 243, 0.12);
+  transform: translateY(-0.2rem);
+}
+
+.landing-course-card__media {
+  min-height: 15rem;
+  background: linear-gradient(180deg, rgba(226, 216, 207, 0.95), rgba(245, 239, 232, 0.7));
+}
+
+.landing-course-card__body {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem 1rem 1.2rem;
+}
+
+.landing-course-card__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.landing-course-card__title {
+  margin: 0;
+  font-family: $font-display;
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.landing-course-card__tag {
+  flex-shrink: 0;
+  border: 1px solid rgba(34, 31, 29, 0.14);
+  border-radius: 999px;
+  padding: 0.38rem 0.6rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.landing-course-card__text {
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+@include mx.media-down($bp-lg) {
+  .home-courses__controls,
+  .home-courses__title {
+    grid-column: 1 / -1;
+  }
+
+  .home-courses__header-row {
+    gap: 1rem;
+  }
+
+  .home-courses__controls {
+    justify-content: center;
+  }
+
+  .landing-course-card {
+    grid-column: span 3;
+  }
+}
+
+@include mx.media-down($bp-md) {
+  .landing-course-card {
+    grid-column: 1 / -1;
+  }
+}

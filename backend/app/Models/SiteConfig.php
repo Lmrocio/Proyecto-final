@@ -22,7 +22,7 @@ class SiteConfig extends Model
         'colors',
         'bilingual_pulse',
         'branding',
-        'login_variant',
+        'ui_variant',
     ];
 
     /**

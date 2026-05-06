@@ -21,6 +21,7 @@ class Material extends Model
     protected $fillable = [
         'course_id',
         'title',
+        'unit_name',
         'type',
         'path',
         'size',

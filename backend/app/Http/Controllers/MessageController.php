@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MessageResource;
 use App\Http\Requests\StoreMessageRequest;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,15 @@ class MessageController extends Controller
             ->latest('messages.created_at')
             ->paginate((int) $request->integer('per_page', 15));
 
-        return response()->json($messages, Response::HTTP_OK);
+        return response()->json([
+            'data' => MessageResource::collection($messages->getCollection())->resolve($request),
+            'meta' => [
+                'current_page' => $messages->currentPage(),
+                'last_page' => $messages->lastPage(),
+                'per_page' => $messages->perPage(),
+                'total' => $messages->total(),
+            ],
+        ], Response::HTTP_OK);
     }
 
     public function sent(Request $request): JsonResponse
@@ -72,6 +81,23 @@ class MessageController extends Controller
         return response()->json($message, Response::HTTP_CREATED);
     }
 
+    public function markAllAsRead(Request $request): JsonResponse
+    {
+        $updated = DB::table('message_recipient')
+            ->where('recipient_id', $request->user()->id)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        return response()->json([
+            'message' => 'Messages marked as read.',
+            'updated' => $updated,
+        ], Response::HTTP_OK);
+    }
+
     public function markAsRead(Request $request, Message $message): JsonResponse
     {
         $recipient = $message->recipients()
@@ -89,8 +115,32 @@ class MessageController extends Controller
             'read_at' => now(),
         ]);
 
+        $notification = $request->user()
+            ->receivedMessages()
+            ->with('sender:id,name,email')
+            ->where('messages.id', $message->id)
+            ->first();
+
         return response()->json([
             'message' => 'Message marked as read.',
+            'notification' => MessageResource::make($notification)->resolve($request),
         ], Response::HTTP_OK);
+    }
+
+    public function destroy(Request $request, Message $message): JsonResponse
+    {
+        $recipient = $message->recipients()
+            ->where('users.id', $request->user()->id)
+            ->first();
+
+        if (!$recipient) {
+            return response()->json([
+                'message' => 'Message not found in your inbox.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $message->recipients()->detach($request->user()->id);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

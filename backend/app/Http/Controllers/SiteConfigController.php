@@ -2,72 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SiteConfigResource;
 use App\Http\Requests\UpdateSiteConfigRequest;
 use App\Models\SiteConfig;
+use App\Services\SiteConfigService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SiteConfigController extends Controller
 {
-    public function show(): JsonResponse
+    public function __construct(private readonly SiteConfigService $siteConfigService)
     {
-        $config = $this->loadOrCreateConfig();
+    }
 
-        return response()->json([
-            'config' => $config,
-        ], Response::HTTP_OK);
+    public function show(Request $request): JsonResponse
+    {
+        return $this->configResponse($request, $this->siteConfigService->getConfig());
     }
 
     public function update(UpdateSiteConfigRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $config = $this->loadOrCreateConfig();
+        $config = $this->siteConfigService->updateUiVariant($data['ui_variant']);
 
-        $config->update([
-            'login_variant' => $data['login_variant'],
-        ]);
+        return $this->configResponse($request, $config);
+    }
 
+    private function configResponse(Request $request, SiteConfig $config): JsonResponse
+    {
         return response()->json([
-            'config' => $config->fresh(),
+            'config' => SiteConfigResource::make($config)->resolve($request),
         ], Response::HTTP_OK);
-    }
-
-    private function loadOrCreateConfig(): SiteConfig
-    {
-        $config = SiteConfig::query()->first();
-
-        if ($config) {
-            if (!$config->login_variant) {
-                $config->update([
-                    'login_variant' => 'v1',
-                ]);
-                $config->refresh();
-            }
-
-            return $config;
-        }
-
-        return SiteConfig::create($this->defaultConfig());
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function defaultConfig(): array
-    {
-        return [
-            'theme_name' => 'openclassy',
-            'colors' => [
-                'primary' => '#0f766e',
-                'primary_contrast' => '#ecfeff',
-                'surface' => '#f8fafc',
-                'surface_strong' => '#ffffff',
-                'text_main' => '#0f172a',
-                'text_muted' => '#475569',
-                'danger' => '#b91c1c',
-                'ok' => '#166534',
-            ],
-            'login_variant' => 'v1',
-        ];
     }
 }

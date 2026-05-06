@@ -1,0 +1,138 @@
+@use '../00-settings/variables' as *;
+
+// Included via 06-components/_index.scss imported by styles/main.scss.
+
+.calendar {
+  background: var(--student-panel-bg);
+  border: var(--student-panel-border);
+  backdrop-filter: var(--student-panel-backdrop);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 0;
+  height: 100%;
+  box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.08);
+}
+
+.calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.calendar__controls {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.calendar__control {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  border: none;
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.calendar__control:hover {
+  background: color-mix(in srgb, var(--primary) 22%, var(--surface));
+  transform: translateY(-1px);
+}
+
+.calendar__title {
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.calendar__today {
+  border: none;
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+  color: var(--text-main);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto repeat(6, minmax(0, 1fr));
+  gap: 0.35rem;
+  min-height: 0;
+}
+
+.calendar__dow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  align-self: center;
+}
+
+.calendar__day {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.calendar__day:hover {
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.calendar__day--muted {
+  color: color-mix(in srgb, var(--text-muted) 65%, transparent);
+}
+
+.calendar__day--today {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  font-weight: 700;
+}
+
+.calendar__day--selected {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.calendar__day--selected:hover {
+  background: color-mix(in srgb, var(--primary) 86%, #000000);
+  color: var(--primary-contrast);
+}
+
+.calendar__number {
+  line-height: 1;
+}
+
+.calendar__task-dot {
+  position: absolute;
+  bottom: 0.22rem;
+  left: 50%;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--danger);
+  transform: translateX(-50%);
+}
+
+.calendar__day--selected .calendar__task-dot {
+  background: var(--primary-contrast);
+}

@@ -1,0 +1,161 @@
+@use '../00-settings/variables' as *;
+
+// Included via 06-components/_index.scss imported by styles/main.scss.
+
+.course-content {
+  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
+  border-radius: 1.75rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.course-content__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.course-content__tab {
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text-main);
+}
+
+.course-content__tab--active {
+  background: #5d4e4c;
+  color: #ffffff;
+}
+
+.course-content__panel {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+}
+
+.course-content__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.course-content__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(47, 37, 35, 0.12);
+}
+
+.course-content__item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.course-content__item-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(93, 78, 76, 0.15);
+  display: grid;
+  place-items: center;
+  color: #5d4e4c;
+}
+
+.course-content__item-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.course-content__item-description {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.course-content__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.course-content--accordion {
+  background: transparent;
+  padding: 0;
+}
+
+.course-content__section {
+  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.course-content__section-toggle {
+  width: 100%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  color: var(--text-main);
+  padding: 0.5rem 0;
+}
+
+.course-content__section--open {
+  background: color-mix(in srgb, #8c7c74 20%, var(--surface));
+}
+
+.course-content__section .course-content__panel {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.course-content--summary {
+  background: transparent;
+  padding: 0;
+}
+
+.course-content__card {
+  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.course-content__card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.course-content__card-text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.course-content__card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.course-content__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--text-main);
+}

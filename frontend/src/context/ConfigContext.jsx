@@ -69,12 +69,12 @@ export const ConfigProvider = ({ children }) => {
     }
   }, [])
 
-  const updateLoginVariant = useCallback(async (variant) => {
+  const updateUiVariant = useCallback(async (variant) => {
     setUpdating(true)
 
     try {
       const { data } = await apiClient.put('/admin/settings', {
-        login_variant: normalizeVariant(variant),
+        ui_variant: normalizeVariant(variant),
       })
 
       const payload = data?.config ?? null
@@ -115,10 +115,10 @@ export const ConfigProvider = ({ children }) => {
       error,
       updating,
       refreshConfig,
-      updateLoginVariant,
-      loginVariant: normalizeVariant(config?.login_variant),
+      updateUiVariant,
+      uiVariant: normalizeVariant(config?.ui_variant),
     }),
-    [config, status, error, updating, refreshConfig, updateLoginVariant],
+    [config, status, error, updating, refreshConfig, updateUiVariant],
   )
 
   return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>

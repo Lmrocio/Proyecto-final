@@ -22,6 +22,7 @@ class Assignment extends Model
     protected $fillable = [
         'course_id',
         'title',
+        'unit_name',
         'description',
         'due_date',
     ];

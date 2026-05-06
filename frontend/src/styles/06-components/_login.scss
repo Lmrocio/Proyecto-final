@@ -71,7 +71,7 @@
 }
 
 .login__layout--split {
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr;
   background: var(--login-right-bg);
 }
 
@@ -146,10 +146,11 @@
 }
 
 .login__footer--split {
-  position: static;
-  grid-column: 1 / -1;
+  position: absolute;
+  left: clamp(1.5rem, 4vw, 3rem);
+  right: clamp(1.5rem, 4vw, 3rem);
+  bottom: clamp(1.5rem, 3vw, 2.5rem);
   grid-template-columns: minmax(0, 40%) 1fr auto;
-  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 4vw, 3rem);
   background: transparent;
   color: #2f2523;
 }
@@ -188,6 +189,42 @@
 .login__footer-copy {
   justify-self: end;
   font-size: 0.85rem;
+}
+
+.login--loading {
+  min-height: 100vh;
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.login__loading-panel {
+  width: min(26rem, 100%);
+  background: var(--surface-strong);
+  border-radius: 2rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.12);
+}
+
+.login__skeleton-title {
+  height: 2.2rem;
+  width: 60%;
+  border-radius: 1rem;
+}
+
+.login__skeleton-label {
+  width: 40%;
+}
+
+.login__skeleton-input {
+  height: 2.6rem;
+  border-radius: 999px;
+}
+
+.login__skeleton-button {
+  height: 2.8rem;
+  border-radius: 999px;
 }
 
 .login-form {

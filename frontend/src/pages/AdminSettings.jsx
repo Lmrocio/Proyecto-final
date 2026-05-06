@@ -8,27 +8,27 @@ const VARIANTS = [
   {
     id: 'v1',
     title: 'Tema Clasico (V1)',
-    description: 'Tarjeta centrada con footer ligero.',
+    description: 'Login tarjeta + Dashboard en pestanas.',
   },
   {
     id: 'v2',
     title: 'Tema Split (V2)',
-    description: 'Pantalla dividida con imagen lateral.',
+    description: 'Login dividido + Dashboard en acordeon.',
   },
   {
     id: 'v3',
     title: 'Tema Cristal (V3)',
-    description: 'Glassmorphism con barra inferior.',
+    description: 'Login glass + Dashboard en resumen.',
   },
 ]
 
 const AdminSettings = () => {
   const { status: authStatus, isAdmin, logout, refreshUser } = useAuth()
-  const { loginVariant, status, refreshConfig, updateLoginVariant, updating } = useConfig()
+  const { uiVariant, status, refreshConfig, updateUiVariant, updating } = useConfig()
   const [updateStatus, setUpdateStatus] = useState('idle')
   const [updateMessage, setUpdateMessage] = useState('')
 
-  const activeVariant = useMemo(() => loginVariant ?? 'v1', [loginVariant])
+  const activeVariant = useMemo(() => uiVariant ?? 'v1', [uiVariant])
 
   const handleLoginRedirect = useCallback(() => {
     window.localStorage.setItem('openclassy_redirect', '/admin/settings')
@@ -51,7 +51,7 @@ const AdminSettings = () => {
       setUpdateStatus('loading')
       setUpdateMessage('Actualizando configuracion...')
 
-      const result = await updateLoginVariant(variantId)
+      const result = await updateUiVariant(variantId)
 
       if (result.ok) {
         setUpdateStatus('success')
@@ -72,7 +72,7 @@ const AdminSettings = () => {
 
       setUpdateMessage('No se pudo guardar. Revisa tu sesion de admin.')
     },
-    [updateLoginVariant],
+    [updateUiVariant],
   )
 
   if (authStatus === 'loading') {
@@ -107,7 +107,7 @@ const AdminSettings = () => {
       <main className="settings">
         <EmptyState
           title="Acceso restringido"
-          text="Necesitas iniciar sesion como admin para configurar el login."
+          text="Necesitas iniciar sesion como admin para configurar el tema global."
           actionLabel="Iniciar sesion"
           onAction={handleLoginRedirect}
           tone="error"
@@ -163,7 +163,7 @@ const AdminSettings = () => {
         <div>
           <p className="settings__kicker">Admin dashboard</p>
           <h1 className="settings__title">Configuracion visual</h1>
-          <p className="settings__subtitle">Cambia el layout del login en tiempo real.</p>
+          <p className="settings__subtitle">Cambia el tema global (Login y Aula Virtual).</p>
         </div>
         <a className="settings__link" href="/login">
           Ver login

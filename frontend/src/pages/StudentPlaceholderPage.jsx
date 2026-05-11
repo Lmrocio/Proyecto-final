@@ -1,5 +1,5 @@
 import StudentLayout from '../layouts/StudentLayout'
-import { useConfig } from '../context/ConfigContext'
+import { useConfig } from '../context/configContext'
 
 const StudentPlaceholderPage = ({ label, children = null }) => {
   const { uiVariant } = useConfig()

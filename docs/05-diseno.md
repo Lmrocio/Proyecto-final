@@ -104,10 +104,14 @@ El modelo de datos ha sido diseñado para cubrir de forma integral las necesidad
 | Campo | Tipo | Restricciones | Descripción |
 | :--- | :--- | :--- | :--- |
 | id | UUID | PK | Identificador de la prueba. |
-| guest_email | String | Not Null | Email del invitado para captación. |
-| writing_text | Text | Not Null | Redacción enviada por el usuario. |
-| result_mcer | String | Not Null | Nivel detectado (A1-C2). |
-| ai_analysis | JSONB | Not Null | Desglose detallado del feedback de la IA. |
+| user_id | UUID | FK users.id, Nullable | Usuario autenticado si la prueba se asocia a una cuenta. |
+| guest_email | String | Nullable | Email opcional del invitado para captación. |
+| topic | String | Nullable | Tema sobre el que se escribe la redacción. |
+| test_date | Date | Nullable | Fecha de realización de la prueba. |
+| score | TinyInteger | Nullable | Puntuación total calculada sobre 40. |
+| suggested_level | Enum | A1, A2, B1, B2, C1, C2 | Nivel MCER recomendado. |
+| writing_text | Text | Nullable | Redacción enviada por el usuario. |
+| ai_analysis | JSONB | Nullable | Desglose detallado del feedback de la IA. |
 
 ### Tabla: site_configs (Marca Blanca)
 | Campo | Tipo | Restricciones | Descripción |
@@ -162,10 +166,10 @@ sequenceDiagram
     participant AI as OpenRouter (LLM)
 
     U->>F: Introduce redacción en inglés
-    F->>B: Envía texto (POST /api/level-test)
+    F->>B: Envía tema y texto (POST /api/level-tests)
     B->>AI: Prompt especializado (MCER)
-    AI-->>B: Devuelve Nivel + Errores comunes
-    B->>B: Almacena Lead para el Admin
+    AI-->>B: Devuelve JSON estructurado de evaluación
+    B->>B: Valida, normaliza y almacena análisis
     B-->>F: Respuesta JSON con feedback
     F-->>U: Muestra resultado y recomienda cursos
 ```
@@ -190,14 +194,54 @@ La API de OpenClassy se rige por los estándares REST, utilizando nombres de rec
 
 | Método | Endpoint | Descripción | Actor |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/courses` | Listado de oferta formativa de la academia. | Público |
-| `POST` | `/api/level-test` | Envío de redacción para procesamiento por IA. | Público |
-| `POST` | `/api/login` | Autenticación y emisión de Token (Sanctum). | Público |
+| `GET` | `/api/site-config` | Recupera la configuración pública de interfaz y marca visual. | Público |
+| `POST` | `/api/level-tests` | Envío de tema y redacción para evaluación MCER por IA. | Público |
+| `POST` | `/api/auth/login` | Autenticación y emisión de Token (Sanctum). | Público |
+| `GET` | `/api/auth/user` | Devuelve el usuario autenticado para mantener sesión en la SPA. | Usuario autenticado |
+| `GET` | `/api/courses` | Listado de cursos visible según rol y matrícula activa. | Usuario autenticado |
 | `GET` | `/api/student/assignments` | Consulta de tareas asignadas al alumno. | Alumno |
-| `POST` | `/api/student/submissions` | Subida de entregas de tareas (archivos/texto). | Alumno |
+| `POST` | `/api/submissions` | Subida de entregas de tareas (archivos/texto). | Alumno |
 | `PUT` | `/api/admin/settings` | Configuración dinámica de la Marca Blanca. | Admin |
 
-### 6.2 Códigos de estado HTTP aplicados
+### 6.2 Contrato de Prueba de Nivel IA
+
+`POST /api/level-tests`
+
+Request:
+```json
+{
+    "topic": "Some people believe online learning should replace traditional classrooms. Discuss both views and give your opinion.",
+    "composition": "English composition written by the user..."
+}
+```
+
+Respuesta correcta `201 Created`:
+```json
+{
+    "cefr_level": "B2",
+    "total_score": 30,
+    "scores": {
+        "task_achievement": 8,
+        "coherence_cohesion": 7,
+        "lexical_resource": 8,
+        "grammatical_accuracy": 7
+    },
+    "strengths": ["Ideas claras", "Buen rango de vocabulario"],
+    "improvements": [{ "issue": "Conectores repetidos", "suggestion": "Alterna however, therefore y nevertheless." }],
+    "next_level_advice": "Trabaja precisión gramatical y cohesión para consolidar C1."
+}
+```
+
+Errores funcionales `422 Unprocessable Entity`:
+```json
+{ "message": "Escribe al menos 150 palabras para una evaluación precisa" }
+```
+
+```json
+{ "message": "Por favor, escribe tu redacción en inglés" }
+```
+
+### 6.3 Códigos de estado HTTP aplicados
 *   **200 OK / 201 Created:** Éxito en la operación o creación de recurso.
 *   **401 Unauthorized:** Intento de acceso sin token válido.
 *   **403 Forbidden:** El usuario no tiene el rol necesario (RBAC).

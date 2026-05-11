@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import EmptyState from '../components/EmptyState'
-import { useConfig } from '../context/ConfigContext'
+import { useAuth } from '../context/authContext'
+import { useConfig } from '../context/configContext'
 import { getStoredToken } from '../services/apiClient'
-import { useAuth } from '../context/AuthContext'
 
 const VARIANTS = [
   {

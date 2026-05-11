@@ -1,7 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiClient } from '../services/apiClient'
-
-const ConfigContext = createContext(null)
+import { ConfigContext } from './configContext'
 
 const COLOR_TO_CSS_VAR = {
   primary: '--primary',
@@ -101,8 +100,41 @@ export const ConfigProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    refreshConfig()
-  }, [refreshConfig])
+    let isMounted = true
+
+    const loadConfig = async () => {
+      try {
+        const { data } = await apiClient.get('/site-config')
+        const payload = data?.config ?? null
+
+        if (!isMounted) {
+          return
+        }
+
+        if (!payload) {
+          setConfig(null)
+          setStatus('empty')
+          return
+        }
+
+        setConfig(payload)
+        setStatus('ready')
+      } catch (err) {
+        if (!isMounted) {
+          return
+        }
+
+        setError(err)
+        setStatus('error')
+      }
+    }
+
+    loadConfig()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   useEffect(() => {
     applyTheme(config)
@@ -122,14 +154,4 @@ export const ConfigProvider = ({ children }) => {
   )
 
   return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
-}
-
-export const useConfig = () => {
-  const context = useContext(ConfigContext)
-
-  if (!context) {
-    throw new Error('useConfig must be used within ConfigProvider')
-  }
-
-  return context
 }

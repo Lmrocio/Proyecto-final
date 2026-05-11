@@ -62,7 +62,7 @@ class MaterialController extends Controller
         $path = $data['path'] ?? null;
         $size = null;
 
-        if ($data['type'] === 'file') {
+        if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->store('materials', 'public');
             $size = $file->getSize();
@@ -71,6 +71,7 @@ class MaterialController extends Controller
         $material = Material::create([
             'course_id' => $data['course_id'],
             'title' => $data['title'],
+            'unit_name' => $data['unit_name'] ?? null,
             'type' => $data['type'],
             'path' => $path,
             'size' => $size,

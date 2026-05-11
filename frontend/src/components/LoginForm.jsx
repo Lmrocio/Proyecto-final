@@ -1,11 +1,26 @@
 import { useCallback, useState } from 'react'
 import { apiClient } from '../services/apiClient'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authContext'
 
 const LoginForm = ({ onSuccess }) => {
   const { setSession } = useAuth()
   const [values, setValues] = useState({ username: '', password: '', remember: false })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+
+  const resolveErrorMessage = useCallback((requestError) => {
+    const responseMessage = requestError?.response?.data?.message
+
+    if (responseMessage === 'Invalid credentials.') {
+      return 'Credenciales incorrectas. Revisa el correo y la contraseña.'
+    }
+
+    if (responseMessage) {
+      return responseMessage
+    }
+
+    return 'No se pudo iniciar sesión. Inténtalo de nuevo en unos minutos.'
+  }, [])
 
   const handleChange = useCallback((event) => {
     const { name, value, type, checked } = event.target
@@ -14,7 +29,11 @@ const LoginForm = ({ onSuccess }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
-  }, [])
+
+    if (error) {
+      setError(null)
+    }
+  }, [error])
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -24,6 +43,7 @@ const LoginForm = ({ onSuccess }) => {
         return
       }
 
+      setError(null)
       setIsSubmitting(true)
 
       try {
@@ -38,11 +58,13 @@ const LoginForm = ({ onSuccess }) => {
             onSuccess(data)
           }
         }
+      } catch (requestError) {
+        setError(resolveErrorMessage(requestError))
       } finally {
         setIsSubmitting(false)
       }
     },
-    [isSubmitting, onSuccess, setSession, values.password, values.username],
+    [isSubmitting, onSuccess, resolveErrorMessage, setSession, values.password, values.username],
   )
 
   return (
@@ -50,6 +72,12 @@ const LoginForm = ({ onSuccess }) => {
       <h1 className="login-form__title" id="login-title">
         Welcome
       </h1>
+
+      {error ? (
+        <p className="login-form__alert" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <div className="login-form__field">
         <label className="login-form__label" htmlFor="login-username">

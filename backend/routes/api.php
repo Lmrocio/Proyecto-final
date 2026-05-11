@@ -7,6 +7,7 @@ use App\Http\Controllers\BonusController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\LevelTestController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SiteConfigController;
@@ -18,6 +19,7 @@ Route::get('/demo-data', [DemoController::class, 'index']);
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/site-config', [SiteConfigController::class, 'show']);
+Route::post('/level-tests', [LevelTestController::class, 'store'])->middleware('throttle:6,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);

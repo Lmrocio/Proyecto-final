@@ -1,0 +1,85 @@
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: openclassy-app
+    environment:
+      APP_NAME: OpenClassy
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_KEY: ${APP_KEY:-base64:Qjv7gxPN4mJ7QW5pFfQH2VwLz8k3iCw4JfA7zG5vZ2s=}
+      APP_URL: http://localhost:8000
+      CACHE_STORE: file
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-openclassy_db}
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemini-2.0-flash-lite-001}
+      OPENROUTER_ENDPOINT: ${OPENROUTER_ENDPOINT:-https://openrouter.ai/api/v1/chat/completions}
+      OPENROUTER_TIMEOUT: ${OPENROUTER_TIMEOUT:-30}
+      OPENROUTER_VERIFY_SSL: ${OPENROUTER_VERIFY_SSL:-true}
+      OPENROUTER_MAX_TOKENS: ${OPENROUTER_MAX_TOKENS:-700}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - openclassy
+
+  db:
+    image: postgres:16-alpine
+    container_name: openclassy-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-openclassy_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-openclassy_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - openclassy
+
+  client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: openclassy-client
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - nginx
+    networks:
+      - openclassy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: openclassy-nginx
+    depends_on:
+      - app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend/public:/var/www/html/public:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - openclassy
+
+volumes:
+  postgres-data:
+
+networks:
+  openclassy:
+    driver: bridge

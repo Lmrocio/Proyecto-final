@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import LoginManager from '../components/LoginManager'
-import { useConfig } from '../context/ConfigContext'
+import { useConfig } from '../context/configContext'
 
 const ROLE_ROUTES = {
   admin: '/admin/settings',

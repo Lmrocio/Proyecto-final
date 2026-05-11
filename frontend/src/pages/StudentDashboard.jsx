@@ -6,8 +6,8 @@ import CourseContent from '../components/CourseContent'
 import Modal from '../components/Modal'
 import StudentLayout from '../layouts/StudentLayout'
 import EmptyState from '../components/EmptyState'
-import { useConfig } from '../context/ConfigContext'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authContext'
+import { useConfig } from '../context/configContext'
 
 const SAMPLE_COURSE = {
   id: null,

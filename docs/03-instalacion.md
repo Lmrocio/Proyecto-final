@@ -38,12 +38,15 @@ El proyecto requiere dos archivos de configuración `.env`. Se deben copiar los 
 | `DB_HOST` | Host de la base de datos | `db` (nombre del servicio en Docker) |
 | `DB_PORT` | Puerto de la base de datos | `5432` |
 | `DB_DATABASE` | Nombre de la base de datos | `openclassy_db` |
-| `OPENROUTER_API_KEY` | Token para la IA | *Obtenido en openrouter.ai* |
+| `OPENROUTER_API_KEY` | Token privado para la corrección IA | *Obtenido en openrouter.ai* |
+| `OPENROUTER_MODEL` | Modelo usado por el corrector | `google/gemini-2.0-flash-lite-001` |
+| `OPENROUTER_TIMEOUT` | Tiempo máximo de espera de la API | `30` |
+| `OPENROUTER_MAX_TOKENS` | Límite de salida para contener coste en pruebas | `700` |
 
 ### 2.2 Frontend (`/frontend/.env`)
 | Variable | Descripción | Valor Recomendado |
 | :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | URL de la API de Laravel | `http://localhost:8000/api` |
+| `VITE_API_URL` | URL base de Laravel; el cliente añade `/api` si hace falta | `http://localhost:8000` |
 
 ---
 

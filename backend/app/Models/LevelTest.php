@@ -21,6 +21,7 @@ class LevelTest extends Model
     protected $fillable = [
         'user_id',
         'guest_email',
+        'topic',
         'test_date',
         'score',
         'suggested_level',

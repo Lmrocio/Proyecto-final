@@ -20,7 +20,7 @@ const HeroSection = () => (
           <p className="home-hero__description">
             Pon a prueba tu inglés con nuestro sistema de evaluación inteligente.
           </p>
-          <Link className="home-hero__cta" to="/login">
+          <Link className="home-hero__cta" to="/prueba-de-nivel">
             <span>Da el primer paso hoy</span>
             <ArrowRight size={18} aria-hidden="true" />
           </Link>

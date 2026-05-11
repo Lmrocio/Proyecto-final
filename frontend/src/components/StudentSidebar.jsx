@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import CalendarWidget from './CalendarWidget'
 import TasksList from './TasksList'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authContext'
 import { apiClient } from '../services/apiClient'
 
 const normalizeAssignments = (assignments) =>

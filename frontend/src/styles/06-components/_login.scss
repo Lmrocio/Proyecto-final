@@ -246,6 +246,17 @@
   gap: 0.5rem;
 }
 
+.login-form__alert {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border: 0.0625rem solid rgba(173, 44, 44, 0.18);
+  border-radius: 1rem;
+  background: rgba(173, 44, 44, 0.08);
+  color: #8f1f1f;
+  font-weight: 700;
+  text-align: center;
+}
+
 .login-form__label {
   font-weight: 700;
   color: #2f2523;

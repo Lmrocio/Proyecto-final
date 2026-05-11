@@ -1,7 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiClient, clearAuthToken, getStoredToken, setAuthToken } from '../services/apiClient'
-
-const AuthContext = createContext(null)
+import { AuthContext } from './authContext'
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -66,10 +65,48 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (getStoredToken()) {
-      refreshUser()
+    if (!getStoredToken()) {
+      return undefined
     }
-  }, [refreshUser])
+
+    let isMounted = true
+
+    const loadStoredUser = async () => {
+      try {
+        const { data } = await apiClient.get('/auth/user')
+
+        if (!isMounted) {
+          return
+        }
+
+        setUser(data)
+        setStatus('ready')
+        setError(null)
+      } catch (err) {
+        if (!isMounted) {
+          return
+        }
+
+        const code = err?.response?.status
+
+        if (code === 401 || code === 403) {
+          clearAuthToken()
+          setUser(null)
+          setStatus('anonymous')
+          return
+        }
+
+        setStatus('error')
+        setError(err)
+      }
+    }
+
+    loadStoredUser()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const value = useMemo(
     () => ({
@@ -86,14 +123,4 @@ export const AuthProvider = ({ children }) => {
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider')
-  }
-
-  return context
 }

@@ -17,14 +17,20 @@ import {
   Star,
   Trash2,
 } from 'lucide-react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import EmptyState from '../components/EmptyState'
+import MessageSettingsModal from '../components/MessageSettingsModal'
 import StudentLayout from '../layouts/StudentLayout'
 import { useAuth } from '../context/authContext'
 import { useConfig } from '../context/configContext'
 import { apiClient } from '../services/apiClient'
 
 const PAGE_SIZE = 8
+
+const DEFAULT_LIST_SETTINGS = {
+  compactRows: false,
+  unreadFirst: true,
+}
 
 const FOLDER_LABELS = {
   new: 'Nuevo mensaje',
@@ -36,7 +42,7 @@ const FOLDER_LABELS = {
   trash: 'Papelera',
 }
 
-const MESSAGE_FOLDERS = ['new', 'settings', 'inbox', 'starred', 'sent', 'drafts', 'trash']
+const MESSAGE_FOLDERS = ['new', 'inbox', 'starred', 'sent', 'drafts', 'trash']
 
 const QUICK_FOLDERS = [
   { id: 'starred', label: FOLDER_LABELS.starred, icon: Star },
@@ -189,7 +195,8 @@ const StudentMessagesPage = () => {
   const { uiVariant } = useConfig()
   const { status: authStatus, user, refreshUser } = useAuth()
   const themeVariant = uiVariant ?? 'v1'
-  const activeFolder = MESSAGE_FOLDERS.includes(folder) ? folder : 'inbox'
+  const isSettingsRoute = folder === 'settings'
+  const activeFolder = isSettingsRoute ? 'inbox' : MESSAGE_FOLDERS.includes(folder) ? folder : 'inbox'
   const isStudent = user?.role === 'student'
   const canLoadMessages = authStatus === 'ready' && isStudent
   const [inboxMessages, setInboxMessages] = useState(() => createSampleMessages())
@@ -206,7 +213,8 @@ const StudentMessagesPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [composeDraft, setComposeDraft] = useState({ recipient: '', subject: '', body: '' })
-  const [settings, setSettings] = useState({ compactRows: false, unreadFirst: true })
+  const listSettings = DEFAULT_LIST_SETTINGS
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
   const loadMessages = useCallback(async () => {
     if (!canLoadMessages) {
@@ -281,7 +289,7 @@ const StudentMessagesPage = () => {
           .some((value) => value.includes(query))
       })
       .sort((leftMessage, rightMessage) => {
-        if (settings.unreadFirst && leftMessage.isRead !== rightMessage.isRead) {
+        if (listSettings.unreadFirst && leftMessage.isRead !== rightMessage.isRead) {
           return leftMessage.isRead ? 1 : -1
         }
 
@@ -290,7 +298,7 @@ const StudentMessagesPage = () => {
 
         return rightDate - leftDate
       })
-  }, [activeFolder, allMessages, deletedMessages, draftMessages, inboxMessages, search, sentMessages, settings.unreadFirst, showUnreadOnly, starredIds])
+  }, [activeFolder, allMessages, deletedMessages, draftMessages, inboxMessages, listSettings.unreadFirst, search, sentMessages, showUnreadOnly, starredIds])
 
   const pageCount = Math.max(1, Math.ceil(visibleMessages.length / PAGE_SIZE))
   const currentPage = Math.min(page, pageCount)
@@ -467,7 +475,7 @@ const StudentMessagesPage = () => {
       ) : null}
 
       {paginatedMessages.length ? (
-        <ul className={settings.compactRows ? 'student-messages__list student-messages__list--compact' : 'student-messages__list'}>
+        <ul className={listSettings.compactRows ? 'student-messages__list student-messages__list--compact' : 'student-messages__list'}>
           {paginatedMessages.map((message) => (
             <MessageRow
               key={message.id}
@@ -564,37 +572,20 @@ const StudentMessagesPage = () => {
     </section>
   )
 
-  const renderSettings = () => (
-    <section className="student-messages__settings" aria-label="Configuracion de mensajes">
-      <label className="student-messages__toggle">
-        <input
-          type="checkbox"
-          checked={settings.compactRows}
-          onChange={(event) => setSettings((currentSettings) => ({ ...currentSettings, compactRows: event.target.checked }))}
-        />
-        <span>Filas compactas</span>
-      </label>
-      <label className="student-messages__toggle">
-        <input
-          type="checkbox"
-          checked={settings.unreadFirst}
-          onChange={(event) => setSettings((currentSettings) => ({ ...currentSettings, unreadFirst: event.target.checked }))}
-        />
-        <span>No leidos primero</span>
-      </label>
-    </section>
-  )
-
   const renderContent = () => {
     if (activeFolder === 'new') {
       return renderComposer()
     }
 
-    if (activeFolder === 'settings') {
-      return renderSettings()
-    }
-
     return renderMessageList()
+  }
+
+  const handleCloseSettingsModal = () => {
+    setIsSettingsModalOpen(false)
+
+    if (isSettingsRoute) {
+      navigate('/student/messages', { replace: true })
+    }
   }
 
   if (authStatus === 'loading') {
@@ -683,7 +674,7 @@ const StudentMessagesPage = () => {
             <input
               type="checkbox"
               checked={allVisibleSelected}
-              disabled={!paginatedMessages.length || activeFolder === 'new' || activeFolder === 'settings'}
+              disabled={!paginatedMessages.length || activeFolder === 'new'}
               aria-label="Seleccionar mensajes visibles"
               onChange={handleTogglePageSelection}
             />
@@ -730,19 +721,21 @@ const StudentMessagesPage = () => {
             {selectedCount ? <span className="student-messages__selected-count">{selectedCount}</span> : null}
           </div>
 
-          <Link
-            className={activeFolder === 'settings' ? 'student-messages__icon-button student-messages__icon-button--active' : 'student-messages__icon-button'}
-            to="/student/messages/settings"
+          <button
+            className={isSettingsModalOpen || isSettingsRoute ? 'student-messages__icon-button student-messages__icon-button--active' : 'student-messages__icon-button'}
+            type="button"
             title={FOLDER_LABELS.settings}
             aria-label={FOLDER_LABELS.settings}
-            aria-current={activeFolder === 'settings' ? 'page' : undefined}
+            aria-haspopup="dialog"
+            aria-expanded={isSettingsModalOpen || isSettingsRoute}
             onClick={() => {
               setSelectedIds(new Set())
               setPage(1)
+              setIsSettingsModalOpen(true)
             }}
           >
             <Settings size={17} />
-          </Link>
+          </button>
         </div>
 
         {selectedCount ? (
@@ -767,6 +760,7 @@ const StudentMessagesPage = () => {
 
         {renderContent()}
       </section>
+      <MessageSettingsModal isOpen={isSettingsModalOpen || isSettingsRoute} onClose={handleCloseSettingsModal} />
     </StudentLayout>
   )
 }

@@ -21,6 +21,8 @@
   position: relative;
   z-index: 1;
   width: min(34rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
   border: 1px solid color-mix(in srgb, var(--primary) 10%, rgba(15, 23, 42, 0.08));
   border-radius: 1.5rem;
   background: color-mix(in srgb, var(--surface-strong) 92%, rgba(255, 255, 255, 0.92));

@@ -56,6 +56,16 @@
   overflow: hidden;
 }
 
+.student-layout--full {
+  .student-layout__body {
+    grid-template-columns: 1fr;
+  }
+
+  .student-layout__main {
+    overflow: auto;
+  }
+}
+
 @include mx.media-down($bp-lg) {
   .student-layout__body {
     grid-template-columns: 1fr;

@@ -15,15 +15,11 @@ FROM php:8.3-cli-alpine
 WORKDIR /var/www/html
 
 RUN apk add --no-cache \
-    bash \
-    icu-dev \
     libpq-dev \
+    postgresql-dev \
     oniguruma-dev \
     unzip \
-    zip \
     && docker-php-ext-install \
-        bcmath \
-        intl \
         mbstring \
         opcache \
         pdo_pgsql \

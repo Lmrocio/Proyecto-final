@@ -8,11 +8,10 @@
   width: min(24rem, calc(100vw - 2rem));
   max-height: min(34rem, calc(100vh - 6rem));
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--primary) 12%, rgba(15, 23, 42, 0.08));
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--surface) 88%, rgba(255, 255, 255, 0.72));
-  box-shadow: 0 1.25rem 3rem rgba(15, 23, 42, 0.18);
-  backdrop-filter: blur(18px);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
   color: var(--text-main);
   display: grid;
   gap: 0.9rem;
@@ -35,7 +34,7 @@
 .notifications-dropdown__mark-all,
 .notifications-dropdown__retry {
   border: none;
-  border-radius: 0.65rem;
+  border-radius: var(--radius);
   background: color-mix(in srgb, var(--primary) 14%, var(--surface));
   color: var(--text-main);
   cursor: pointer;
@@ -54,9 +53,9 @@
 .notifications-dropdown__search {
   min-width: 0;
   height: 2.55rem;
-  border: 1px solid color-mix(in srgb, var(--primary) 12%, rgba(15, 23, 42, 0.1));
-  border-radius: 0.8rem;
-  background: color-mix(in srgb, var(--surface-strong) 70%, transparent);
+  border: var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -81,23 +80,26 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.65rem;
 }
 
 .notifications-dropdown__item {
   min-width: 0;
-  border: 1px solid color-mix(in srgb, var(--primary) 10%, rgba(15, 23, 42, 0.08));
-  border-radius: 0.8rem;
-  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border: none;
+  border-bottom: 1px solid rgba(57, 31, 8, 0.2);
+  border-radius: 0;
+  background: transparent;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
   padding: 0.85rem;
 }
 
+.notifications-dropdown__item:last-child {
+  border-bottom: none;
+}
+
 .notifications-dropdown__item--unread {
-  border-color: color-mix(in srgb, var(--danger) 34%, transparent);
-  box-shadow: inset 0.22rem 0 0 var(--danger);
+  box-shadow: inset 0.22rem 0 0 var(--ok);
 }
 
 .notifications-dropdown__content {
@@ -134,7 +136,7 @@
   width: 2rem;
   height: 2rem;
   border: none;
-  border-radius: 0.65rem;
+  border-radius: var(--radius);
   background: color-mix(in srgb, var(--primary) 12%, var(--surface));
   color: var(--text-main);
   cursor: pointer;
@@ -174,4 +176,10 @@
   .notifications-dropdown {
     right: -5.25rem;
   }
+}
+// Variant v3 keeps the glass aesthetic
+.student-layout[data-variant='v3'] .notifications-dropdown {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(0.75rem);
 }

@@ -52,7 +52,11 @@ const StudentTopbar = () => {
   return (
     <header className="student-topbar">
       <Link className="student-topbar__brand" to="/">
-        Openclassy
+        <span className="student-topbar__brand-name student-topbar__brand-name--display font-display">Openclassy</span>
+        <span className="student-topbar__brand-separator" aria-hidden="true">
+          |
+        </span>
+        <span className="student-topbar__brand-name student-topbar__brand-name--main font-main">Aula virtual</span>
       </Link>
       <div className="student-topbar__actions" ref={actionsRef}>
         <div className="student-topbar__dropdown-wrap">
@@ -93,6 +97,7 @@ const StudentTopbar = () => {
             onClick={() => toggleDropdown('messages')}
           >
             <Mail size={18} />
+            {unreadCount > 0 ? <span className="student-topbar__badge" /> : null}
           </button>
           {activeDropdown === 'messages' ? <MessagesDropdown onNavigate={closeDropdowns} /> : null}
         </div>

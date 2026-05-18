@@ -61,7 +61,7 @@
 .message-settings__switch {
   width: 2.9rem;
   height: 1.55rem;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--text-muted) 28%, var(--surface));
   display: flex;
   align-items: center;
@@ -72,7 +72,7 @@
 .message-settings__switch-thumb {
   width: 1.18rem;
   height: 1.18rem;
-  border-radius: 999px;
+  border-radius: 0.2rem;
   background: var(--surface-strong);
   box-shadow: 0 0.2rem 0.5rem rgba(15, 23, 42, 0.2);
   transform: translateX(0);
@@ -186,5 +186,59 @@
   .message-settings__actions {
     display: grid;
     grid-template-columns: 1fr;
+  }
+}
+
+.modal[data-variant='v1'] {
+  .message-settings__item {
+    border: none;
+    border-bottom: 1px solid rgba(57, 31, 8, 0.15);
+    border-radius: 0;
+    background: transparent;
+    padding: 0.85rem 0;
+  }
+
+  .message-settings__item:last-child {
+    border-bottom: none;
+  }
+
+  .message-settings__switch {
+    width: 2.8rem;
+    height: 1.5rem;
+    border-radius: 0.3rem;
+    background: color-mix(in srgb, var(--text-main) 22%, var(--surface-strong));
+    padding: 0.15rem;
+  }
+
+  .message-settings__switch-thumb {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.25rem;
+    background: var(--surface-strong);
+    box-shadow: 0 0.15rem 0.35rem rgba(51, 61, 41, 0.2);
+  }
+
+  .message-settings__checkbox:checked + .message-settings__switch .message-settings__switch-thumb {
+    transform: translateX(1.3rem);
+  }
+
+  .message-settings__textarea,
+  .message-settings__select {
+    border: 1px solid rgba(57, 31, 8, 0.2);
+    border-radius: 0.4rem;
+    background: var(--surface-strong);
+  }
+
+  .message-settings__button {
+    border-radius: 0.5rem;
+  }
+
+  .message-settings__button--secondary {
+    background: var(--surface-strong);
+    color: var(--text-main);
+  }
+
+  .message-settings__feedback {
+    border-radius: 0.4rem;
   }
 }

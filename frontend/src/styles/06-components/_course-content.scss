@@ -3,36 +3,42 @@
 // Included via 06-components/_index.scss imported by styles/main.scss.
 
 .course-content {
-  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
-  border-radius: 1.75rem;
+  background: var(--surface-strong);
+  border-radius: var(--radius-md);
   padding: clamp(1.5rem, 3vw, 2.5rem);
   display: grid;
   gap: 1.5rem;
+  box-shadow: 0 1rem 2rem rgba(51, 61, 41, 0.15);
+}
+
+.course-content--tabs {
+  gap: 0;
 }
 
 .course-content__tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.25rem;
+  align-items: end;
 }
 
 .course-content__tab {
   border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 999px;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.7);
+  padding: 0.65rem 1.2rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-weight: 700;
+  background: var(--surface-strong);
   color: var(--text-main);
 }
 
 .course-content__tab--active {
-  background: #5d4e4c;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--primary-contrast);
 }
 
 .course-content__panel {
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 1.25rem;
+  background: transparent;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
   padding: 1.25rem;
 }
 
@@ -48,7 +54,7 @@
   grid-template-columns: auto 1fr;
   gap: 1rem;
   padding: 1rem 0;
-  border-bottom: 1px solid rgba(47, 37, 35, 0.12);
+  border-bottom: 1px solid rgba(57, 31, 8, 0.2);
 }
 
 .course-content__item:last-child {
@@ -59,8 +65,8 @@
 .course-content__item-icon {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.75rem;
-  background: rgba(93, 78, 76, 0.15);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
   display: grid;
   place-items: center;
   color: #5d4e4c;
@@ -90,11 +96,12 @@
 .course-content--accordion {
   background: transparent;
   padding: 0;
+  box-shadow: none;
 }
 
 .course-content__section {
-  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
-  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
 }
@@ -112,21 +119,22 @@
 }
 
 .course-content__section--open {
-  background: color-mix(in srgb, #8c7c74 20%, var(--surface));
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface));
 }
 
 .course-content__section .course-content__panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface);
 }
 
 .course-content--summary {
   background: transparent;
   padding: 0;
+  box-shadow: none;
 }
 
 .course-content__card {
-  background: color-mix(in srgb, #8c7c74 14%, var(--surface));
-  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   display: grid;
   gap: 0.75rem;

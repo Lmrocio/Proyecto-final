@@ -80,14 +80,14 @@ class DatabaseSeeder extends Seeder
         SiteConfig::create([
             'theme_name' => 'openclassy',
             'colors' => [
-                'primary' => '#0f766e',
-                'primary_contrast' => '#ecfeff',
-                'surface' => '#f8fafc',
-                'surface_strong' => '#ffffff',
-                'text_main' => '#0f172a',
-                'text_muted' => '#475569',
-                'danger' => '#b91c1c',
-                'ok' => '#166534',
+                'primary' => '#333D29',
+                'primary_contrast' => '#EBE2C3',
+                'surface' => '#EBE2C3',
+                'surface_strong' => '#DBCEA1',
+                'text_main' => '#391F08',
+                'text_muted' => '#673D17',
+                'danger' => '#7F4F24',
+                'ok' => '#687E51',
             ],
             'ui_variant' => 'v1',
         ]);

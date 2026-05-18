@@ -9,7 +9,7 @@
 
 .app-nav__link {
   padding: var(--space-1) var(--space-2);
-  border-radius: 999rem;
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--text-main);
   background: color-mix(in srgb, var(--surface) 85%, var(--text-main));

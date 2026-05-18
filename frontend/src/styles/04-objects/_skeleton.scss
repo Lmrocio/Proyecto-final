@@ -7,6 +7,15 @@
   }
 }
 
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
 .skeleton {
   display: grid;
   gap: var(--space-1);
@@ -14,20 +23,78 @@
   &__line {
     position: relative;
     overflow: hidden;
-    height: 0.875rem;
-    border-radius: 999rem;
-    background: #e2e8f0;
+    height: 0.75rem;
+    border-radius: 0.25rem;
+    background: color-mix(in srgb, var(--text-main) 12%, var(--surface-strong));
 
     &::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, transparent, #ffffff, transparent);
-      animation: shimmer 1.2s infinite;
+      background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--surface) 70%, transparent), transparent);
+      animation: shimmer 1.4s infinite;
     }
 
     &--short {
-      width: 70%;
+      width: 60%;
     }
+
+    &--title {
+      height: 1rem;
+      width: 50%;
+    }
+
+    &--name {
+      width: 8rem;
+    }
+
+    &--date {
+      width: 3.5rem;
+    }
+  }
+
+  &__chip {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 0.2rem;
+    background: color-mix(in srgb, var(--text-main) 12%, var(--surface-strong));
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+
+    &--small {
+      width: 0.9rem;
+      height: 0.9rem;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--text-main) 12%, transparent);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__card {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--text-main) 6%, var(--surface));
+  }
+
+  &--rows {
+    gap: 0;
+    border: var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  &--card {
+    gap: var(--space-1);
   }
 }

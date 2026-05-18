@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CheckCheck, RefreshCcw, Search, Trash2 } from 'lucide-react'
+import Skeleton from './Skeleton'
 
 const normalizeSearch = (value) => value.trim().toLocaleLowerCase('es')
 
@@ -80,7 +81,7 @@ const NotificationsDropdown = ({
         />
       </label>
 
-      {isLoading ? <p className="notifications-dropdown__state">Cargando notificaciones...</p> : null}
+      {isLoading ? <Skeleton variant="row" lines={3} label="Cargando notificaciones" /> : null}
 
       {!isLoading && error ? (
         <div className="notifications-dropdown__state notifications-dropdown__state--error">

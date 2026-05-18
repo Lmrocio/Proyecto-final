@@ -15,9 +15,29 @@
 
 .student-topbar__brand {
   text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: 1.35rem;
+}
+
+.student-topbar__brand-name--display {
   font-family: $font-display;
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.student-topbar__brand-name--main {
+  font-family: $font-main;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.student-topbar__brand-separator {
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-family: $font-main;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
 .student-topbar__actions {
@@ -60,7 +80,23 @@
   right: 0.45rem;
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 999px;
-  background: var(--danger);
+  border-radius: 0.15rem;
+  background: var(--ok);
   box-shadow: 0 0 0 0.15rem rgba(255, 255, 255, 0.5);
+}
+
+.student-layout[data-variant='v1'] .student-topbar__icon {
+  background: transparent;
+  color: var(--primary-contrast);
+}
+
+.student-layout[data-variant='v1'] .student-topbar__icon:hover,
+.student-layout[data-variant='v1'] .student-topbar__icon--active,
+.student-layout[data-variant='v1'] .student-topbar__icon--profile {
+  background: transparent;
+}
+
+.student-layout[data-variant='v1'] .student-topbar__icon:hover,
+.student-layout[data-variant='v1'] .student-topbar__icon--active {
+  color: #ffffff;
 }

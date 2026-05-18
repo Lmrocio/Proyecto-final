@@ -19,7 +19,9 @@
 
   &__title {
     font-family: $font-display;
-    margin: 0;
+    font-weight: 900;
+    color: var(--text-main);
+    margin: 0 0 0.5rem;
   }
 
   &__subtitle {
@@ -33,14 +35,15 @@
   }
 
   &__label {
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--text-main);
   }
 
   &__input {
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius);
-    border: 0.0625rem solid color-mix(in srgb, var(--text-main) 10%, transparent);
-    background: var(--surface);
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(57, 31, 8, 0.15);
+    background: var(--surface-strong);
     color: var(--text-main);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     @include mx.focus-ring;
@@ -63,11 +66,12 @@
   }
 
   &__submit {
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius);
+    padding: 1rem;
+    border-radius: 0.5rem;
     background: var(--primary);
     color: var(--primary-contrast);
-    font-weight: 600;
+    font-weight: 700;
+    border: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover:enabled {
@@ -85,6 +89,18 @@
 
   &__loading {
     margin-top: var(--space-1);
+  }
+
+  &__recovery,
+  &__remember,
+  &__footer {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  &__recovery {
+    text-decoration: none;
   }
 
   &__alert {

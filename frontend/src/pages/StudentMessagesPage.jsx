@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, isValid, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import {
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import EmptyState from '../components/EmptyState'
+import Skeleton from '../components/Skeleton'
 import MessageSettingsModal from '../components/MessageSettingsModal'
 import StudentLayout from '../layouts/StudentLayout'
 import { useAuth } from '../context/authContext'
@@ -216,19 +217,30 @@ const StudentMessagesPage = () => {
   const listSettings = DEFAULT_LIST_SETTINGS
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
+  const abortControllerRef = useRef(null)
+
   const loadMessages = useCallback(async () => {
     if (!canLoadMessages) {
       return
     }
+
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000)
 
     setIsLoading(true)
     setError(null)
 
     try {
       const [inboxResponse, sentResponse] = await Promise.all([
-        apiClient.get('/messages', { params: { per_page: 64 } }),
-        apiClient.get('/messages/sent', { params: { per_page: 64 } }),
+        apiClient.get('/messages', { params: { per_page: 64 }, signal: controller.signal }),
+        apiClient.get('/messages/sent', { params: { per_page: 64 }, signal: controller.signal }),
       ])
+
+      if (controller.signal.aborted) {
+        return
+      }
 
       const inboxItems = Array.isArray(inboxResponse.data?.data) ? inboxResponse.data.data : []
       const sentItems = Array.isArray(sentResponse.data?.data) ? sentResponse.data.data : []
@@ -239,9 +251,16 @@ const StudentMessagesPage = () => {
       setSentMessages(normalizedSent)
       setStarredIds(new Set())
     } catch (requestError) {
+      if (requestError?.name === 'CanceledError' || requestError?.code === 'ERR_CANCELED' || controller.signal.aborted) {
+        return
+      }
       setError(requestError)
     } finally {
-      setIsLoading(false)
+      window.clearTimeout(timeoutId)
+      if (abortControllerRef.current === controller) {
+        setIsLoading(false)
+        abortControllerRef.current = null
+      }
     }
   }, [canLoadMessages])
 
@@ -250,11 +269,18 @@ const StudentMessagesPage = () => {
       return undefined
     }
 
-    const timeoutId = window.setTimeout(() => {
-      loadMessages()
-    }, 0)
+    let shouldLoad = true
+    window.queueMicrotask(() => {
+      if (shouldLoad) {
+        loadMessages()
+      }
+    })
 
-    return () => window.clearTimeout(timeoutId)
+    return () => {
+      shouldLoad = false
+      abortControllerRef.current?.abort()
+      abortControllerRef.current = null
+    }
   }, [canLoadMessages, loadMessages])
 
   const allMessages = useMemo(
@@ -453,10 +479,7 @@ const StudentMessagesPage = () => {
     <>
       {isLoading ? (
         <div className="student-messages__state">
-          <div className="skeleton" role="status" aria-label="Cargando mensajes">
-            <span className="skeleton__line" />
-            <span className="skeleton__line skeleton__line--short" />
-          </div>
+          <Skeleton variant="row" lines={6} label="Cargando mensajes" />
         </div>
       ) : null}
 
@@ -593,10 +616,7 @@ const StudentMessagesPage = () => {
       <StudentLayout variant={themeVariant} showSidebar={false}>
         <section className="student-messages">
           <div className="student-messages__state">
-            <div className="skeleton" role="status" aria-label="Validando sesion">
-              <span className="skeleton__line" />
-              <span className="skeleton__line skeleton__line--short" />
-            </div>
+            <Skeleton lines={3} label="Validando sesión" />
           </div>
         </section>
       </StudentLayout>

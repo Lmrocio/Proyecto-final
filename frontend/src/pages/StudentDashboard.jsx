@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Video } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { apiClient } from '../services/apiClient'
@@ -6,6 +6,7 @@ import CourseContent from '../components/CourseContent'
 import Modal from '../components/Modal'
 import StudentLayout from '../layouts/StudentLayout'
 import EmptyState from '../components/EmptyState'
+import Skeleton from '../components/Skeleton'
 import { useAuth } from '../context/authContext'
 import { useConfig } from '../context/configContext'
 
@@ -94,6 +95,7 @@ const StudentDashboard = () => {
   const [units, setUnits] = useState(SAMPLE_UNITS)
   const [isLoading, setIsLoading] = useState(false)
   const [isClassroomModalOpen, setIsClassroomModalOpen] = useState(false)
+  const abortControllerRef = useRef(null)
 
   const handleLoginRedirect = useCallback(() => {
     window.localStorage.setItem('openclassy_redirect', '/student')
@@ -109,7 +111,10 @@ const StudentDashboard = () => {
       return undefined
     }
 
-    let isActive = true
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000)
 
     const loadContent = async () => {
       setIsLoading(true)
@@ -119,9 +124,10 @@ const StudentDashboard = () => {
           params: {
             per_page: 50,
           },
+          signal: controller.signal,
         })
 
-        if (!isActive) {
+        if (controller.signal.aborted) {
           return
         }
 
@@ -134,8 +140,10 @@ const StudentDashboard = () => {
           return
         }
 
-        const { data } = await apiClient.get(`/student/courses/${activeCourse.id}/content`)
-        if (!isActive) {
+        const { data } = await apiClient.get(`/student/courses/${activeCourse.id}/content`, {
+          signal: controller.signal,
+        })
+        if (controller.signal.aborted) {
           return
         }
 
@@ -148,10 +156,18 @@ const StudentDashboard = () => {
         } else {
           setUnits([])
         }
-      } catch {
-        // keep sample data if request fails
+      } catch (requestError) {
+        if (
+          requestError?.name === 'CanceledError' ||
+          requestError?.code === 'ERR_CANCELED' ||
+          controller.signal.aborted
+        ) {
+          return
+        }
+        // Keep last known content visible so the user is not left with a blank screen.
       } finally {
-        if (isActive) {
+        window.clearTimeout(timeoutId)
+        if (!controller.signal.aborted) {
           setIsLoading(false)
         }
       }
@@ -160,7 +176,8 @@ const StudentDashboard = () => {
     loadContent()
 
     return () => {
-      isActive = false
+      controller.abort()
+      window.clearTimeout(timeoutId)
     }
   }, [authStatus, isStudent, requestedCourseId])
 
@@ -169,10 +186,7 @@ const StudentDashboard = () => {
       <StudentLayout variant={themeVariant}>
         <section className="student-dashboard">
           <div className="student-dashboard__loading">
-            <div className="skeleton" role="status" aria-label="Validando sesion">
-              <span className="skeleton__line" />
-              <span className="skeleton__line skeleton__line--short" />
-            </div>
+            <Skeleton variant="card" lines={2} label="Validando sesión" />
           </div>
         </section>
       </StudentLayout>
@@ -240,10 +254,7 @@ const StudentDashboard = () => {
 
         {isLoading && !units.length ? (
           <div className="student-dashboard__loading">
-            <div className="skeleton" role="status" aria-label="Cargando">
-              <span className="skeleton__line" />
-              <span className="skeleton__line skeleton__line--short" />
-            </div>
+            <Skeleton variant="card" lines={3} label="Cargando contenido" />
           </div>
         ) : null}
 

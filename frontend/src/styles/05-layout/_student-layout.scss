@@ -8,13 +8,13 @@
   --student-topbar-text: var(--primary-contrast);
   --student-topbar-border: none;
   --student-topbar-backdrop: none;
-  --student-sidebar-bg: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  --student-sidebar-bg: var(--surface-strong);
   --student-sidebar-border: none;
   --student-sidebar-backdrop: none;
-  --student-panel-bg: var(--surface-strong);
+  --student-panel-bg: transparent;
   --student-panel-border: none;
   --student-panel-backdrop: none;
-  --student-main-bg: color-mix(in srgb, var(--surface) 90%, #ffffff);
+  --student-main-bg: var(--surface);
   --student-sidebar-calendar-height: 22rem;
   --student-sidebar-tasks-height: 24rem;
 
@@ -22,6 +22,20 @@
   display: grid;
   grid-template-rows: auto 1fr;
   background: var(--student-main-bg);
+}
+
+.student-layout[data-variant='v1'] {
+  --student-topbar-bg: var(--primary);
+  --student-topbar-text: var(--primary-contrast);
+  --student-topbar-border: none;
+  --student-topbar-backdrop: none;
+  --student-sidebar-bg: var(--surface-strong);
+  --student-sidebar-border: none;
+  --student-sidebar-backdrop: none;
+  --student-panel-bg: transparent;
+  --student-panel-border: none;
+  --student-panel-backdrop: none;
+  --student-main-bg: var(--surface);
 }
 
 .student-layout[data-variant='v2'] {

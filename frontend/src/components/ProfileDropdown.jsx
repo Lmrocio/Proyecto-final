@@ -4,11 +4,7 @@ import { useAuth } from '../context/authContext'
 
 const PROFILE_LINKS = [
   { id: 'profile', label: 'Perfil', to: '/student/profile' },
-  { id: 'profile-settings', label: 'Ajustes del perfil', to: '/student/profile/settings' },
-  { id: 'accessibility', label: 'Accesibilidad', to: '/student/profile/accessibility' },
-  { id: 'privacy', label: 'Privacidad', to: '/student/profile/privacy' },
-  { id: 'security', label: 'Seguridad', to: '/student/profile/security' },
-  { id: 'grades', label: 'Calificaciones', to: '/student/profile/grades' },
+  { id: 'grades', label: 'Calificaciones', to: '/student/grades' },
 ]
 
 const ProfileDropdown = ({ onNavigate }) => {

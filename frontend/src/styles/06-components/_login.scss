@@ -9,15 +9,19 @@
   --login-card-bg: #ffffff;
   --login-card-border: 0;
   --login-card-backdrop: none;
+  --login-card-radius: 2rem;
   --login-card-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.18);
   --login-footer-bg: transparent;
   --login-footer-border: 0;
   --login-footer-backdrop: none;
+  --login-footer-text-shadow: none;
   --login-overlay-text: #f8f4f1;
   --login-back-bg: transparent;
   --login-back-border: 0;
   --login-back-backdrop: none;
   --login-back-color: #f8f4f1;
+  --login-back-radius: 999px;
+  --login-back-text-shadow: none;
   --login-split-brand-color: #ffffff;
 
   min-height: 100vh;
@@ -32,6 +36,22 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.login[data-variant='v1'] {
+  --login-card-bg: var(--surface);
+  --login-card-border: none;
+  --login-card-backdrop: none;
+  --login-card-radius: 1.25rem;
+  --login-card-shadow: 0 2rem 4rem rgba(51, 61, 41, 0.4);
+  --login-overlay-text: #ffffff;
+  --login-back-bg: transparent;
+  --login-back-border: none;
+  --login-back-backdrop: none;
+  --login-back-color: #ffffff;
+  --login-back-radius: 0;
+  --login-back-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --login-footer-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .login[data-variant='v2'] {
@@ -83,9 +103,11 @@
   background: var(--login-back-bg);
   color: var(--login-back-color);
   border: var(--login-back-border);
-  border-radius: 999px;
+  border-radius: var(--login-back-radius);
   padding: 0.45rem 0.9rem;
   backdrop-filter: var(--login-back-backdrop);
+  text-align: left;
+  text-shadow: var(--login-back-text-shadow);
 }
 
 .login__back--split {
@@ -101,7 +123,7 @@
 .login__panel--card {
   background: var(--login-card-bg);
   border: var(--login-card-border);
-  border-radius: 2rem;
+  border-radius: var(--login-card-radius);
   padding: clamp(2rem, 4vw, 3rem);
   box-shadow: var(--login-card-shadow);
   backdrop-filter: var(--login-card-backdrop);
@@ -143,6 +165,7 @@
   left: clamp(1.5rem, 4vw, 3rem);
   right: clamp(1.5rem, 4vw, 3rem);
   bottom: clamp(1.5rem, 3vw, 2.5rem);
+  text-shadow: var(--login-footer-text-shadow);
 }
 
 .login__footer--split {
@@ -235,10 +258,10 @@
 .login-form__title {
   font-family: $font-display;
   font-size: clamp(2.2rem, 4vw, 3rem);
-  font-weight: 700;
+  font-weight: 900;
   text-align: center;
   margin: 0 0 0.5rem;
-  color: #2f2523;
+  color: var(--text-main);
 }
 
 .login-form__field {
@@ -259,21 +282,21 @@
 
 .login-form__label {
   font-weight: 700;
-  color: #2f2523;
+  color: var(--text-main);
 }
 
 .login-form__input {
   padding: 0.85rem 1rem;
-  border-radius: 999px;
-  border: none;
-  background: #e9e6e3;
-  color: #2f2523;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  background: var(--surface-strong);
+  color: var(--text-main);
   font-size: 1rem;
   @include mx.focus-ring;
 }
 
 .login-form__input::placeholder {
-  color: #7d726d;
+  color: var(--text-muted);
 }
 
 .login-form__recovery {
@@ -281,7 +304,7 @@
   text-align: right;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #2f2523;
+  color: var(--text-main);
   text-decoration: none;
 }
 
@@ -289,8 +312,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 600;
-  color: #2f2523;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .login-form__remember input {
@@ -300,11 +323,11 @@
 
 .login-form__submit {
   width: 100%;
-  padding: 0.9rem 1rem;
-  border-radius: 999px;
-  background: #5d4e4c;
-  color: #ffffff;
-  font-weight: 600;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: var(--primary-contrast);
+  font-weight: 700;
   border: none;
 }
 
@@ -313,8 +336,9 @@
   display: grid;
   gap: 0.35rem;
   text-align: center;
-  color: #2f2523;
-  font-size: 0.9rem;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .login-form__footer strong {

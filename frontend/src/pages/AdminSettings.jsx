@@ -7,18 +7,18 @@ import { getStoredToken } from '../services/apiClient'
 const VARIANTS = [
   {
     id: 'v1',
-    title: 'Tema Clasico (V1)',
-    description: 'Login tarjeta + Dashboard en pestanas.',
+    title: 'Tema Orgánico (V1)',
+    description: 'Layout clásico con paleta en tonos tierra.',
   },
   {
     id: 'v2',
-    title: 'Tema Split (V2)',
-    description: 'Login dividido + Dashboard en acordeon.',
+    title: 'Tema Institucional (V2)',
+    description: 'Layout dividido con paleta teal.',
   },
   {
     id: 'v3',
-    title: 'Tema Cristal (V3)',
-    description: 'Login glass + Dashboard en resumen.',
+    title: 'Tema Neón (V3)',
+    description: 'Layout glassmorphism con acentos azules.',
   },
 ]
 

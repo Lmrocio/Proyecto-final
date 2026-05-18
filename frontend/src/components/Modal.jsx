@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { useConfig } from '../context/configContext'
 
 const FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -15,6 +16,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   const titleId = useId()
   const contentRef = useRef(null)
   const closeButtonRef = useRef(null)
+  const { uiVariant } = useConfig()
 
   useEffect(() => {
     if (!isOpen) {
@@ -88,7 +90,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   }
 
   return createPortal(
-    <div className="modal" role="presentation">
+    <div className="modal" data-variant={uiVariant ?? 'v1'} role="presentation">
       <button className="modal__overlay" type="button" aria-label="Cerrar modal" onClick={onClose} />
       <section
         ref={contentRef}

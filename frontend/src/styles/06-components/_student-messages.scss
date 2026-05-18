@@ -134,7 +134,7 @@
 .student-messages__selected-count {
   min-width: 1.45rem;
   height: 1.45rem;
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--primary);
   color: var(--primary-contrast);
   display: inline-grid;
@@ -385,5 +385,167 @@
   .student-messages__selection-bar {
     width: 100%;
     flex-wrap: wrap;
+  }
+}
+
+.student-layout[data-variant='v1'] {
+  .student-messages {
+    background: var(--surface-strong);
+    border-radius: 0.5rem;
+    box-shadow: 0 1rem 2.5rem rgba(51, 61, 41, 0.15);
+    padding: clamp(1rem, 2vw, 1.5rem);
+    gap: 1rem;
+  }
+
+  .student-messages__search,
+  .student-messages__icon-button,
+  .student-messages__text-button,
+  .student-messages__select-all,
+  .student-messages__page-button,
+  .student-messages__page-ellipsis,
+  .student-messages__selection-action,
+  .student-messages__notice-action,
+  .student-messages__secondary-action,
+  .student-messages__star {
+    border-radius: 0.4rem;
+  }
+
+  .student-messages__search {
+    background: var(--surface-strong);
+    border: 1px solid rgba(57, 31, 8, 0.2);
+    color: var(--text-main);
+  }
+
+  .student-messages__search input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .student-messages__icon-button,
+  .student-messages__text-button,
+  .student-messages__select-all,
+  .student-messages__page-button,
+  .student-messages__page-ellipsis,
+  .student-messages__selection-action,
+  .student-messages__notice-action,
+  .student-messages__secondary-action {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid rgba(57, 31, 8, 0.15);
+  }
+
+  .student-messages__icon-button:hover,
+  .student-messages__icon-button:focus-visible,
+  .student-messages__text-button:hover,
+  .student-messages__text-button:focus-visible,
+  .student-messages__select-all:hover,
+  .student-messages__select-all:focus-within,
+  .student-messages__page-button:hover:not(:disabled),
+  .student-messages__selection-action:hover,
+  .student-messages__notice-action:hover,
+  .student-messages__secondary-action:hover {
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface-strong));
+    transform: none;
+  }
+
+  .student-messages__icon-button--active,
+  .student-messages__text-button--active,
+  .student-messages__page-button--active {
+    background: var(--primary);
+    color: var(--primary-contrast);
+    border-color: var(--primary);
+  }
+
+  .student-messages__primary-action {
+    background: var(--primary);
+    color: var(--primary-contrast);
+    border: none;
+    border-radius: 0.5rem;
+  }
+
+  .student-messages__primary-action:hover,
+  .student-messages__primary-action:focus-visible {
+    background: color-mix(in srgb, var(--primary) 88%, #000000);
+    transform: none;
+  }
+
+  .student-messages__selected-count {
+    border-radius: 0.3rem;
+  }
+
+  .student-messages__selection-bar,
+  .student-messages__notice {
+    border-radius: 0.4rem;
+    background: transparent;
+    border: 1px solid rgba(57, 31, 8, 0.15);
+  }
+
+  .student-messages__list {
+    gap: 0;
+  }
+
+  .student-messages__row,
+  .student-messages__row--unread {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(57, 31, 8, 0.15);
+    border-radius: 0;
+    padding: 0.55rem 0.45rem;
+  }
+
+  .student-messages__row--unread {
+    background: color-mix(in srgb, var(--surface-strong) 60%, var(--surface));
+  }
+
+  .student-messages__row:last-child {
+    border-bottom: none;
+  }
+
+  .student-messages__row-check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 3px;
+    border: 1px solid rgba(57, 31, 8, 0.4);
+    background: var(--surface-strong);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .student-messages__row-check input:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .student-messages__row-check input:checked::after {
+    content: '';
+    width: 0.3rem;
+    height: 0.55rem;
+    border-right: 2px solid var(--primary-contrast);
+    border-bottom: 2px solid var(--primary-contrast);
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  .student-messages__sender {
+    color: var(--text-main);
+  }
+
+  .student-messages__composer,
+  .student-messages__settings {
+    background: transparent;
+    border: 1px solid rgba(57, 31, 8, 0.15);
+    border-radius: 0.5rem;
+  }
+
+  .student-messages__field input,
+  .student-messages__field textarea {
+    border: 1px solid rgba(57, 31, 8, 0.2);
+    border-radius: 0.4rem;
+    background: var(--surface-strong);
+  }
+
+  .student-messages__page-button:disabled {
+    border-color: rgba(57, 31, 8, 0.1);
   }
 }

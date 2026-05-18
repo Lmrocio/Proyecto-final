@@ -18,7 +18,7 @@
   background: var(--student-panel-bg);
   border: var(--student-panel-border);
   backdrop-filter: var(--student-panel-backdrop);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-md);
   padding: 1.25rem;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
@@ -129,6 +129,27 @@
   font-size: 0.82rem;
   font-weight: 700;
   padding: 0.45rem 0.75rem;
+}
+
+.student-layout[data-variant='v1'] .tasks-list {
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  color: var(--text-main);
+  padding: 0;
+}
+
+.student-layout[data-variant='v1'] .tasks-list__item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(57, 31, 8, 0.2);
+  border-radius: 0;
+  padding: 0.8rem 0;
+}
+
+.student-layout[data-variant='v1'] .tasks-list__item:last-child {
+  border-bottom: none;
 }
 
 @media (max-width: 68rem) {

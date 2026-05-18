@@ -27,8 +27,13 @@
 }
 
 @mixin glass-card {
-  background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
+  background: color-mix(in srgb, var(--surface-strong) 96%, transparent);
   border: f.rem(1) solid color-mix(in srgb, var(--text-main) 12%, transparent);
+}
+
+@mixin glass-card-blur {
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  border: f.rem(1) solid rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(f.rem(10));
 }
 

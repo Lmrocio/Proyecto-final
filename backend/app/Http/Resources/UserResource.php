@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'profile_photo' => $this->profile_photo,
             'accessibility_settings' => $this->accessibility_settings,
+            'messaging_settings' => $this->accessibility_settings['messaging'] ?? null,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

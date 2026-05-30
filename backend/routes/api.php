@@ -23,7 +23,12 @@ Route::post('/level-tests', [LevelTestController::class, 'store'])->middleware('
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);
+    Route::put('/auth/user', [AuthController::class, 'updateProfile']);
+    Route::delete('/auth/user', [AuthController::class, 'destroyAccount']);
+    Route::put('/auth/password', [AuthController::class, 'updatePassword']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::put('/user/messaging-settings', [AuthController::class, 'updateMessagingSettings']);
+    Route::get('/message-recipients', [UserController::class, 'recipients']);
 
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{course}', [CourseController::class, 'show']);
@@ -69,6 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('role:admin,teacher')->group(function () {
+        Route::get('/assignments', [AssignmentController::class, 'index']);
+        Route::post('/assignments', [AssignmentController::class, 'store']);
+        Route::put('/assignments/{assignment}', [AssignmentController::class, 'update']);
+        Route::delete('/assignments/{assignment}', [AssignmentController::class, 'destroy']);
+
         Route::post('/attendances', [AttendanceController::class, 'store']);
         Route::patch('/attendances/{attendance}', [AttendanceController::class, 'update']);
 

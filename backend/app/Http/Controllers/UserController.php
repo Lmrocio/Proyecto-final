@@ -13,6 +13,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
+    public function recipients(Request $request): JsonResponse
+    {
+        $users = User::query()
+            ->whereKeyNot($request->user()?->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'role']);
+
+        return response()->json([
+            'data' => UserResource::collection($users)->resolve($request),
+        ], Response::HTTP_OK);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $query = User::query()->latest();

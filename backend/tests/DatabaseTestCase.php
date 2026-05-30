@@ -31,7 +31,25 @@ abstract class DatabaseTestCase extends TestCase
         $this->setEnvironmentValue('QUEUE_CONNECTION', 'sync');
         $this->setEnvironmentValue('MAIL_MAILER', 'array');
 
-        return parent::createApplication();
+        // Safety: never let the sqlite test connection inherit a remote DB_URL.
+        // The 'sqlite' connection in config/database.php defines 'url' => env('DB_URL'),
+        // and a populated DB_URL (e.g. a managed Postgres instance) would override the
+        // driver/host, pointing tests at a real database. RefreshDatabase would then run
+        // migrate:fresh against it and wipe production data.
+        $this->unsetEnvironmentValue('DB_URL');
+        $this->unsetEnvironmentValue('DATABASE_URL');
+
+        $app = parent::createApplication();
+
+        // The framework reloads .env during bootstrap, which can repopulate DB_URL.
+        // Force the sqlite connection back to the local in-process database and drop
+        // any inherited URL so the test connection can never reach a remote server.
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite.url', null);
+        $app['config']->set('database.connections.sqlite.database', $databasePath);
+        $app['db']->purge('sqlite');
+
+        return $app;
     }
 
     private function setEnvironmentValue(string $key, string $value): void
@@ -39,5 +57,11 @@ abstract class DatabaseTestCase extends TestCase
         putenv($key.'='.$value);
         $_ENV[$key] = $value;
         $_SERVER[$key] = $value;
+    }
+
+    private function unsetEnvironmentValue(string $key): void
+    {
+        putenv($key);
+        unset($_ENV[$key], $_SERVER[$key]);
     }
 }

@@ -67,6 +67,7 @@ const StudentTopbar = () => {
                 : 'student-topbar__icon'
             }
             type="button"
+            title="Notificaciones"
             aria-label="Notificaciones"
             aria-haspopup="dialog"
             aria-expanded={activeDropdown === 'notifications'}
@@ -91,6 +92,7 @@ const StudentTopbar = () => {
           <button
             className={activeDropdown === 'messages' ? 'student-topbar__icon student-topbar__icon--active' : 'student-topbar__icon'}
             type="button"
+            title="Mensajes"
             aria-label="Mensajes"
             aria-haspopup="menu"
             aria-expanded={activeDropdown === 'messages'}
@@ -109,6 +111,7 @@ const StudentTopbar = () => {
                 : 'student-topbar__icon student-topbar__icon--profile'
             }
             type="button"
+            title="Perfil"
             aria-label="Perfil"
             aria-haspopup="menu"
             aria-expanded={activeDropdown === 'profile'}

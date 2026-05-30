@@ -32,10 +32,10 @@ const CoursesSection = () => (
   <section className="home-courses">
     <div className="home-grid home-courses__header-row">
       <div className="home-courses__controls" aria-hidden="true">
-        <button className="home-courses__control" type="button" aria-label="Anterior">
+        <button className="home-courses__control" type="button" title="Anterior" aria-label="Anterior">
           <ArrowLeft size={18} />
         </button>
-        <button className="home-courses__control" type="button" aria-label="Siguiente">
+        <button className="home-courses__control" type="button" title="Siguiente" aria-label="Siguiente">
           <ArrowRight size={18} />
         </button>
       </div>

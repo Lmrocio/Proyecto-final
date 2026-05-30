@@ -115,6 +115,7 @@ const NotificationsDropdown = ({
                   <button
                     className="notifications-dropdown__icon"
                     type="button"
+                    title="Marcar como leído"
                     aria-label="Marcar como leído"
                     onClick={() => handleMarkAsRead(notification.id)}
                     disabled={pendingAction === `read-${notification.id}`}
@@ -125,6 +126,7 @@ const NotificationsDropdown = ({
                 <button
                   className="notifications-dropdown__icon notifications-dropdown__icon--danger"
                   type="button"
+                  title="Eliminar notificación"
                   aria-label="Eliminar notificación"
                   onClick={() => handleDelete(notification.id)}
                   disabled={pendingAction === `delete-${notification.id}`}

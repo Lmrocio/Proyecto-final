@@ -69,6 +69,7 @@ const CalendarWidget = ({ assignments = [], onSelectedDateChange }) => {
           <button
             className="calendar__control"
             type="button"
+            title="Mes anterior"
             aria-label="Mes anterior"
             onClick={() => setVisibleMonth((currentMonth) => subMonths(currentMonth, 1))}
           >
@@ -77,6 +78,7 @@ const CalendarWidget = ({ assignments = [], onSelectedDateChange }) => {
           <button
             className="calendar__control"
             type="button"
+            title="Mes siguiente"
             aria-label="Mes siguiente"
             onClick={() => setVisibleMonth((currentMonth) => addMonths(currentMonth, 1))}
           >

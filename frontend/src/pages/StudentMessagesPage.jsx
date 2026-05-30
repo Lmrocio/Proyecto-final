@@ -181,6 +181,7 @@ const MessageRow = ({ message, isSelected, onSelect, onOpen, onToggleStar }) => 
     <button
       className={message.isStarred ? 'student-messages__star student-messages__star--active' : 'student-messages__star'}
       type="button"
+      title={message.isStarred ? 'Quitar de destacados' : 'Marcar como destacado'}
       aria-label={message.isStarred ? 'Quitar de destacados' : 'Marcar como destacado'}
       aria-pressed={message.isStarred}
       onClick={() => onToggleStar(message.id)}
@@ -517,6 +518,7 @@ const StudentMessagesPage = () => {
           <button
             className="student-messages__page-button"
             type="button"
+            title="Pagina anterior"
             aria-label="Pagina anterior"
             disabled={currentPage === 1}
             onClick={() => setPage((currentValue) => Math.max(1, currentValue - 1))}
@@ -547,6 +549,7 @@ const StudentMessagesPage = () => {
           <button
             className="student-messages__page-button"
             type="button"
+            title="Pagina siguiente"
             aria-label="Pagina siguiente"
             disabled={currentPage === pageCount}
             onClick={() => setPage((currentValue) => Math.min(pageCount, currentValue + 1))}
@@ -679,6 +682,7 @@ const StudentMessagesPage = () => {
             <button
               className={showUnreadOnly ? 'student-messages__icon-button student-messages__icon-button--active' : 'student-messages__icon-button'}
               type="button"
+              title="Filtrar no leidos"
               aria-label="Filtrar no leidos"
               aria-pressed={showUnreadOnly}
               onClick={() => {
@@ -690,7 +694,7 @@ const StudentMessagesPage = () => {
             </button>
           </div>
 
-          <label className="student-messages__select-all">
+          <label className="student-messages__select-all" title="Seleccionar mensajes visibles">
             <input
               type="checkbox"
               checked={allVisibleSelected}

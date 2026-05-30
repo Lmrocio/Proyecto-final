@@ -39,7 +39,7 @@ const ContactAndFooter = () => (
 
         <div className="home-footer__socials" aria-label="Redes sociales">
           {SOCIAL_LINKS.map(({ id, label, icon: Icon }) => (
-            <a key={id} className="home-footer__social" href="/" aria-label={label}>
+            <a key={id} className="home-footer__social" href="/" title={label} aria-label={label}>
               <Icon size={16} aria-hidden="true" />
             </a>
           ))}

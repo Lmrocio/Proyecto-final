@@ -99,7 +99,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         aria-modal="true"
         aria-labelledby={titleId}
       >
-        <button ref={closeButtonRef} className="modal__close" type="button" aria-label="Cerrar" onClick={onClose}>
+        <button ref={closeButtonRef} className="modal__close" type="button" title="Cerrar" aria-label="Cerrar" onClick={onClose}>
           <X size={18} />
         </button>
         <header className="modal__header">

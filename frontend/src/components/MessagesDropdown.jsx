@@ -18,6 +18,7 @@ const MessagesDropdown = ({ onNavigate }) => (
       <Link
         className="dropdown-panel__icon-link"
         to="/student/messages/settings"
+        title="Configurar mensajes"
         aria-label="Configurar mensajes"
         onClick={onNavigate}
       >

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -75,5 +76,27 @@ class Course extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Limita la consulta a los cursos visibles para el usuario segun su rol:
+     * el profesor ve los suyos, el alumno los que tiene matriculados y activos,
+     * y el administrador todos.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if ($user->role === 'teacher') {
+            return $query->where('teacher_id', $user->id);
+        }
+
+        if ($user->role === 'student') {
+            return $query->whereHas('enrollments', function (Builder $enrollmentQuery) use ($user): void {
+                $enrollmentQuery
+                    ->where('student_id', $user->id)
+                    ->where('status', 'active');
+            });
+        }
+
+        return $query;
     }
 }

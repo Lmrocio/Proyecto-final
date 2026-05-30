@@ -18,18 +18,9 @@ class EnrollmentController extends Controller
         $user = $request->user();
 
         $query = Enrollment::query()
+            ->visibleTo($user)
             ->with(['student:id,name,email,role', 'course:id,title,teacher_id'])
             ->latest();
-
-        if ($user->role === 'teacher') {
-            $query->whereHas('course', function ($courseQuery) use ($user) {
-                $courseQuery->where('teacher_id', $user->id);
-            });
-        }
-
-        if ($user->role === 'student') {
-            $query->where('student_id', $user->id);
-        }
 
         if ($request->filled('course_id')) {
             $query->where('course_id', $request->string('course_id'));

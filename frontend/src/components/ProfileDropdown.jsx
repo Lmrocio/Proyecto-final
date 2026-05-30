@@ -4,6 +4,8 @@ import { useAuth } from '../context/authContext'
 
 const PROFILE_LINKS = [
   { id: 'profile', label: 'Perfil', to: '/student/profile' },
+  { id: 'tasks', label: 'Tareas', to: '/student/tasks' },
+  { id: 'messages', label: 'Mensajes', to: '/student/messages' },
   { id: 'grades', label: 'Calificaciones', to: '/student/grades' },
 ]
 

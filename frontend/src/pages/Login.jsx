@@ -5,6 +5,7 @@ import { useConfig } from '../context/configContext'
 
 const ROLE_ROUTES = {
   admin: '/admin/settings',
+  teacher: '/teacher',
   student: '/student',
 }
 

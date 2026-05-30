@@ -9,6 +9,7 @@ import StudentGradesPage from './pages/StudentGradesPage'
 import StudentMessagesPage from './pages/StudentMessagesPage'
 import StudentProfilePage from './pages/StudentProfilePage'
 import StudentTasksPage from './pages/StudentTasksPage'
+import TeacherDashboard from './pages/TeacherDashboard'
 
 function App() {
   return (
@@ -20,6 +21,10 @@ function App() {
 
       <Route element={<ProtectedRoute roles={['admin']} />}>
         <Route path="/admin/settings" element={<AdminSettings />} />
+      </Route>
+
+      <Route element={<ProtectedRoute roles={['teacher']} />}>
+        <Route path="/teacher" element={<TeacherDashboard />} />
       </Route>
 
       <Route element={<ProtectedRoute roles={['student']} />}>

@@ -4,6 +4,7 @@ import EmptyState from './EmptyState'
 
 const ROLE_HOME = {
   admin: '/admin/settings',
+  teacher: '/teacher',
   student: '/student',
 }
 

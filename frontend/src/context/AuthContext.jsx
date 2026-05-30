@@ -2,9 +2,62 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiClient, clearAuthToken, getStoredToken, setAuthToken } from '../services/apiClient'
 import { AuthContext } from './authContext'
 
+const USER_STORAGE_KEY = 'openclassy_auth_user'
+let authenticatedUserRequest = null
+
+const fetchAuthenticatedUser = () => {
+  if (!authenticatedUserRequest) {
+    authenticatedUserRequest = apiClient.get('/auth/user').finally(() => {
+      authenticatedUserRequest = null
+    })
+  }
+
+  return authenticatedUserRequest
+}
+
+const getStoredUser = () => {
+  if (typeof window === 'undefined' || !getStoredToken()) {
+    return null
+  }
+
+  const storedUser = window.localStorage.getItem(USER_STORAGE_KEY)
+  if (!storedUser) {
+    return null
+  }
+
+  try {
+    return JSON.parse(storedUser)
+  } catch {
+    window.localStorage.removeItem(USER_STORAGE_KEY)
+    return null
+  }
+}
+
+const storeUser = (user) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user))
+  }
+}
+
+const clearStoredUser = () => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(USER_STORAGE_KEY)
+  }
+}
+
+const getInitialUser = () => getStoredUser()
+
+const getInitialStatus = () => {
+  if (!getStoredToken()) {
+    return 'anonymous'
+  }
+
+  return getStoredUser() ? 'ready' : 'loading'
+}
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [status, setStatus] = useState(getStoredToken() ? 'loading' : 'anonymous')
+  const [user, setUser] = useState(getInitialUser)
+  const [status, setStatus] = useState(getInitialStatus)
   const [error, setError] = useState(null)
 
   const setSession = useCallback((payload) => {
@@ -13,12 +66,14 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (payload?.user) {
+      storeUser(payload.user)
       setUser(payload.user)
       setStatus('ready')
       setError(null)
       return
     }
 
+    clearStoredUser()
     setUser(null)
     setStatus(getStoredToken() ? 'loading' : 'anonymous')
   }, [])
@@ -34,7 +89,8 @@ export const AuthProvider = ({ children }) => {
     setError(null)
 
     try {
-      const { data } = await apiClient.get('/auth/user')
+      const { data } = await fetchAuthenticatedUser()
+      storeUser(data)
       setUser(data)
       setStatus('ready')
     } catch (err) {
@@ -42,6 +98,7 @@ export const AuthProvider = ({ children }) => {
 
       if (code === 401 || code === 403) {
         clearAuthToken()
+        clearStoredUser()
         setUser(null)
         setStatus('anonymous')
         return
@@ -60,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     clearAuthToken()
+    clearStoredUser()
     setUser(null)
     setStatus('anonymous')
   }, [])
@@ -70,15 +128,17 @@ export const AuthProvider = ({ children }) => {
     }
 
     let isMounted = true
+    const hasCachedUser = Boolean(getStoredUser())
 
     const loadStoredUser = async () => {
       try {
-        const { data } = await apiClient.get('/auth/user')
+        const { data } = await fetchAuthenticatedUser()
 
         if (!isMounted) {
           return
         }
 
+        storeUser(data)
         setUser(data)
         setStatus('ready')
         setError(null)
@@ -91,8 +151,15 @@ export const AuthProvider = ({ children }) => {
 
         if (code === 401 || code === 403) {
           clearAuthToken()
+          clearStoredUser()
           setUser(null)
           setStatus('anonymous')
+          return
+        }
+
+        if (hasCachedUser) {
+          setStatus('ready')
+          setError(err)
           return
         }
 

@@ -2,6 +2,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiClient } from '../services/apiClient'
 import { ConfigContext } from './configContext'
 
+const CONFIG_STORAGE_KEY = 'openclassy_site_config'
+let siteConfigRequest = null
+
+const fetchSiteConfig = () => {
+  if (!siteConfigRequest) {
+    siteConfigRequest = apiClient.get('/site-config').finally(() => {
+      siteConfigRequest = null
+    })
+  }
+
+  return siteConfigRequest
+}
+
 const COLOR_TO_CSS_VAR = {
   primary: '--primary',
   primary_contrast: '--primary-contrast',
@@ -19,6 +32,36 @@ const normalizeVariant = (variant) => {
   }
 
   return 'v1'
+}
+
+const getStoredConfig = () => {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const storedConfig = window.localStorage.getItem(CONFIG_STORAGE_KEY)
+  if (!storedConfig) {
+    return null
+  }
+
+  try {
+    return JSON.parse(storedConfig)
+  } catch {
+    window.localStorage.removeItem(CONFIG_STORAGE_KEY)
+    return null
+  }
+}
+
+const storeConfig = (config) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config))
+  }
+}
+
+const clearStoredConfig = () => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(CONFIG_STORAGE_KEY)
+  }
 }
 
 const applyTheme = (config) => {
@@ -41,8 +84,8 @@ const applyTheme = (config) => {
 }
 
 export const ConfigProvider = ({ children }) => {
-  const [config, setConfig] = useState(null)
-  const [status, setStatus] = useState('loading')
+  const [config, setConfig] = useState(getStoredConfig)
+  const [status, setStatus] = useState(getStoredConfig() ? 'ready' : 'loading')
   const [error, setError] = useState(null)
   const [updating, setUpdating] = useState(false)
 
@@ -51,15 +94,17 @@ export const ConfigProvider = ({ children }) => {
     setError(null)
 
     try {
-      const { data } = await apiClient.get('/site-config')
+      const { data } = await fetchSiteConfig()
       const payload = data?.config ?? null
 
       if (!payload) {
+        clearStoredConfig()
         setConfig(null)
         setStatus('empty')
         return
       }
 
+      storeConfig(payload)
       setConfig(payload)
       setStatus('ready')
     } catch (err) {
@@ -81,6 +126,7 @@ export const ConfigProvider = ({ children }) => {
         return { ok: false, reason: 'empty' }
       }
 
+      storeConfig(payload)
       setConfig(payload)
       return { ok: true }
     } catch (err) {
@@ -101,10 +147,11 @@ export const ConfigProvider = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true
+    const hasCachedConfig = Boolean(getStoredConfig())
 
     const loadConfig = async () => {
       try {
-        const { data } = await apiClient.get('/site-config')
+        const { data } = await fetchSiteConfig()
         const payload = data?.config ?? null
 
         if (!isMounted) {
@@ -112,15 +159,23 @@ export const ConfigProvider = ({ children }) => {
         }
 
         if (!payload) {
+          clearStoredConfig()
           setConfig(null)
           setStatus('empty')
           return
         }
 
+        storeConfig(payload)
         setConfig(payload)
         setStatus('ready')
       } catch (err) {
         if (!isMounted) {
+          return
+        }
+
+        if (hasCachedConfig) {
+          setStatus('ready')
+          setError(err)
           return
         }
 

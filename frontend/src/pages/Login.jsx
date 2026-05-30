@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import LoginManager from '../components/LoginManager'
 import { useConfig } from '../context/configContext'
 
@@ -19,6 +20,7 @@ const resolveRoleRedirect = (user, requestedRedirect) => {
 
 const Login = () => {
   const { uiVariant, status } = useConfig()
+  const navigate = useNavigate()
   const variant = uiVariant ?? 'v1'
 
   const handleBack = useCallback(() => {
@@ -37,10 +39,10 @@ const Login = () => {
       window.localStorage.removeItem('openclassy_redirect')
     }
 
-    window.location.assign(resolveRoleRedirect(payload?.user, redirect))
-  }, [])
+    navigate(resolveRoleRedirect(payload?.user, redirect), { replace: true })
+  }, [navigate])
 
-  if (status === 'loading') {
+  if (status === 'loading' && !uiVariant) {
     return (
       <main className="login login--loading">
         <div className="login__loading-panel">

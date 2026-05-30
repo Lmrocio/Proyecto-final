@@ -1,5 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 
+import BudgetCalculator from './BudgetCalculator'
+
 const CERTIFICATIONS = [
   'Cambridge English',
   'Trinity College London',
@@ -30,7 +32,7 @@ const CertificationsAndCalc = () => (
         <p className="home-certifications__text home-certifications__text--dark">
           ¿Ya sabes a qué examen quieres presentarte? Ajusta los meses y deja preparado tu presupuesto desde el inicio.
         </p>
-        <div className="calculator-placeholder" aria-hidden="true" />
+        <BudgetCalculator />
       </article>
     </div>
 

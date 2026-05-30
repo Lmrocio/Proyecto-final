@@ -76,11 +76,7 @@ class EnrollmentController extends Controller
 
     public function show(Request $request, Enrollment $enrollment): JsonResponse
     {
-        if (!$this->canAccessEnrollment($request->user(), $enrollment)) {
-            return response()->json([
-                'message' => 'Forbidden.',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('view', $enrollment);
 
         return response()->json($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id']), Response::HTTP_OK);
     }
@@ -97,18 +93,5 @@ class EnrollmentController extends Controller
         $enrollment->delete();
 
         return response()->json([], Response::HTTP_NO_CONTENT);
-    }
-
-    private function canAccessEnrollment(User $user, Enrollment $enrollment): bool
-    {
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        if ($user->role === 'teacher') {
-            return $enrollment->course()->where('teacher_id', $user->id)->exists();
-        }
-
-        return $enrollment->student_id === $user->id;
     }
 }

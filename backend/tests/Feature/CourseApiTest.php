@@ -96,6 +96,28 @@ class CourseApiTest extends DatabaseTestCase
             ]);
     }
 
+    public function test_student_cannot_view_course_without_active_enrollment(): void
+    {
+        $teacher = User::factory()->create(['role' => 'teacher']);
+        $student = User::factory()->create(['role' => 'student']);
+        $course = $this->createCourse($teacher, 'Hidden Course');
+
+        Sanctum::actingAs($student);
+
+        $this->getJson('/api/courses/'.$course->id)->assertForbidden();
+    }
+
+    public function test_teacher_cannot_view_course_owned_by_another_teacher(): void
+    {
+        $owner = User::factory()->create(['role' => 'teacher']);
+        $otherTeacher = User::factory()->create(['role' => 'teacher']);
+        $course = $this->createCourse($owner, 'Owned Course');
+
+        Sanctum::actingAs($otherTeacher);
+
+        $this->getJson('/api/courses/'.$course->id)->assertForbidden();
+    }
+
     private function createCourse(User $teacher, string $title): Course
     {
         return Course::create([

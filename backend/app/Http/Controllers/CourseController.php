@@ -66,11 +66,7 @@ class CourseController extends Controller
 
     public function show(Request $request, Course $course): JsonResponse
     {
-        if (!$this->canAccessCourse($request->user(), $course)) {
-            return response()->json([
-                'message' => 'Forbidden.',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('view', $course);
 
         return response()->json(
             $course->load(['teacher:id,name,email', 'bonus:id,name,type,price']),
@@ -80,11 +76,7 @@ class CourseController extends Controller
 
     public function content(Request $request, Course $course): JsonResponse
     {
-        if (!$this->canAccessCourse($request->user(), $course)) {
-            return response()->json([
-                'message' => 'Forbidden.',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('view', $course);
 
         $course->load('teacher:id,name');
 
@@ -168,21 +160,5 @@ class CourseController extends Controller
         $course->delete();
 
         return response()->json([], Response::HTTP_NO_CONTENT);
-    }
-
-    private function canAccessCourse(User $user, Course $course): bool
-    {
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        if ($user->role === 'teacher') {
-            return $course->teacher_id === $user->id;
-        }
-
-        return $course->enrollments()
-            ->where('student_id', $user->id)
-            ->where('status', 'active')
-            ->exists();
     }
 }

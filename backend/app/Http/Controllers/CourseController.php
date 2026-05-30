@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
-use App\Models\Assignment;
 use App\Models\Course;
-use App\Models\Material;
 use App\Models\User;
+use App\Services\CourseContentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,20 +19,9 @@ class CourseController extends Controller
         $user = $request->user();
 
         $query = Course::query()
+            ->visibleTo($user)
             ->with(['teacher:id,name,email', 'bonus:id,name,type,price'])
             ->latest();
-
-        if ($user->role === 'teacher') {
-            $query->where('teacher_id', $user->id);
-        }
-
-        if ($user->role === 'student') {
-            $query->whereHas('enrollments', function ($enrollmentQuery) use ($user) {
-                $enrollmentQuery
-                    ->where('student_id', $user->id)
-                    ->where('status', 'active');
-            });
-        }
 
         if ($request->filled('teacher_id')) {
             $query->where('teacher_id', $request->string('teacher_id'));
@@ -76,67 +64,14 @@ class CourseController extends Controller
         );
     }
 
-    public function content(Request $request, Course $course): JsonResponse
+    public function content(Request $request, Course $course, CourseContentService $courseContentService): JsonResponse
     {
         $this->authorize('view', $course);
 
-        $course->load('teacher:id,name');
-
-        $materials = $course->materials()->latest()->get();
-        $assignments = $course->assignments()->orderBy('due_date')->get();
-
-        $materialsByUnit = $materials->groupBy(fn (Material $material) => $material->unit_name ?? 'Unidad general');
-        $assignmentsByUnit = $assignments->groupBy(fn (Assignment $assignment) => $assignment->unit_name ?? 'Unidad general');
-
-        $unitNames = $materialsByUnit->keys()
-            ->merge($assignmentsByUnit->keys())
-            ->unique()
-            ->values();
-
-        $units = $unitNames->map(function (string $unitName) use ($materialsByUnit, $assignmentsByUnit): array {
-            $unitMaterials = $materialsByUnit->get($unitName, collect());
-            $unitAssignments = $assignmentsByUnit->get($unitName, collect());
-
-            return [
-                'unit_name' => $unitName,
-                'materials' => $unitMaterials->map(function (Material $material): array {
-                    return [
-                        'id' => $material->id,
-                        'title' => $material->title,
-                        'type' => $material->type,
-                        'path' => $material->path,
-                        'size' => $material->size,
-                        'unit_name' => $material->unit_name,
-                    ];
-                })->values(),
-                'assignments' => $unitAssignments->map(function (Assignment $assignment): array {
-                    return [
-                        'id' => $assignment->id,
-                        'title' => $assignment->title,
-                        'description' => $assignment->description,
-                        'due_date' => $assignment->due_date?->toDateTimeString(),
-                        'unit_name' => $assignment->unit_name,
-                    ];
-                })->values(),
-                'resource_counts' => [
-                    'file' => $unitMaterials->where('type', 'file')->count(),
-                    'link' => $unitMaterials->where('type', 'link')->count(),
-                    'video' => $unitMaterials->where('type', 'video')->count(),
-                    'audio' => $unitMaterials->where('type', 'audio')->count(),
-                    'assignment' => $unitAssignments->count(),
-                ],
-            ];
-        });
-
-        return response()->json([
-            'course' => [
-                'id' => $course->id,
-                'title' => $course->title,
-                'teacher_name' => $course->teacher?->name,
-                'meeting_link' => $course->meeting_link,
-            ],
-            'units' => $units,
-        ], Response::HTTP_OK);
+        return response()->json(
+            $courseContentService->forCourse($course),
+            Response::HTTP_OK
+        );
     }
 
     public function update(UpdateCourseRequest $request, Course $course): JsonResponse

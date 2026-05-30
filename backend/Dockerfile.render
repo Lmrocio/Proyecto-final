@@ -35,8 +35,10 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} storage/logs boots
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
 
-RUN php artisan config:cache && php artisan route:cache
+# El cacheo de config/rutas y las migraciones se ejecutan en runtime (entrypoint),
+# cuando Render ya ha inyectado las variables de entorno reales.
+RUN chmod +x docker/render-entrypoint.sh
 
 EXPOSE 10000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+CMD ["sh", "docker/render-entrypoint.sh"]

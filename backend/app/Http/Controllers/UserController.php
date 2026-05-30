@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class UserController extends Controller
             $query->where('role', $request->string('role'));
         }
 
-        $users = $query->paginate((int) $request->integer('per_page', 15));
+        $users = $query->paginate((int) $request->integer('per_page', 15))
+            ->through(fn (User $user): UserResource => new UserResource($user));
 
         return response()->json($users, Response::HTTP_OK);
     }
@@ -32,12 +34,12 @@ class UserController extends Controller
 
         $user = User::create($data);
 
-        return response()->json($user, Response::HTTP_CREATED);
+        return response()->json(new UserResource($user), Response::HTTP_CREATED);
     }
 
     public function show(User $user): JsonResponse
     {
-        return response()->json($user, Response::HTTP_OK);
+        return response()->json(new UserResource($user), Response::HTTP_OK);
     }
 
     public function update(UpdateUserRequest $request, User $user): JsonResponse
@@ -50,7 +52,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return response()->json($user, Response::HTTP_OK);
+        return response()->json(new UserResource($user), Response::HTTP_OK);
     }
 
     public function destroy(Request $request, User $user): JsonResponse

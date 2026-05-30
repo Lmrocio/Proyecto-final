@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
+use App\Http\Resources\CourseResource;
 use App\Models\Assignment;
 use App\Models\Course;
 use App\Models\Material;
@@ -43,7 +44,8 @@ class CourseController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Course $course): CourseResource => new CourseResource($course)),
             Response::HTTP_OK
         );
     }
@@ -61,7 +63,7 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-        return response()->json($course->load(['teacher:id,name,email', 'bonus:id,name,type,price']), Response::HTTP_CREATED);
+        return response()->json(new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])), Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Course $course): JsonResponse
@@ -69,7 +71,7 @@ class CourseController extends Controller
         $this->authorize('view', $course);
 
         return response()->json(
-            $course->load(['teacher:id,name,email', 'bonus:id,name,type,price']),
+            new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])),
             Response::HTTP_OK
         );
     }
@@ -152,7 +154,7 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        return response()->json($course->load(['teacher:id,name,email', 'bonus:id,name,type,price']), Response::HTTP_OK);
+        return response()->json(new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])), Response::HTTP_OK);
     }
 
     public function destroy(Course $course): JsonResponse

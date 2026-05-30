@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEnrollmentRequest;
 use App\Http\Requests\UpdateEnrollmentRequest;
+use App\Http\Resources\EnrollmentResource;
 use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -43,7 +44,8 @@ class EnrollmentController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Enrollment $enrollment): EnrollmentResource => new EnrollmentResource($enrollment)),
             Response::HTTP_OK
         );
     }
@@ -71,21 +73,21 @@ class EnrollmentController extends Controller
 
         $status = $enrollment->wasRecentlyCreated ? Response::HTTP_CREATED : Response::HTTP_OK;
 
-        return response()->json($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id']), $status);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), $status);
     }
 
     public function show(Request $request, Enrollment $enrollment): JsonResponse
     {
         $this->authorize('view', $enrollment);
 
-        return response()->json($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id']), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), Response::HTTP_OK);
     }
 
     public function update(UpdateEnrollmentRequest $request, Enrollment $enrollment): JsonResponse
     {
         $enrollment->update($request->validated());
 
-        return response()->json($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id']), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), Response::HTTP_OK);
     }
 
     public function destroy(Enrollment $enrollment): JsonResponse

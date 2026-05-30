@@ -15,15 +15,13 @@ FROM php:8.3-cli-alpine
 WORKDIR /var/www/html
 
 RUN apk add --no-cache \
-    libpq-dev \
     postgresql-dev \
     oniguruma-dev \
     unzip \
     && docker-php-ext-install \
         mbstring \
         opcache \
-        pdo_pgsql \
-        pdo_sqlite
+        pdo_pgsql
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY . .

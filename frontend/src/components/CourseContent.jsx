@@ -24,7 +24,7 @@ const buildItems = (unit) => {
     id: material.id,
     kind: 'material',
     title: material.title,
-    description: material.description ?? material.path ?? 'Lorem ipsum dolor sit amet.',
+    description: material.description ?? material.path ?? 'Material del curso disponible en el aula.',
     materialType: material.type,
   }))
 
@@ -32,7 +32,7 @@ const buildItems = (unit) => {
     id: assignment.id,
     kind: 'assignment',
     title: assignment.title,
-    description: assignment.description ?? 'Lorem ipsum dolor sit amet, consectetur.',
+    description: assignment.description ?? 'Actividad pendiente con instrucciones del profesor.',
     dueDate: assignment.due_date,
     status: assignment.status ?? 'Sin entregar',
     grade: assignment.grade ?? '-',
@@ -167,7 +167,7 @@ const CourseContent = ({ units, variant }) => {
           return (
             <article key={unit.unit_name} className="course-content__card">
               <h3 className="course-content__card-title">{unit.unit_name}</h3>
-              <p className="course-content__card-text">{unit.description ?? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+              <p className="course-content__card-text">{unit.description ?? 'Unidad con materiales y tareas del curso.'}</p>
               <div className="course-content__card-meta">
                 <span className="course-content__meta-item">
                   <FileText size={16} />

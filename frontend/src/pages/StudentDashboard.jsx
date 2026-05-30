@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Video } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { Award, ClipboardList, Mail, UserSquare, Video } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { apiClient } from '../services/apiClient'
 import CourseContent from '../components/CourseContent'
 import Modal from '../components/Modal'
@@ -14,6 +14,45 @@ const EMPTY_COURSE = {
   id: null,
   title: '',
   meeting_link: null,
+}
+
+const dashboardContentRequests = new Map()
+
+const fetchDashboardContent = (requestedCourseId) => {
+  const requestKey = requestedCourseId ?? 'default'
+
+  if (!dashboardContentRequests.has(requestKey)) {
+    const request = (async () => {
+      const { data: coursesResponse } = await apiClient.get('/courses', {
+        params: {
+          per_page: 50,
+        },
+      })
+
+      const availableCourses = Array.isArray(coursesResponse?.data) ? coursesResponse.data : []
+      const activeCourse = availableCourses.find((availableCourse) => availableCourse.id === requestedCourseId) ?? availableCourses[0]
+
+      if (!activeCourse?.id) {
+        return {
+          course: EMPTY_COURSE,
+          units: [],
+        }
+      }
+
+      const { data } = await apiClient.get(`/student/courses/${activeCourse.id}/content`)
+
+      return {
+        course: data?.course ? { ...activeCourse, ...data.course } : activeCourse,
+        units: Array.isArray(data?.units) ? data.units : [],
+      }
+    })().finally(() => {
+      dashboardContentRequests.delete(requestKey)
+    })
+
+    dashboardContentRequests.set(requestKey, request)
+  }
+
+  return dashboardContentRequests.get(requestKey)
 }
 
 const StudentDashboard = () => {
@@ -30,7 +69,6 @@ const StudentDashboard = () => {
   const [loadError, setLoadError] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
   const [isClassroomModalOpen, setIsClassroomModalOpen] = useState(false)
-  const abortControllerRef = useRef(null)
 
   const handleLoginRedirect = useCallback(() => {
     window.localStorage.setItem('openclassy_redirect', '/student')
@@ -38,7 +76,7 @@ const StudentDashboard = () => {
   }, [])
 
   const handleRoleRedirect = useCallback(() => {
-    window.location.assign(user?.role === 'admin' ? '/admin/settings' : '/')
+    window.location.assign(user?.role === 'admin' ? '/admin/settings' : user?.role === 'teacher' ? '/teacher' : '/')
   }, [user?.role])
 
   useEffect(() => {
@@ -46,65 +84,27 @@ const StudentDashboard = () => {
       return undefined
     }
 
-    abortControllerRef.current?.abort()
-    const controller = new AbortController()
-    abortControllerRef.current = controller
-    const timeoutId = window.setTimeout(() => controller.abort(), 10000)
+    let isMounted = true
 
     const loadContent = async () => {
       setIsLoading(true)
       setLoadError(false)
 
       try {
-        const { data: coursesResponse } = await apiClient.get('/courses', {
-          params: {
-            per_page: 50,
-          },
-          signal: controller.signal,
-        })
-
-        if (controller.signal.aborted) {
+        const data = await fetchDashboardContent(requestedCourseId)
+        if (!isMounted) {
           return
         }
 
-        const availableCourses = Array.isArray(coursesResponse?.data) ? coursesResponse.data : []
-        const activeCourse = availableCourses.find((availableCourse) => availableCourse.id === requestedCourseId) ?? availableCourses[0]
-
-        if (!activeCourse?.id) {
-          setCourse(EMPTY_COURSE)
-          setUnits([])
+        setCourse(data.course)
+        setUnits(data.units)
+      } catch {
+        if (!isMounted) {
           return
         }
-
-        const { data } = await apiClient.get(`/student/courses/${activeCourse.id}/content`, {
-          signal: controller.signal,
-        })
-        if (controller.signal.aborted) {
-          return
-        }
-
-        if (data?.course) {
-          setCourse({ ...activeCourse, ...data.course })
-        }
-
-        if (Array.isArray(data?.units) && data.units.length > 0) {
-          setUnits(data.units)
-        } else {
-          setUnits([])
-        }
-      } catch (requestError) {
-        if (
-          requestError?.name === 'CanceledError' ||
-          requestError?.code === 'ERR_CANCELED' ||
-          controller.signal.aborted
-        ) {
-          return
-        }
-        // Surfacear el fallo real en lugar de ocultarlo tras datos de ejemplo.
         setLoadError(true)
       } finally {
-        window.clearTimeout(timeoutId)
-        if (!controller.signal.aborted) {
+        if (isMounted) {
           setIsLoading(false)
         }
       }
@@ -113,8 +113,7 @@ const StudentDashboard = () => {
     loadContent()
 
     return () => {
-      controller.abort()
-      window.clearTimeout(timeoutId)
+      isMounted = false
     }
   }, [authStatus, isStudent, requestedCourseId, reloadKey])
 
@@ -188,6 +187,13 @@ const StudentDashboard = () => {
             Sala de clase
           </button>
         </header>
+
+        <nav className="student-dashboard__quick-links" aria-label="Accesos del aula">
+          <Link className="student-dashboard__quick-link" to="/student/tasks"><ClipboardList size={17} aria-hidden="true" />Tareas</Link>
+          <Link className="student-dashboard__quick-link" to="/student/messages/new"><Mail size={17} aria-hidden="true" />Mensajes</Link>
+          <Link className="student-dashboard__quick-link" to="/student/grades"><Award size={17} aria-hidden="true" />Calificaciones</Link>
+          <Link className="student-dashboard__quick-link" to="/student/profile"><UserSquare size={17} aria-hidden="true" />Perfil</Link>
+        </nav>
 
         {isLoading && !units.length ? (
           <div className="student-dashboard__loading">

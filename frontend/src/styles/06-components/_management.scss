@@ -1,0 +1,215 @@
+.management {
+  display: grid;
+  gap: var(--space-3);
+  color: var(--text-main);
+}
+
+.management__header,
+.management__toolbar,
+.management__section-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.management__eyebrow,
+.management__subtitle,
+.management__meta,
+.management__item-copy,
+.management__field span,
+.management__table-meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.management__eyebrow,
+.management__field span {
+  font-weight: 800;
+}
+
+.management__title,
+.management__section-title,
+.management__item-title {
+  margin: 0;
+  color: var(--text-main);
+}
+
+.management__title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.management__section,
+.management__item,
+.management__panel {
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-3);
+}
+
+.management__section,
+.management__item,
+.management__inline-form,
+.management__form,
+.management__list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.management__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-2);
+}
+
+.management__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: var(--space-2);
+}
+
+.management__stat {
+  display: grid;
+  gap: 0.25rem;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  color: var(--text-main);
+  padding: var(--space-2);
+  text-align: left;
+}
+
+.management__stat strong {
+  font-size: 1.6rem;
+}
+
+.management__stat--active {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-soft);
+}
+
+.management__field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.management__field input,
+.management__field select,
+.management__field textarea {
+  width: 100%;
+  min-height: 2.7rem;
+  border: var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+  color: var(--text-main);
+  padding: 0.7rem 0.85rem;
+}
+
+.management__field textarea {
+  resize: vertical;
+}
+
+.management__button {
+  min-height: 2.7rem;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0 1rem;
+  font-weight: 800;
+}
+
+.management__button--primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.management__button--secondary {
+  background: var(--surface-strong);
+  color: var(--text-main);
+}
+
+.management__button--danger {
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  background: color-mix(in srgb, var(--danger) 9%, var(--surface));
+  color: var(--danger);
+}
+
+.management__badge {
+  width: fit-content;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface-strong));
+  color: var(--text-main);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.management__badge--graded,
+.management__badge--active {
+  background: color-mix(in srgb, var(--ok) 24%, var(--surface-strong));
+}
+
+.management__badge--overdue,
+.management__badge--inactive {
+  background: color-mix(in srgb, var(--danger) 20%, var(--surface-strong));
+}
+
+.management__meta,
+.management__actions,
+.management__row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.management__notice,
+.management__feedback {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+  padding: var(--space-2);
+}
+
+.management__table-wrap {
+  overflow-x: auto;
+}
+
+.management__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.management__table th,
+.management__table td {
+  border-bottom: var(--border-subtle);
+  padding: 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.management__table th {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 48em) {
+  .management__section,
+  .management__item,
+  .management__panel {
+    padding: var(--space-2);
+  }
+}

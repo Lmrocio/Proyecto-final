@@ -214,7 +214,10 @@ const StudentMessagesPage = () => {
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [composeDraft, setComposeDraft] = useState({ recipient: '', subject: '', body: '' })
+  const [recipients, setRecipients] = useState([])
+  const [composeDraft, setComposeDraft] = useState({ recipientId: '', subject: '', body: '' })
+  const [composeFeedback, setComposeFeedback] = useState('')
+  const [isSending, setIsSending] = useState(false)
   const listSettings = DEFAULT_LIST_SETTINGS
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
@@ -234,9 +237,10 @@ const StudentMessagesPage = () => {
     setError(null)
 
     try {
-      const [inboxResponse, sentResponse] = await Promise.all([
+      const [inboxResponse, sentResponse, recipientsResponse] = await Promise.all([
         apiClient.get('/messages', { params: { per_page: 64 }, signal: controller.signal }),
         apiClient.get('/messages/sent', { params: { per_page: 64 }, signal: controller.signal }),
+        apiClient.get('/message-recipients', { signal: controller.signal }),
       ])
 
       if (controller.signal.aborted) {
@@ -245,11 +249,13 @@ const StudentMessagesPage = () => {
 
       const inboxItems = Array.isArray(inboxResponse.data?.data) ? inboxResponse.data.data : []
       const sentItems = Array.isArray(sentResponse.data?.data) ? sentResponse.data.data : []
+      const recipientItems = Array.isArray(recipientsResponse.data?.data) ? recipientsResponse.data.data : []
       const normalizedInbox = inboxItems.map(normalizeInboxMessage).filter((message) => message.id)
       const normalizedSent = sentItems.map(normalizeSentMessage).filter((message) => message.id)
 
       setInboxMessages(normalizedInbox)
       setSentMessages(normalizedSent)
+      setRecipients(recipientItems)
       setStarredIds(new Set())
     } catch (requestError) {
       if (requestError?.name === 'CanceledError' || requestError?.code === 'ERR_CANCELED' || controller.signal.aborted) {
@@ -339,7 +345,7 @@ const StudentMessagesPage = () => {
   }, [activeFolder])
 
   const handleRoleRedirect = useCallback(() => {
-    window.location.assign(user?.role === 'admin' ? '/admin/settings' : '/')
+    window.location.assign(user?.role === 'admin' ? '/admin/settings' : user?.role === 'teacher' ? '/teacher' : '/')
   }, [user?.role])
 
   const handleFolderNavigate = useCallback(
@@ -452,7 +458,8 @@ const StudentMessagesPage = () => {
   }, [handleFolderNavigate, inboxMessages, selectedCount, selectedIds])
 
   const handleSaveDraft = () => {
-    const hasDraftContent = composeDraft.recipient.trim() || composeDraft.subject.trim() || composeDraft.body.trim()
+    const selectedRecipient = recipients.find((recipient) => recipient.id === composeDraft.recipientId)
+    const hasDraftContent = composeDraft.recipientId || composeDraft.subject.trim() || composeDraft.body.trim()
 
     if (!hasDraftContent) {
       return
@@ -462,7 +469,7 @@ const StudentMessagesPage = () => {
       {
         id: `draft-message-${Date.now()}`,
         sender: 'Borrador',
-        recipients: composeDraft.recipient ? [composeDraft.recipient] : [],
+        recipients: selectedRecipient ? [selectedRecipient.name] : [],
         title: composeDraft.subject || 'Sin asunto',
         body: composeDraft.body || 'Mensaje sin contenido.',
         createdAt: new Date().toISOString(),
@@ -472,8 +479,36 @@ const StudentMessagesPage = () => {
       },
       ...currentDrafts,
     ])
-    setComposeDraft({ recipient: '', subject: '', body: '' })
+    setComposeDraft({ recipientId: '', subject: '', body: '' })
+    setComposeFeedback('Borrador guardado.')
     handleFolderNavigate('drafts')
+  }
+
+  const handleSendMessage = async () => {
+    if (!composeDraft.recipientId || !composeDraft.body.trim()) {
+      setComposeFeedback('Selecciona un destinatario y escribe un mensaje.')
+      return
+    }
+
+    setIsSending(true)
+    setComposeFeedback('')
+
+    try {
+      const body = composeDraft.subject.trim() ? `${composeDraft.subject.trim()}\n\n${composeDraft.body.trim()}` : composeDraft.body.trim()
+      const { data } = await apiClient.post('/messages', {
+        recipient_ids: [composeDraft.recipientId],
+        body,
+      })
+      const sentMessage = normalizeSentMessage(data)
+      setSentMessages((currentMessages) => [sentMessage, ...currentMessages].filter((message) => message.id))
+      setComposeDraft({ recipientId: '', subject: '', body: '' })
+      setComposeFeedback('Mensaje enviado.')
+      handleFolderNavigate('sent')
+    } catch (requestError) {
+      setComposeFeedback(requestError?.response?.data?.message ?? 'No se pudo enviar el mensaje.')
+    } finally {
+      setIsSending(false)
+    }
   }
 
   const renderMessageList = () => (
@@ -565,11 +600,15 @@ const StudentMessagesPage = () => {
     <section className="student-messages__composer" aria-label="Redactar mensaje">
       <label className="student-messages__field">
         <span>Para</span>
-        <input
-          type="text"
-          value={composeDraft.recipient}
-          onChange={(event) => setComposeDraft((currentDraft) => ({ ...currentDraft, recipient: event.target.value }))}
-        />
+        <select
+          value={composeDraft.recipientId}
+          onChange={(event) => setComposeDraft((currentDraft) => ({ ...currentDraft, recipientId: event.target.value }))}
+        >
+          <option value="">Selecciona destinatario</option>
+          {recipients.map((recipient) => (
+            <option key={recipient.id} value={recipient.id}>{recipient.name} · {recipient.role}</option>
+          ))}
+        </select>
       </label>
       <label className="student-messages__field">
         <span>Asunto</span>
@@ -588,11 +627,12 @@ const StudentMessagesPage = () => {
         />
       </label>
       <div className="student-messages__composer-actions">
+        {composeFeedback ? <span className="student-messages__notice" role="status">{composeFeedback}</span> : null}
         <button className="student-messages__secondary-action" type="button" onClick={handleSaveDraft}>
           Guardar borrador
         </button>
-        <button className="student-messages__primary-action" type="button" onClick={handleSaveDraft}>
-          Enviar
+        <button className="student-messages__primary-action" type="button" onClick={handleSendMessage} disabled={isSending}>
+          {isSending ? 'Enviando...' : 'Enviar'}
         </button>
       </div>
     </section>

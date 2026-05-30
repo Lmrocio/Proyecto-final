@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMaterialRequest;
+use App\Http\Resources\MaterialResource;
 use App\Models\Course;
 use App\Models\Material;
 use Illuminate\Http\JsonResponse;
@@ -17,22 +18,9 @@ class MaterialController extends Controller
         $user = $request->user();
 
         $query = Material::query()
+            ->visibleTo($user)
             ->with(['course:id,title,teacher_id'])
             ->latest();
-
-        if ($user->role === 'teacher') {
-            $query->whereHas('course', function ($courseQuery) use ($user) {
-                $courseQuery->where('teacher_id', $user->id);
-            });
-        }
-
-        if ($user->role === 'student') {
-            $query->whereHas('course.enrollments', function ($enrollmentQuery) use ($user) {
-                $enrollmentQuery
-                    ->where('student_id', $user->id)
-                    ->where('status', 'active');
-            });
-        }
 
         if ($request->filled('course_id')) {
             $query->where('course_id', $request->string('course_id'));
@@ -43,7 +31,8 @@ class MaterialController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Material $material): MaterialResource => new MaterialResource($material)),
             Response::HTTP_OK
         );
     }
@@ -77,7 +66,7 @@ class MaterialController extends Controller
             'size' => $size,
         ]);
 
-        return response()->json($material->load('course:id,title,teacher_id'), Response::HTTP_CREATED);
+        return response()->json(new MaterialResource($material->load('course:id,title,teacher_id')), Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Material $material): JsonResponse
@@ -88,7 +77,7 @@ class MaterialController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        return response()->json($material->load('course:id,title,teacher_id'), Response::HTTP_OK);
+        return response()->json(new MaterialResource($material->load('course:id,title,teacher_id')), Response::HTTP_OK);
     }
 
     public function destroy(Request $request, Material $material): JsonResponse

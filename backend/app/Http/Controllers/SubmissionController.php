@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GradeSubmissionRequest;
 use App\Http\Requests\StoreSubmissionRequest;
+use App\Http\Resources\SubmissionResource;
 use App\Models\Assignment;
 use App\Models\Enrollment;
 use App\Models\Submission;
@@ -19,22 +20,13 @@ class SubmissionController extends Controller
         $user = $request->user();
 
         $query = Submission::query()
+            ->visibleTo($user)
             ->with([
                 'student:id,name,email,role',
                 'assignment:id,course_id,title,due_date',
                 'assignment.course:id,title,teacher_id',
             ])
             ->latest();
-
-        if ($user->role === 'teacher') {
-            $query->whereHas('assignment.course', function ($courseQuery) use ($user) {
-                $courseQuery->where('teacher_id', $user->id);
-            });
-        }
-
-        if ($user->role === 'student') {
-            $query->where('student_id', $user->id);
-        }
 
         if ($request->filled('assignment_id')) {
             $query->where('assignment_id', $request->string('assignment_id'));
@@ -45,7 +37,8 @@ class SubmissionController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Submission $submission): SubmissionResource => new SubmissionResource($submission)),
             Response::HTTP_OK
         );
     }
@@ -99,7 +92,7 @@ class SubmissionController extends Controller
         $status = $submission->wasRecentlyCreated ? Response::HTTP_CREATED : Response::HTTP_OK;
 
         return response()->json(
-            $submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date']),
+            new SubmissionResource($submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date'])),
             $status
         );
     }
@@ -113,7 +106,7 @@ class SubmissionController extends Controller
         }
 
         return response()->json(
-            $submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date', 'assignment.course:id,title,teacher_id']),
+            new SubmissionResource($submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date', 'assignment.course:id,title,teacher_id'])),
             Response::HTTP_OK
         );
     }
@@ -133,7 +126,7 @@ class SubmissionController extends Controller
         $submission->update($request->validated());
 
         return response()->json(
-            $submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date']),
+            new SubmissionResource($submission->load(['student:id,name,email,role', 'assignment:id,course_id,title,due_date'])),
             Response::HTTP_OK
         );
     }

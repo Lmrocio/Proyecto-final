@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
+use App\Http\Resources\AttendanceResource;
 use App\Models\Attendance;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -19,18 +20,9 @@ class AttendanceController extends Controller
         $user = $request->user();
 
         $query = Attendance::query()
+            ->visibleTo($user)
             ->with(['user:id,name,email,role', 'course:id,title,teacher_id'])
             ->latest('date');
-
-        if ($user->role === 'teacher') {
-            $query->whereHas('course', function ($courseQuery) use ($user) {
-                $courseQuery->where('teacher_id', $user->id);
-            });
-        }
-
-        if ($user->role === 'student') {
-            $query->where('user_id', $user->id);
-        }
 
         if ($request->filled('course_id')) {
             $query->where('course_id', $request->string('course_id'));
@@ -45,7 +37,8 @@ class AttendanceController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Attendance $attendance): AttendanceResource => new AttendanceResource($attendance)),
             Response::HTTP_OK
         );
     }
@@ -96,7 +89,7 @@ class AttendanceController extends Controller
 
         $status = $attendance->wasRecentlyCreated ? Response::HTTP_CREATED : Response::HTTP_OK;
 
-        return response()->json($attendance->load(['user:id,name,email,role', 'course:id,title,teacher_id']), $status);
+        return response()->json(new AttendanceResource($attendance->load(['user:id,name,email,role', 'course:id,title,teacher_id'])), $status);
     }
 
     public function update(UpdateAttendanceRequest $request, Attendance $attendance): JsonResponse
@@ -111,6 +104,6 @@ class AttendanceController extends Controller
 
         $attendance->update($request->validated());
 
-        return response()->json($attendance->load(['user:id,name,email,role', 'course:id,title,teacher_id']), Response::HTTP_OK);
+        return response()->json(new AttendanceResource($attendance->load(['user:id,name,email,role', 'course:id,title,teacher_id'])), Response::HTTP_OK);
     }
 }

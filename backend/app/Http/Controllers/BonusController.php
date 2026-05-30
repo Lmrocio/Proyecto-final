@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBonusRequest;
 use App\Http\Requests\UpdateBonusRequest;
+use App\Http\Resources\BonusResource;
 use App\Models\Bonus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class BonusController extends Controller
         }
 
         return response()->json(
-            $query->paginate((int) $request->integer('per_page', 15)),
+            $query->paginate((int) $request->integer('per_page', 15))
+                ->through(fn (Bonus $bonus): BonusResource => new BonusResource($bonus)),
             Response::HTTP_OK
         );
     }
@@ -29,19 +31,19 @@ class BonusController extends Controller
     {
         $bonus = Bonus::create($request->validated());
 
-        return response()->json($bonus, Response::HTTP_CREATED);
+        return response()->json(new BonusResource($bonus), Response::HTTP_CREATED);
     }
 
     public function show(Bonus $bonus): JsonResponse
     {
-        return response()->json($bonus, Response::HTTP_OK);
+        return response()->json(new BonusResource($bonus), Response::HTTP_OK);
     }
 
     public function update(UpdateBonusRequest $request, Bonus $bonus): JsonResponse
     {
         $bonus->update($request->validated());
 
-        return response()->json($bonus, Response::HTTP_OK);
+        return response()->json(new BonusResource($bonus), Response::HTTP_OK);
     }
 
     public function destroy(Bonus $bonus): JsonResponse

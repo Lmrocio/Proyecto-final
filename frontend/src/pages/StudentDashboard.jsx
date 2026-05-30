@@ -10,78 +10,11 @@ import Skeleton from '../components/Skeleton'
 import { useAuth } from '../context/authContext'
 import { useConfig } from '../context/configContext'
 
-const SAMPLE_COURSE = {
+const EMPTY_COURSE = {
   id: null,
-  title: 'Título del curso',
+  title: '',
   meeting_link: null,
 }
-
-const SAMPLE_UNITS = [
-  {
-    unit_name: 'UNIDAD 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    materials: [
-      {
-        id: 'mat-1',
-        title: 'Guía de lectura',
-        type: 'file',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-      {
-        id: 'mat-2',
-        title: 'Enlace de apoyo',
-        type: 'link',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-      {
-        id: 'mat-3',
-        title: 'Video introductorio',
-        type: 'video',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-      {
-        id: 'mat-4',
-        title: 'Audio practice',
-        type: 'audio',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-    ],
-    assignments: [
-      {
-        id: 'ass-1',
-        title: 'Actividad 1',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        due_date: '2026-05-22T23:45:00',
-      },
-    ],
-  },
-  {
-    unit_name: 'UNIDAD 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    materials: [
-      {
-        id: 'mat-5',
-        title: 'Material de apoyo',
-        type: 'file',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-      {
-        id: 'mat-6',
-        title: 'Referencia externa',
-        type: 'link',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      },
-    ],
-    assignments: [
-      {
-        id: 'ass-2',
-        title: 'Actividad 2',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        due_date: '2026-05-28T18:30:00',
-      },
-    ],
-  },
-]
 
 const StudentDashboard = () => {
   const { uiVariant } = useConfig()
@@ -91,9 +24,11 @@ const StudentDashboard = () => {
   const contentVariant = themeVariant === 'v2' ? 'accordion' : themeVariant === 'v3' ? 'summary' : 'tabs'
   const isStudent = user?.role === 'student'
   const requestedCourseId = searchParams.get('course')
-  const [course, setCourse] = useState(SAMPLE_COURSE)
-  const [units, setUnits] = useState(SAMPLE_UNITS)
+  const [course, setCourse] = useState(EMPTY_COURSE)
+  const [units, setUnits] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [loadError, setLoadError] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
   const [isClassroomModalOpen, setIsClassroomModalOpen] = useState(false)
   const abortControllerRef = useRef(null)
 
@@ -118,6 +53,7 @@ const StudentDashboard = () => {
 
     const loadContent = async () => {
       setIsLoading(true)
+      setLoadError(false)
 
       try {
         const { data: coursesResponse } = await apiClient.get('/courses', {
@@ -135,7 +71,7 @@ const StudentDashboard = () => {
         const activeCourse = availableCourses.find((availableCourse) => availableCourse.id === requestedCourseId) ?? availableCourses[0]
 
         if (!activeCourse?.id) {
-          setCourse(SAMPLE_COURSE)
+          setCourse(EMPTY_COURSE)
           setUnits([])
           return
         }
@@ -164,7 +100,8 @@ const StudentDashboard = () => {
         ) {
           return
         }
-        // Keep last known content visible so the user is not left with a blank screen.
+        // Surfacear el fallo real en lugar de ocultarlo tras datos de ejemplo.
+        setLoadError(true)
       } finally {
         window.clearTimeout(timeoutId)
         if (!controller.signal.aborted) {
@@ -179,7 +116,7 @@ const StudentDashboard = () => {
       controller.abort()
       window.clearTimeout(timeoutId)
     }
-  }, [authStatus, isStudent, requestedCourseId])
+  }, [authStatus, isStudent, requestedCourseId, reloadKey])
 
   if (authStatus === 'loading') {
     return (
@@ -245,7 +182,7 @@ const StudentDashboard = () => {
     <StudentLayout variant={themeVariant}>
       <section className="student-dashboard">
         <header className="student-dashboard__header">
-          <h1 className="student-dashboard__title">{course.title}</h1>
+          <h1 className="student-dashboard__title">{course.title || 'Aula virtual'}</h1>
           <button className="student-dashboard__cta" type="button" onClick={() => setIsClassroomModalOpen(true)}>
             <Video size={18} />
             Sala de clase
@@ -258,11 +195,21 @@ const StudentDashboard = () => {
           </div>
         ) : null}
 
-        {!units.length ? (
+        {loadError ? (
+          <EmptyState
+            title="No se pudo cargar el aula"
+            text="Ha ocurrido un error al obtener el contenido del curso. Inténtalo de nuevo."
+            actionLabel="Reintentar"
+            onAction={() => setReloadKey((key) => key + 1)}
+            tone="error"
+          />
+        ) : null}
+
+        {!loadError && !isLoading && !units.length ? (
           <EmptyState title="Sin contenido" text="No hay unidades disponibles." tone="ok" />
         ) : null}
 
-        {units.length ? <CourseContent units={units} variant={contentVariant} /> : null}
+        {!loadError && units.length ? <CourseContent units={units} variant={contentVariant} /> : null}
 
         <Modal isOpen={isClassroomModalOpen} onClose={() => setIsClassroomModalOpen(false)} title="Sala de clase">
           {course.meeting_link ? (

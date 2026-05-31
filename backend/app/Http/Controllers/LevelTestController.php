@@ -6,8 +6,11 @@ use App\Exceptions\LevelTestCorrectionException;
 use App\Exceptions\LevelTestValidationException;
 use App\Http\Requests\StoreLevelTestRequest;
 use App\Http\Resources\LevelTestEvaluationResource;
+use App\Http\Resources\LevelTestLeadResource;
+use App\Models\LevelTest;
 use App\Services\LevelTestCorrectionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class LevelTestController extends Controller
@@ -54,6 +57,17 @@ Always respond in Spanish. Return ONLY a valid JSON object — no markdown, no e
   "next_level_advice": "..."
 }
 PROMPT;
+
+    public function index(Request $request): JsonResponse
+    {
+        $levelTests = LevelTest::query()
+            ->with('user:id,name,email')
+            ->latest()
+            ->paginate((int) $request->integer('per_page', 15))
+            ->through(fn (LevelTest $levelTest): LevelTestLeadResource => new LevelTestLeadResource($levelTest));
+
+        return response()->json($levelTests, Response::HTTP_OK);
+    }
 
     public function store(StoreLevelTestRequest $request, LevelTestCorrectionService $correctionService): JsonResponse
     {

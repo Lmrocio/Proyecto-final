@@ -3,7 +3,7 @@ import { useAuth } from '../context/authContext'
 import EmptyState from './EmptyState'
 
 const ROLE_HOME = {
-  admin: '/admin/settings',
+  admin: '/admin',
   teacher: '/teacher',
   student: '/student',
 }

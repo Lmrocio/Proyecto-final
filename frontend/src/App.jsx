@@ -1,5 +1,13 @@
 import { Route, Routes } from 'react-router-dom'
-import AdminSettings from './pages/AdminSettings'
+import AdminLayout from './layouts/AdminLayout'
+import AdminAdmins from './pages/admin/AdminAdmins'
+import AdminAppearance from './pages/admin/AdminAppearance'
+import AdminBonuses from './pages/admin/AdminBonuses'
+import AdminConfig from './pages/admin/AdminConfig'
+import AdminCourses from './pages/admin/AdminCourses'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminStudents from './pages/admin/AdminStudents'
+import AdminTeachers from './pages/admin/AdminTeachers'
 import Home from './pages/Home'
 import LevelTest from './pages/LevelTest'
 import Login from './pages/Login'
@@ -20,7 +28,16 @@ function App() {
       <Route path="/login" element={<Login />} />
 
       <Route element={<ProtectedRoute roles={['admin']} />}>
-        <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="students" element={<AdminStudents />} />
+          <Route path="teachers" element={<AdminTeachers />} />
+          <Route path="admins" element={<AdminAdmins />} />
+          <Route path="courses" element={<AdminCourses />} />
+          <Route path="bonuses" element={<AdminBonuses />} />
+          <Route path="appearance" element={<AdminAppearance />} />
+          <Route path="config" element={<AdminConfig />} />
+        </Route>
       </Route>
 
       <Route element={<ProtectedRoute roles={['teacher']} />}>

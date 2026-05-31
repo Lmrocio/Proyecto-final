@@ -345,7 +345,7 @@ const StudentMessagesPage = () => {
   }, [activeFolder])
 
   const handleRoleRedirect = useCallback(() => {
-    window.location.assign(user?.role === 'admin' ? '/admin/settings' : user?.role === 'teacher' ? '/teacher' : '/')
+    window.location.assign(user?.role === 'admin' ? '/admin' : user?.role === 'teacher' ? '/teacher' : '/')
   }, [user?.role])
 
   const handleFolderNavigate = useCallback(

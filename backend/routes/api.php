@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\BonusController;
 use App\Http\Controllers\CourseController;
@@ -56,7 +57,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', AdminDashboardController::class);
+
         Route::apiResource('users', UserController::class);
+
+        Route::get('/level-tests', [LevelTestController::class, 'index']);
 
         Route::put('/admin/settings', [SiteConfigController::class, 'update']);
 

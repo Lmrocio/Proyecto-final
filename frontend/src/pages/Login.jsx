@@ -4,7 +4,7 @@ import LoginManager from '../components/LoginManager'
 import { useConfig } from '../context/configContext'
 
 const ROLE_ROUTES = {
-  admin: '/admin/settings',
+  admin: '/admin',
   teacher: '/teacher',
   student: '/student',
 }

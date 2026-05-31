@@ -1,0 +1,161 @@
+@use '../00-settings/variables' as *;
+
+.admin-dashboard {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  color: var(--text-main);
+}
+
+.admin-dashboard__header,
+.admin-dashboard__card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.admin-dashboard__kpi-label {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.admin-dashboard__kpi-label {
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.admin-dashboard__title,
+.admin-dashboard__card-title {
+  margin: 0;
+  color: var(--text-main);
+  font-family: $font-display;
+}
+
+.admin-dashboard__title {
+  font-size: clamp(2.25rem, 4vw, 3.7rem);
+  line-height: 1;
+}
+
+.admin-dashboard__card-title {
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.admin-dashboard__alert {
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--danger) 22%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  color: var(--danger);
+  padding: var(--space-2);
+  font-weight: 800;
+}
+
+.admin-dashboard__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.admin-dashboard__kpi-card,
+.admin-dashboard__card {
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+}
+
+.admin-dashboard__kpi-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem var(--space-2);
+  align-items: center;
+  padding: var(--space-2);
+}
+
+.admin-dashboard__kpi-icon {
+  width: 2.85rem;
+  aspect-ratio: 1;
+  grid-row: span 2;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  color: var(--primary);
+}
+
+.admin-dashboard__kpi-value {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.admin-dashboard__main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  gap: var(--space-2);
+  align-items: start;
+}
+
+.admin-dashboard__card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.admin-dashboard__table-wrap {
+  overflow-x: auto;
+}
+
+.admin-dashboard__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-dashboard__table th,
+.admin-dashboard__table td {
+  border-bottom: var(--border-subtle);
+  padding: 0.85rem 0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-dashboard__table th {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.admin-dashboard__empty-row td {
+  color: var(--text-muted);
+  font-weight: 800;
+  text-align: center;
+}
+
+.admin-dashboard__level-badge {
+  width: fit-content;
+  display: inline-flex;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--ok) 24%, var(--surface));
+  color: var(--text-main);
+  padding: 0.25rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.admin-dashboard__actions {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.admin-dashboard__action {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 64em) {
+  .admin-dashboard__kpis,
+  .admin-dashboard__main-grid {
+    grid-template-columns: 1fr;
+  }
+}

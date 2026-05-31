@@ -24,6 +24,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 1.35rem;
   backdrop-filter: blur(12px);
 }
@@ -34,6 +35,25 @@
   font-size: 1.35rem;
   font-weight: 700;
   text-decoration: none;
+}
+
+.home-hero__login {
+  width: 2.65rem;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fdf8f2;
+  display: inline-grid;
+  place-items: center;
+  text-decoration: none;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.home-hero__login:hover,
+.home-hero__login:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
 }
 
 .home-hero__content {

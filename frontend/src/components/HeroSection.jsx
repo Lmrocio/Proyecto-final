@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LogIn } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const HeroSection = () => (
@@ -7,6 +7,9 @@ const HeroSection = () => (
       <header className="home-hero__nav" aria-label="Cabecera principal">
         <Link className="home-hero__brand" to="/">
           OpenClassy
+        </Link>
+        <Link className="home-hero__login" to="/login" aria-label="Ir al login" title="Ir al login">
+          <LogIn size={20} aria-hidden="true" />
         </Link>
       </header>
 

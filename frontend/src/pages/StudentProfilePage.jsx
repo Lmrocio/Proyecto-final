@@ -5,9 +5,30 @@ import { useAuth } from '../context/authContext'
 import { useConfig } from '../context/configContext'
 import { apiClient } from '../services/apiClient'
 
-const getInitials = (name = '') => {
-  const [firstName = 'Alumno', lastName = 'OpenClassy'] = name.trim().split(/\s+/)
-  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+const getNameParts = (user) => {
+  const firstName = String(user?.first_name ?? '').trim()
+  const lastName = String(user?.last_name ?? '').trim()
+
+  if (firstName || lastName) {
+    return {
+      firstName,
+      lastName,
+    }
+  }
+
+  const [derivedFirstName = '', derivedLastName = ''] = String(user?.name ?? '').trim().split(/\s+/, 2)
+
+  return {
+    firstName: derivedFirstName,
+    lastName: derivedLastName,
+  }
+}
+
+const getInitials = (firstName = '', lastName = '') => {
+  const resolvedFirstName = firstName || 'Alumno'
+  const resolvedLastName = lastName || 'OpenClassy'
+
+  return `${resolvedFirstName.charAt(0)}${resolvedLastName.charAt(0)}`.toUpperCase()
 }
 
 const getCurrentCourse = (user) =>
@@ -44,10 +65,16 @@ const StudentProfilePage = () => {
   const { user, setSession, logout } = useAuth()
   const navigate = useNavigate()
   const themeVariant = uiVariant ?? 'v1'
-  const studentName = user?.name ?? 'Alumno OpenClassy'
+  const nameParts = useMemo(() => getNameParts(user), [user])
+  const studentName = `${nameParts.firstName} ${nameParts.lastName}`.trim() || 'Alumno OpenClassy'
   const courseTitle = getCurrentCourse(user)
-  const avatarInitials = useMemo(() => getInitials(studentName), [studentName])
-  const [contactForm, setContactForm] = useState(() => ({ name: user?.name ?? '', email: user?.email ?? '', phone: user?.phone ?? '' }))
+  const avatarInitials = useMemo(() => getInitials(nameParts.firstName, nameParts.lastName), [nameParts.firstName, nameParts.lastName])
+  const [contactForm, setContactForm] = useState(() => ({
+    first_name: nameParts.firstName,
+    last_name: nameParts.lastName,
+    email: user?.email ?? '',
+    phone: user?.phone ?? '',
+  }))
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', nextPassword: '', confirmPassword: '' })
   const [accessibility, setAccessibility] = useState(() => getInitialAccessibility(user))
   const [feedback, setFeedback] = useState('')
@@ -79,7 +106,8 @@ const StudentProfilePage = () => {
 
     try {
       const { data } = await apiClient.put('/auth/user', {
-        name: contactForm.name,
+        first_name: contactForm.first_name,
+        last_name: contactForm.last_name,
         email: contactForm.email,
         phone: contactForm.phone,
       })
@@ -203,10 +231,21 @@ const StudentProfilePage = () => {
                     <input
                       className="student-profile__input"
                       type="text"
-                      name="name"
-                      value={contactForm.name}
+                      name="first_name"
+                      value={contactForm.first_name}
                       onChange={handleContactChange}
-                      autoComplete="name"
+                      autoComplete="given-name"
+                    />
+                  </label>
+                  <label className="student-profile__field">
+                    <span>Apellidos</span>
+                    <input
+                      className="student-profile__input"
+                      type="text"
+                      name="last_name"
+                      value={contactForm.last_name}
+                      onChange={handleContactChange}
+                      autoComplete="family-name"
                     />
                   </label>
                   <label className="student-profile__field">

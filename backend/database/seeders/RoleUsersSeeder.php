@@ -15,17 +15,20 @@ class RoleUsersSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Admin OpenClassy',
+                'first_name' => 'Admin',
+                'last_name' => 'OpenClassy',
                 'email' => 'admin@openclassy.test',
                 'role' => 'admin',
             ],
             [
-                'name' => 'Teacher OpenClassy',
+                'first_name' => 'Teacher',
+                'last_name' => 'OpenClassy',
                 'email' => 'teacher@openclassy.test',
                 'role' => 'teacher',
             ],
             [
-                'name' => 'Student OpenClassy',
+                'first_name' => 'Student',
+                'last_name' => 'OpenClassy',
                 'email' => 'student@openclassy.test',
                 'role' => 'student',
             ],
@@ -35,7 +38,9 @@ class RoleUsersSeeder extends Seeder
             User::updateOrCreate(
                 ['email' => $data['email']],
                 [
-                    'name' => $data['name'],
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
+                    'name' => trim($data['first_name'].' '.$data['last_name']),
                     'role' => $data['role'],
                     'password' => Hash::make('Password123!'),
                     'phone' => null,

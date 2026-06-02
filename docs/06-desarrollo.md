@@ -20,6 +20,23 @@ Esta separacion es el estandar recomendado para un producto Open Source descarga
 - Datos vivos en runtime: el catalogo de cursos no queda congelado en el bundle, sino sincronizado con lo que el equipo administra en backend.
 - Mantenibilidad y escalado: se reduce duplicacion de strings, se facilita internacionalizacion futura y se evita acoplar contenido de marketing con entidades operativas.
 
+## Modelo de Usuario con Nombre y Apellidos Separados
+
+Se implemento una evolucion de esquema en users para almacenar nombre y apellidos por separado, añadiendo first_name y last_name con migracion de datos heredados desde name.
+
+Decisiones tecnicas aplicadas:
+
+- Persistencia dual compatible: se conservan first_name y last_name como fuente de verdad y se mantiene name como nombre completo derivado para compatibilidad con consumidores existentes.
+- Backfill automatico en migracion: los registros previos se descomponen desde name para no perder datos historicos.
+- Ordenacion alfabetica por apellidos en API: los listados de usuarios (gestion y destinatarios) se ordenan por last_name y despues por first_name.
+- Contratos de API actualizados: creacion/edicion/perfil aceptan first_name y last_name, manteniendo name como campo compatible para clientes antiguos.
+
+Justificacion funcional:
+
+- Permite ordenar alumnado, docentes y administradores por apellidos, que es el criterio academico habitual para busqueda y administracion.
+- Mejora la calidad del dato para futuras funciones (filtros avanzados, exportaciones CSV, integraciones externas, etiquetas oficiales).
+- Evita una ruptura brusca del ecosistema, al mantener compatibilidad con name mientras se completa la transicion de frontend y clientes API.
+
 ## Prueba de Nivel IA
 
 Se ha implementado el flujo público de evaluación de redacciones sobre la ruta `POST /api/level-tests`. El controlador mantiene el `CORRECTOR_SYSTEM_PROMPT` como constante privada y delega la lógica de negocio en `LevelTestCorrectionService`, respetando el patrón Service Layer: validación semántica, detección básica de idioma, llamada a OpenRouter, normalización del JSON y persistencia en `level_tests`.

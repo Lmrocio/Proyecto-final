@@ -26,6 +26,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
         'name',
         'email',
         'role',
@@ -57,6 +59,57 @@ class User extends Authenticatable
             'accessibility_settings' => 'array',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $user): void {
+            [$firstName, $lastName] = self::normalizeNameParts(
+                $user->first_name,
+                $user->last_name,
+                $user->name,
+            );
+
+            $user->first_name = $firstName;
+            $user->last_name = $lastName;
+            $user->name = trim($firstName.' '.$lastName);
+        });
+    }
+
+    /**
+     * @return array{0:string,1:string}
+     */
+    private static function normalizeNameParts(mixed $firstName, mixed $lastName, mixed $fullName): array
+    {
+        $normalizedFirstName = trim((string) ($firstName ?? ''));
+        $normalizedLastName = trim((string) ($lastName ?? ''));
+
+        if ($normalizedFirstName === '' && $normalizedLastName === '') {
+            return self::splitFullName((string) ($fullName ?? ''));
+        }
+
+        return [$normalizedFirstName, $normalizedLastName];
+    }
+
+    /**
+     * @return array{0:string,1:string}
+     */
+    private static function splitFullName(string $fullName): array
+    {
+        $normalizedFullName = trim((string) preg_replace('/\s+/', ' ', $fullName));
+
+        if ($normalizedFullName === '') {
+            return ['', ''];
+        }
+
+        $parts = explode(' ', $normalizedFullName, 2);
+
+        return [$parts[0], $parts[1] ?? ''];
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return trim(($this->first_name ?? '').' '.($this->last_name ?? ''));
     }
 
     public function taughtCourses(): HasMany

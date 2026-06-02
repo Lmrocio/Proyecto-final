@@ -17,8 +17,9 @@ class UserController extends Controller
     {
         $users = User::query()
             ->whereKeyNot($request->user()?->id)
-            ->orderBy('name')
-            ->get(['id', 'name', 'email', 'role']);
+            ->orderByRaw("LOWER(COALESCE(last_name, ''))")
+            ->orderByRaw("LOWER(COALESCE(first_name, name))")
+            ->get(['id', 'name', 'first_name', 'last_name', 'email', 'role']);
 
         return response()->json([
             'data' => UserResource::collection($users)->resolve($request),
@@ -27,7 +28,10 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->latest();
+        $query = User::query()
+            ->orderByRaw("LOWER(COALESCE(last_name, ''))")
+            ->orderByRaw("LOWER(COALESCE(first_name, name))")
+            ->orderBy('created_at');
 
         if ($request->filled('role')) {
             $query->where('role', $request->string('role'));
@@ -41,7 +45,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $data = $this->normalizeNamePayload($request->validated());
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
@@ -56,7 +60,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $data = $request->validated();
+        $data = $this->normalizeNamePayload($request->validated());
 
         if (array_key_exists('password', $data)) {
             $data['password'] = Hash::make($data['password']);
@@ -78,5 +82,58 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizeNamePayload(array $data): array
+    {
+        $firstName = array_key_exists('first_name', $data)
+            ? trim((string) ($data['first_name'] ?? ''))
+            : null;
+        $lastName = array_key_exists('last_name', $data)
+            ? trim((string) ($data['last_name'] ?? ''))
+            : null;
+        $name = array_key_exists('name', $data)
+            ? trim((string) ($data['name'] ?? ''))
+            : null;
+
+        if (($firstName === null || $lastName === null) && $name !== null && $name !== '') {
+            [$derivedFirstName, $derivedLastName] = $this->splitFullName($name);
+            $firstName = $firstName ?? $derivedFirstName;
+            $lastName = $lastName ?? $derivedLastName;
+        }
+
+        if ($firstName !== null) {
+            $data['first_name'] = $firstName;
+        }
+
+        if ($lastName !== null) {
+            $data['last_name'] = $lastName;
+        }
+
+        if ($firstName !== null || $lastName !== null) {
+            $data['name'] = trim((string) ($firstName ?? '').' '.(string) ($lastName ?? ''));
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array{0:string,1:string}
+     */
+    private function splitFullName(string $fullName): array
+    {
+        $normalizedName = trim((string) preg_replace('/\s+/', ' ', $fullName));
+
+        if ($normalizedName === '') {
+            return ['', ''];
+        }
+
+        $parts = explode(' ', $normalizedName, 2);
+
+        return [$parts[0], $parts[1] ?? ''];
     }
 }

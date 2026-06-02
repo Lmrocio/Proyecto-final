@@ -5,11 +5,43 @@ import { useAuth } from '../../context/authContext'
 import { apiClient } from '../../services/apiClient'
 import { dataItems, getErrorMessage, updateFormField } from './adminPageUtils'
 
-const buildInitialForm = (role) => ({ name: '', email: '', role, password: 'Password123!', phone: '' })
+const splitUserName = (user) => {
+  const currentFirstName = String(user?.first_name ?? '').trim()
+  const currentLastName = String(user?.last_name ?? '').trim()
+
+  if (currentFirstName || currentLastName) {
+    return {
+      first_name: currentFirstName,
+      last_name: currentLastName,
+    }
+  }
+
+  const [derivedFirstName = '', derivedLastName = ''] = String(user?.name ?? '').trim().split(/\s+/, 2)
+
+  return {
+    first_name: derivedFirstName,
+    last_name: derivedLastName,
+  }
+}
+
+const buildInitialForm = (role) => ({ first_name: '', last_name: '', email: '', role, password: 'Password123!', phone: '' })
+
+const formatTableName = (user) => {
+  const firstName = String(user?.first_name ?? '').trim()
+  const lastName = String(user?.last_name ?? '').trim()
+
+  if (lastName || firstName) {
+    return lastName ? `${lastName}, ${firstName}` : firstName
+  }
+
+  return user?.name ?? '-'
+}
 
 const buildUserPayload = (form, role, mode) => {
   const payload = {
-    name: form.name,
+    first_name: form.first_name.trim(),
+    last_name: form.last_name.trim(),
+    name: `${form.first_name} ${form.last_name}`.trim(),
     email: form.email,
     role,
     phone: form.phone || null,
@@ -24,7 +56,8 @@ const buildUserPayload = (form, role, mode) => {
 
 const RoleUserForm = ({ form, mode, onChange, onSubmit }) => (
   <form className="management__form management__grid" onSubmit={onSubmit}>
-    <label className="management__field"><span>Nombre</span><input name="name" value={form.name} onChange={onChange} required /></label>
+    <label className="management__field"><span>Nombre</span><input name="first_name" value={form.first_name} onChange={onChange} required /></label>
+    <label className="management__field"><span>Apellidos</span><input name="last_name" value={form.last_name} onChange={onChange} required /></label>
     <label className="management__field"><span>Email</span><input name="email" type="email" value={form.email} onChange={onChange} required /></label>
     <label className="management__field"><span>Teléfono</span><input name="phone" value={form.phone} onChange={onChange} /></label>
     <label className="management__field">
@@ -71,7 +104,16 @@ const UserRoleManagement = ({ role, title, eyebrow, description, createLabel, em
   }
 
   const openEditModal = (selectedUser) => {
-    setForm({ name: selectedUser.name ?? '', email: selectedUser.email ?? '', role, password: '', phone: selectedUser.phone ?? '' })
+    const userName = splitUserName(selectedUser)
+
+    setForm({
+      first_name: userName.first_name,
+      last_name: userName.last_name,
+      email: selectedUser.email ?? '',
+      role,
+      password: '',
+      phone: selectedUser.phone ?? '',
+    })
     setEditingUserId(selectedUser.id)
     setModalMode('edit')
     setFeedback('')
@@ -144,7 +186,7 @@ const UserRoleManagement = ({ role, title, eyebrow, description, createLabel, em
             <tbody>
               {users.map((item) => (
                 <tr key={item.id}>
-                  <td><strong>{item.name}</strong><p className="management__table-meta">{item.email}</p></td>
+                  <td><strong>{formatTableName(item)}</strong><p className="management__table-meta">{item.email}</p></td>
                   <td><span className="management__badge">{item.role}</span></td>
                   <td>{item.phone ?? '-'}</td>
                   <td>

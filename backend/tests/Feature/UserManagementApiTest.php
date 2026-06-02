@@ -19,7 +19,8 @@ class UserManagementApiTest extends DatabaseTestCase
         Sanctum::actingAs($admin);
 
         $response = $this->postJson('/api/users', [
-            'name' => 'Teacher Created From Test',
+            'first_name' => 'Teacher',
+            'last_name' => 'Created From Test',
             'email' => 'teacher.created@example.com',
             'role' => 'teacher',
             'password' => 'Password123',
@@ -28,6 +29,8 @@ class UserManagementApiTest extends DatabaseTestCase
 
         $response
             ->assertCreated()
+            ->assertJsonPath('first_name', 'Teacher')
+            ->assertJsonPath('last_name', 'Created From Test')
             ->assertJsonPath('email', 'teacher.created@example.com')
             ->assertJsonPath('role', 'teacher');
 
@@ -43,7 +46,8 @@ class UserManagementApiTest extends DatabaseTestCase
         Sanctum::actingAs($student);
 
         $this->postJson('/api/users', [
-            'name' => 'Blocked User',
+            'first_name' => 'Blocked',
+            'last_name' => 'User',
             'email' => 'blocked@example.com',
             'role' => 'teacher',
             'password' => 'Password123',

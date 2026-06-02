@@ -23,6 +23,8 @@ class UpdateUserRequest extends FormRequest
         $routeUser = $this->route('user');
 
         return [
+            'first_name' => ['sometimes', 'required_with:last_name', 'string', 'max:255'],
+            'last_name' => ['sometimes', 'required_with:first_name', 'string', 'max:255'],
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => [
                 'sometimes',

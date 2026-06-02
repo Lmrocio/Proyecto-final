@@ -1,27 +1,12 @@
 import { Brain, GraduationCap, Monitor, Users } from 'lucide-react'
+import { FEATURES_ITEMS } from '../data/homeData'
 
-const FEATURES = [
-  {
-    id: 'official-preparation',
-    icon: GraduationCap,
-    title: 'Preparación oficial garantizada',
-  },
-  {
-    id: 'integral-platform',
-    icon: Monitor,
-    title: 'Plataforma integral',
-  },
-  {
-    id: 'smart-learning',
-    icon: Brain,
-    title: 'Aprendizaje inteligente, no repitas lo que ya sabes',
-  },
-  {
-    id: 'continuous-support',
-    icon: Users,
-    title: 'Acompañamiento continuo',
-  },
-]
+const FEATURE_ICONS = {
+  'official-preparation': GraduationCap,
+  'integral-platform': Monitor,
+  'smart-learning': Brain,
+  'continuous-support': Users,
+}
 
 const FeaturesSection = () => (
   <section className="home-features">
@@ -33,14 +18,18 @@ const FeaturesSection = () => (
 
       <div className="home-features__list-block">
         <ul className="home-features__list">
-          {FEATURES.map(({ id, icon: Icon, title }) => (
-            <li key={id} className="home-features__item">
-              <span className="home-features__icon">
-                <Icon size={20} aria-hidden="true" />
-              </span>
-              <span className="home-features__text">{title}</span>
-            </li>
-          ))}
+          {FEATURES_ITEMS.map(({ id, title }) => {
+            const Icon = FEATURE_ICONS[id] ?? GraduationCap
+
+            return (
+              <li key={id} className="home-features__item">
+                <span className="home-features__icon">
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <span className="home-features__text">{title}</span>
+              </li>
+            )
+          })}
         </ul>
       </div>
     </div>

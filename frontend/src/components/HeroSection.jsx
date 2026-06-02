@@ -1,30 +1,34 @@
 import { ArrowRight, LogIn } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { HERO_CONTENT } from '../data/homeData'
 
 const HeroSection = () => (
   <section className="home-hero">
     <div className="home-hero__shell">
-      <header className="home-hero__nav" aria-label="Cabecera principal">
+      <header className="home-hero__nav" aria-label={HERO_CONTENT.navAriaLabel}>
         <Link className="home-hero__brand" to="/">
-          OpenClassy
+          {HERO_CONTENT.brandLabel}
         </Link>
-        <Link className="home-hero__login" to="/login" aria-label="Ir al login" title="Ir al login">
+        <Link
+          className="home-hero__login"
+          to="/login"
+          aria-label={HERO_CONTENT.loginLabel}
+          title={HERO_CONTENT.loginLabel}
+        >
           <LogIn size={20} aria-hidden="true" />
         </Link>
       </header>
 
       <div className="home-grid home-hero__content">
         <div className="home-hero__headline-block">
-          <p className="home-hero__eyebrow">Academia de inglés personalizada</p>
-          <h1 className="home-hero__title">Inglés a medida, aprende a tu ritmo</h1>
+          <p className="home-hero__eyebrow">{HERO_CONTENT.eyebrow}</p>
+          <h1 className="home-hero__title">{HERO_CONTENT.title}</h1>
         </div>
 
         <aside className="home-hero__aside">
-          <p className="home-hero__description">
-            Pon a prueba tu inglés con nuestro sistema de evaluación inteligente.
-          </p>
+          <p className="home-hero__description">{HERO_CONTENT.description}</p>
           <Link className="home-hero__cta" to="/prueba-de-nivel">
-            <span>Da el primer paso hoy</span>
+            <span>{HERO_CONTENT.ctaLabel}</span>
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
         </aside>

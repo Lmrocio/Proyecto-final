@@ -6,62 +6,29 @@ import CertificationsAndCalc from '../components/CertificationsAndCalc'
 import MethodologySection from '../components/MethodologySection'
 import ContactAndFooter from '../components/ContactAndFooter'
 import useScrollSpy from '../hooks/useScrollSpy'
+import { HOME_JOURNEY_ARIA_LABEL, HOME_SECTIONS_COPY } from '../data/homeData'
 
-const HOME_SECTIONS = [
-  {
-    id: 'hero',
-    label: 'Inicio',
-    title: 'Descubre OpenClassy',
-    description: 'Punto de partida con identidad, propuesta de valor y llamada principal a la accion.',
-    Component: HeroSection,
-  },
-  {
-    id: 'features',
-    label: 'Ventajas',
-    title: 'Que nos hace diferentes',
-    description: 'Beneficios claros para entender rapidamente por que la metodologia funciona.',
-    Component: FeaturesSection,
-  },
-  {
-    id: 'courses',
-    label: 'Cursos',
-    title: 'Encuentra tu ritmo',
-    description: 'Recorrido de formaciones para cada perfil, nivel y objetivo academico.',
-    Component: CoursesSection,
-  },
-  {
-    id: 'certifications',
-    label: 'Certificaciones',
-    title: 'Prepara tu siguiente hito',
-    description: 'Ruta para certificar competencias y calcular tu inversion con transparencia.',
-    Component: CertificationsAndCalc,
-  },
-  {
-    id: 'methodology',
-    label: 'Metodologia',
-    title: 'Aprendizaje guiado',
-    description: 'Sistema de trabajo con seguimiento, materiales propios y enfoque practico.',
-    Component: MethodologySection,
-  },
-  {
-    id: 'contact',
-    label: 'Contacto',
-    title: 'Habla con nosotros',
-    description: 'Ultima parada para resolver dudas y activar el siguiente paso de tu plan.',
-    Component: ContactAndFooter,
-  },
-]
+const HOME_SECTION_COMPONENTS = {
+  hero: HeroSection,
+  features: FeaturesSection,
+  courses: CoursesSection,
+  certifications: CertificationsAndCalc,
+  methodology: MethodologySection,
+  contact: ContactAndFooter,
+}
+
+const HOME_SECTIONS = HOME_SECTIONS_COPY.map((section) => ({
+  ...section,
+  Component: HOME_SECTION_COMPONENTS[section.id],
+}))
 
 const JOURNEY_STOP_IDS = HOME_SECTIONS.map((section) => section.id)
 
 const HomeLayoutV1 = () => (
   <div className="home-layout" data-variant="v1">
-    <HeroSection />
-    <FeaturesSection />
-    <CoursesSection />
-    <CertificationsAndCalc />
-    <MethodologySection />
-    <ContactAndFooter />
+    {HOME_SECTIONS.map(({ id, Component }) => (
+      <Component key={id} />
+    ))}
   </div>
 )
 
@@ -97,7 +64,7 @@ const HomeLayoutV3 = () => {
 
   return (
     <div className="home-layout" data-variant="v3">
-      <div className="home-journey" aria-label="Recorrido de aprendizaje OpenClassy">
+      <div className="home-journey" aria-label={HOME_JOURNEY_ARIA_LABEL}>
         <span className="home-journey__line" aria-hidden="true" />
 
         {HOME_SECTIONS.map(({ id, label, title, Component }, index) => {

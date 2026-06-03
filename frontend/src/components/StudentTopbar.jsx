@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Bell, Mail, UserSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import Brand from './Brand'
 import MessagesDropdown from './MessagesDropdown'
 import NotificationsDropdown from './NotificationsDropdown'
 import ProfileDropdown from './ProfileDropdown'
@@ -52,7 +53,11 @@ const StudentTopbar = () => {
   return (
     <header className="student-topbar">
       <Link className="student-topbar__brand" to="/">
-        <span className="student-topbar__brand-name student-topbar__brand-name--display font-display">Openclassy</span>
+        <Brand
+          className="student-topbar__brand-mark"
+          textClassName="student-topbar__brand-name student-topbar__brand-name--display font-display"
+          imageClassName="student-topbar__brand-logo"
+        />
         <span className="student-topbar__brand-separator" aria-hidden="true">
           |
         </span>

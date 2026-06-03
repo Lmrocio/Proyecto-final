@@ -1,5 +1,6 @@
 import { ArrowRight, LogIn } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import Brand from './Brand'
 import { HERO_CONTENT } from '../data/homeData'
 
 const HeroSection = () => (
@@ -7,7 +8,7 @@ const HeroSection = () => (
     <div className="home-hero__shell">
       <header className="home-hero__nav" aria-label={HERO_CONTENT.navAriaLabel}>
         <Link className="home-hero__brand" to="/">
-          {HERO_CONTENT.brandLabel}
+          <Brand className="home-hero__brand-mark" textClassName="home-hero__brand-text" imageClassName="home-hero__brand-logo" />
         </Link>
         <Link
           className="home-hero__login"

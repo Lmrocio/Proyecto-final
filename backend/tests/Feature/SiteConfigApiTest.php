@@ -19,7 +19,11 @@ class SiteConfigApiTest extends DatabaseTestCase
         $response
             ->assertOk()
             ->assertJsonPath('config.theme_name', 'openclassy')
-            ->assertJsonPath('config.ui_variant', 'v1');
+            ->assertJsonPath('config.ui_variant', 'v1')
+            ->assertJsonPath('config.branding.site_name', 'OpenClassy')
+            ->assertJsonPath('config.branding.logo_type', 'text')
+            ->assertJsonPath('config.branding.logo_img_url', null)
+            ->assertJsonPath('config.branding.isotype_img_url', null);
 
         $this->assertSame(1, SiteConfig::query()->count());
     }
@@ -40,6 +44,34 @@ class SiteConfigApiTest extends DatabaseTestCase
 
         $this->assertDatabaseHas('site_configs', [
             'ui_variant' => 'v2',
+        ]);
+    }
+
+    public function test_admin_can_update_branding_payload(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        Sanctum::actingAs($admin);
+
+        $response = $this->putJson('/api/admin/settings', [
+            'ui_variant' => 'v1',
+            'branding' => [
+                'site_name' => 'Academia Delta',
+                'logo_type' => 'image',
+                'logo_img_url' => 'https://cdn.example.com/logo.svg',
+                'isotype_img_url' => 'https://cdn.example.com/isotype.svg',
+            ],
+        ]);
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('config.branding.site_name', 'Academia Delta')
+            ->assertJsonPath('config.branding.logo_type', 'image')
+            ->assertJsonPath('config.branding.logo_img_url', 'https://cdn.example.com/logo.svg')
+            ->assertJsonPath('config.branding.isotype_img_url', 'https://cdn.example.com/isotype.svg');
+
+        $this->assertDatabaseHas('site_configs', [
+            'ui_variant' => 'v1',
         ]);
     }
 

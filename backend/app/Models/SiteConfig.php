@@ -6,6 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Branding JSONB contract:
+ * {
+ *   "site_name": string,
+ *   "logo_type": "text"|"image",
+ *   "logo_img_url": string|null,
+ *   "isotype_img_url": string|null
+ * }
+ *
+ * PostgreSQL JSONB keeps this payload flexible without rigid schema migrations
+ * when the white-label identity evolves.
+ */
 class SiteConfig extends Model
 {
     use HasFactory, HasUuids;

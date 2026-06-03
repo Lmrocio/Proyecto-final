@@ -26,12 +26,56 @@ const COLOR_TO_CSS_VAR = {
   ok: '--ok',
 }
 
+const DEFAULT_BRANDING = {
+  site_name: 'OpenClassy',
+  logo_type: 'text',
+  logo_img_url: null,
+  isotype_img_url: null,
+}
+
 const normalizeVariant = (variant) => {
   if (variant === 'v2' || variant === 'v3') {
     return variant
   }
 
   return 'v1'
+}
+
+const normalizeNullableString = (value) => {
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  const normalizedValue = value.trim()
+
+  return normalizedValue === '' ? null : normalizedValue
+}
+
+const normalizeBranding = (branding) => {
+  if (!branding || typeof branding !== 'object') {
+    return DEFAULT_BRANDING
+  }
+
+  const siteName = typeof branding.site_name === 'string' ? branding.site_name.trim() : ''
+
+  return {
+    site_name: siteName || DEFAULT_BRANDING.site_name,
+    logo_type: branding.logo_type === 'image' ? 'image' : 'text',
+    logo_img_url: normalizeNullableString(branding.logo_img_url),
+    isotype_img_url: normalizeNullableString(branding.isotype_img_url),
+  }
+}
+
+const normalizeConfig = (config) => {
+  if (!config) {
+    return null
+  }
+
+  return {
+    ...config,
+    ui_variant: normalizeVariant(config.ui_variant),
+    branding: normalizeBranding(config.branding),
+  }
 }
 
 const getStoredConfig = () => {
@@ -45,7 +89,7 @@ const getStoredConfig = () => {
   }
 
   try {
-    return JSON.parse(storedConfig)
+    return normalizeConfig(JSON.parse(storedConfig))
   } catch {
     window.localStorage.removeItem(CONFIG_STORAGE_KEY)
     return null
@@ -54,7 +98,7 @@ const getStoredConfig = () => {
 
 const storeConfig = (config) => {
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config))
+    window.localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(normalizeConfig(config)))
   }
 }
 
@@ -95,7 +139,7 @@ export const ConfigProvider = ({ children }) => {
 
     try {
       const { data } = await fetchSiteConfig()
-      const payload = data?.config ?? null
+      const payload = normalizeConfig(data?.config ?? null)
 
       if (!payload) {
         clearStoredConfig()
@@ -113,21 +157,27 @@ export const ConfigProvider = ({ children }) => {
     }
   }, [])
 
-  const updateUiVariant = useCallback(async (variant) => {
+  const updateSiteConfig = useCallback(async (payload) => {
     setUpdating(true)
 
     try {
-      const { data } = await apiClient.put('/admin/settings', {
-        ui_variant: normalizeVariant(variant),
-      })
+      const requestPayload = {
+        ui_variant: normalizeVariant(payload?.ui_variant),
+      }
 
-      const payload = data?.config ?? null
-      if (!payload) {
+      if (payload?.branding) {
+        requestPayload.branding = normalizeBranding(payload.branding)
+      }
+
+      const { data } = await apiClient.put('/admin/settings', requestPayload)
+
+      const nextConfig = normalizeConfig(data?.config ?? null)
+      if (!nextConfig) {
         return { ok: false, reason: 'empty' }
       }
 
-      storeConfig(payload)
-      setConfig(payload)
+      storeConfig(nextConfig)
+      setConfig(nextConfig)
       return { ok: true }
     } catch (err) {
       const status = err?.response?.status
@@ -145,6 +195,11 @@ export const ConfigProvider = ({ children }) => {
     }
   }, [])
 
+  const updateUiVariant = useCallback(
+    async (variant) => updateSiteConfig({ ui_variant: variant }),
+    [updateSiteConfig],
+  )
+
   useEffect(() => {
     let isMounted = true
     const hasCachedConfig = Boolean(getStoredConfig())
@@ -152,7 +207,7 @@ export const ConfigProvider = ({ children }) => {
     const loadConfig = async () => {
       try {
         const { data } = await fetchSiteConfig()
-        const payload = data?.config ?? null
+        const payload = normalizeConfig(data?.config ?? null)
 
         if (!isMounted) {
           return
@@ -201,11 +256,13 @@ export const ConfigProvider = ({ children }) => {
       status,
       error,
       updating,
+      branding: normalizeBranding(config?.branding),
       refreshConfig,
+      updateSiteConfig,
       updateUiVariant,
       uiVariant: normalizeVariant(config?.ui_variant),
     }),
-    [config, status, error, updating, refreshConfig, updateUiVariant],
+    [config, status, error, updating, refreshConfig, updateSiteConfig, updateUiVariant],
   )
 
   return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>

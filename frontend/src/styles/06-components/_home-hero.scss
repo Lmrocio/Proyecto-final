@@ -31,10 +31,22 @@
 
 .home-hero__brand {
   color: #fdf8f2;
+  text-decoration: none;
+}
+
+.home-hero__brand-mark {
+  display: inline-flex;
+  align-items: center;
+}
+
+.home-hero__brand-text {
   font-family: $font-display;
   font-size: 1.35rem;
   font-weight: 700;
-  text-decoration: none;
+}
+
+.home-hero__brand-logo {
+  max-height: 2rem;
 }
 
 .home-hero__login {

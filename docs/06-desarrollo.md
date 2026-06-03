@@ -6,6 +6,32 @@ Theming Engine & Accesibilidad Dinámica: Uso de JSONB en PostgreSQL para almace
 
 Seguridad de Archivos: Implementación de un sistema de gestión de recursos con validación de tipos MIME y límites de tamaño (max 2MB) para prevenir ataques de denegación de servicio y optimizar el almacenamiento del servidor.
 
+## Estrategia de Branding Agnóstico y Fallback de Marca
+
+Para garantizar la flexibilidad de la marca blanca, se ha implementado un sistema de identidad dinámica que prioriza activos gráficos pero asegura una estética profesional mediante wordmarks tipográficos e isotipos basados en iniciales en su ausencia.
+
+La configuración visual del sitio se centraliza en el objeto `branding` de `SiteConfig`, persistido en PostgreSQL como JSONB con la siguiente forma:
+
+```json
+{
+	"site_name": "OpenClassy",
+	"logo_type": "text",
+	"logo_img_url": null,
+	"isotype_img_url": null
+}
+```
+
+Decisiones técnicas aplicadas:
+
+- Backend: `UpdateSiteConfigRequest` valida el payload de branding y `SiteConfigService` normaliza valores por defecto para asegurar consistencia incluso cuando existan configuraciones antiguas o incompletas.
+- Frontend: el componente reutilizable `Brand.jsx` consume `ConfigContext` y resuelve dos modos de representación. Para el logotipo, si `logo_type === 'image'` y existe `logo_img_url`, renderiza la imagen; en caso contrario muestra el `site_name` con la tipografía activa del tema. Para el isotipo, si falta `isotype_img_url`, genera automáticamente iniciales mediante `getInitials(name)`.
+- Panel de administración: `AdminAppearance.jsx` incorpora un formulario para editar nombre del sitio, selector entre logotipo tipográfico o imagen, carga de archivos para logo e isotipo y una vista previa en vivo del fallback visual antes de guardar.
+
+Justificación de persistencia:
+
+- Se mantiene JSONB en PostgreSQL para evitar migraciones rígidas de base de datos cada vez que evolucione la identidad visual de una academia.
+- Este enfoque permite ampliar la estrategia de marca blanca con nuevos atributos sin romper contratos existentes ni forzar cambios estructurales en tablas relacionales ya desplegadas.
+
 ## Estrategia Hibrida de Contenido en Landing
 
 Se adopto una estrategia hibrida para la portada publica del frontend:

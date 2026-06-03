@@ -1,3 +1,5 @@
+@use '../00-settings/variables' as *;
+
 .management {
   display: grid;
   gap: var(--space-3);
@@ -225,6 +227,81 @@
 .admin-config__toggle input:checked::before {
   background: var(--primary-contrast);
   transform: translateX(1.35rem);
+}
+
+.admin-branding,
+.admin-branding__preview,
+.admin-branding__preview-card {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.admin-branding__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.admin-branding__preview {
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  padding: var(--space-3);
+}
+
+.admin-branding__preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-2);
+}
+
+.admin-branding__preview-card {
+  align-content: start;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-2);
+}
+
+.admin-branding__preview-card--meta strong {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1;
+}
+
+.admin-branding__preview-label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-branding__brand-mark,
+.admin-branding__isotype-wrap {
+  min-height: 4rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.admin-branding__brand-name {
+  font-family: $font-display;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 700;
+}
+
+.admin-branding__brand-logo {
+  max-height: 3.2rem;
+}
+
+.admin-branding__isotype-image,
+.admin-branding__initials {
+  width: 3.4rem;
+  height: 3.4rem;
+}
+
+.admin-branding__initials {
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface));
 }
 
 @media (max-width: 64em) {

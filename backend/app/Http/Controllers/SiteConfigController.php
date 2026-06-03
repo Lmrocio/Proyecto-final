@@ -24,7 +24,7 @@ class SiteConfigController extends Controller
     public function update(UpdateSiteConfigRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $config = $this->siteConfigService->updateUiVariant($data['ui_variant']);
+        $config = $this->siteConfigService->updateConfig($data);
 
         return $this->configResponse($request, $config);
     }

@@ -9,6 +9,8 @@ class SiteConfigService
 {
     private const DEFAULT_UI_VARIANT = 'v1';
 
+    private const DEFAULT_SITE_NAME = 'OpenClassy';
+
     private const THEME_PALETTES = [
         'v1' => [
             'primary' => '#333D29',
@@ -50,23 +52,36 @@ class SiteConfigService
             return SiteConfig::create($this->defaultConfig());
         }
 
-        return $this->ensureUiVariant($config);
+        return $this->ensureDefaults($config);
     }
 
-    public function updateUiVariant(string $uiVariant): SiteConfig
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function updateConfig(array $data): SiteConfig
     {
         $config = $this->getConfig();
-        $palette = $this->getThemePalette($uiVariant);
-
-        $config->update([
+        $uiVariant = (string) ($data['ui_variant'] ?? $config->ui_variant ?? self::DEFAULT_UI_VARIANT);
+        $payload = [
             'ui_variant' => $uiVariant,
-            'colors' => $palette,
-        ]);
+            'colors' => $this->getThemePalette($uiVariant),
+        ];
+
+        if (array_key_exists('branding', $data)) {
+            $payload['branding'] = $this->normalizeBranding($data['branding']);
+        }
+
+        $config->update($payload);
 
         return $config->refresh();
     }
 
-    private function ensureUiVariant(SiteConfig $config): SiteConfig
+    public function updateUiVariant(string $uiVariant): SiteConfig
+    {
+        return $this->updateConfig(['ui_variant' => $uiVariant]);
+    }
+
+    private function ensureDefaults(SiteConfig $config): SiteConfig
     {
         $palettes = $this->getThemePalettes();
         $uiVariant = $config->ui_variant;
@@ -75,13 +90,20 @@ class SiteConfigService
             $uiVariant = self::DEFAULT_UI_VARIANT;
         }
 
-        if ($config->ui_variant === $uiVariant && $config->colors === $palettes[$uiVariant]) {
+        $branding = $this->normalizeBranding($config->branding);
+
+        if (
+            $config->ui_variant === $uiVariant
+            && $config->colors === $palettes[$uiVariant]
+            && $config->branding === $branding
+        ) {
             return $config;
         }
 
         $config->update([
             'ui_variant' => $uiVariant,
             'colors' => $palettes[$uiVariant],
+            'branding' => $branding,
         ]);
 
         return $config->refresh();
@@ -117,7 +139,45 @@ class SiteConfigService
         return [
             'theme_name' => 'openclassy',
             'colors' => $this->getThemePalette(self::DEFAULT_UI_VARIANT),
+            'branding' => $this->defaultBranding(),
             'ui_variant' => self::DEFAULT_UI_VARIANT,
         ];
+    }
+
+    /**
+     * @param array<string, mixed>|null $branding
+     * @return array<string, string|null>
+     */
+    private function normalizeBranding(?array $branding): array
+    {
+        $siteName = trim((string) ($branding['site_name'] ?? self::DEFAULT_SITE_NAME));
+        $logoType = $branding['logo_type'] ?? 'text';
+        $logoType = $logoType === 'image' ? 'image' : 'text';
+
+        return [
+            'site_name' => $siteName !== '' ? $siteName : self::DEFAULT_SITE_NAME,
+            'logo_type' => $logoType,
+            'logo_img_url' => $this->normalizeNullableString($branding['logo_img_url'] ?? null),
+            'isotype_img_url' => $this->normalizeNullableString($branding['isotype_img_url'] ?? null),
+        ];
+    }
+
+    /**
+     * @return array<string, string|null>
+     */
+    private function defaultBranding(): array
+    {
+        return $this->normalizeBranding(null);
+    }
+
+    private function normalizeNullableString(mixed $value): ?string
+    {
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $normalized = trim($value);
+
+        return $normalized !== '' ? $normalized : null;
     }
 }

@@ -23,10 +23,12 @@ class Course extends Model
      */
     protected $fillable = [
         'title',
+        'description',
         'teacher_id',
         'meeting_link',
         'start_date',
         'end_date',
+        'schedule',
         'bonus_id',
     ];
 

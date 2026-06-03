@@ -30,21 +30,27 @@ class DatabaseSeeder extends Seeder
         $courses = [
             [
                 'title' => 'General English B1',
+                'description' => 'Curso general de ingles B1 con practica oral, gramatica aplicada y seguimiento semanal.',
                 'meeting_link' => 'https://meet.google.com/abc-defg-hij',
                 'start_date' => now()->startOfWeek()->toDateString(),
                 'end_date' => now()->addMonths(3)->toDateString(),
+                'schedule' => 'L/X 17:00-18:30',
             ],
             [
                 'title' => 'First Certificate Prep',
+                'description' => 'Preparacion intensiva de examen Cambridge con simulacros y feedback individual.',
                 'meeting_link' => null,
                 'start_date' => now()->addWeek()->toDateString(),
                 'end_date' => now()->addMonths(4)->toDateString(),
+                'schedule' => 'M/J 18:00-19:30',
             ],
             [
                 'title' => 'Business English',
+                'description' => 'Ingles profesional para reuniones, presentaciones y comunicacion internacional.',
                 'meeting_link' => 'https://meet.example.com/business-english',
                 'start_date' => now()->addDays(10)->toDateString(),
                 'end_date' => now()->addMonths(2)->toDateString(),
+                'schedule' => 'V 10:00-12:00',
             ],
         ];
 

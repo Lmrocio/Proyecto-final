@@ -92,6 +92,15 @@
   padding-bottom: var(--space-1);
 }
 
+.management__tabs--large {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(10rem, 1fr));
+  width: min(100%, 38rem);
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: var(--space-3);
+}
+
 .management__tab {
   min-height: 2.5rem;
   border: var(--border-subtle);
@@ -108,6 +117,43 @@
   border-color: var(--primary);
   background: var(--primary);
   color: var(--primary-contrast);
+}
+
+.management__search,
+.management__select-filter {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  padding: 0 0.85rem;
+}
+
+.management__search {
+  width: min(100%, 28rem);
+}
+
+.management__select-filter {
+  width: min(100%, 18rem);
+}
+
+.management__search input,
+.management__select-filter select {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-weight: 700;
+}
+
+.management__search input::placeholder {
+  color: var(--text-muted);
 }
 
 .admin-dashboard__topline {
@@ -212,6 +258,10 @@
   gap: 0.4rem;
 }
 
+.management__field--wide {
+  grid-column: 1 / -1;
+}
+
 .management__field input,
 .management__field select,
 .management__field textarea {
@@ -260,6 +310,37 @@
 .management__button--danger {
   border-color: color-mix(in srgb, var(--danger) 45%, transparent);
   background: color-mix(in srgb, var(--danger) 9%, var(--surface));
+  color: var(--danger);
+}
+
+.management__icon-action,
+.management__link-button {
+  min-height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.management__icon-action {
+  width: 2.25rem;
+  padding: 0;
+}
+
+.management__icon-action:hover,
+.management__icon-action:focus-visible,
+.management__link-button:hover,
+.management__link-button:focus-visible {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.management__icon-action--danger {
   color: var(--danger);
 }
 

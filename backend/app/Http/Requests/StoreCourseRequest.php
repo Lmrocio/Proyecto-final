@@ -18,10 +18,12 @@ class StoreCourseRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'teacher_id' => ['required', 'string', 'uuid', 'exists:users,id'],
             'meeting_link' => ['nullable', 'url', 'max:500'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'schedule' => ['nullable', 'string', 'max:255'],
             'bonus_id' => ['nullable', 'string', 'uuid', 'exists:bonuses,id'],
         ];
     }

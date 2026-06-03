@@ -19,7 +19,7 @@ class EnrollmentController extends Controller
 
         $query = Enrollment::query()
             ->visibleTo($user)
-            ->with(['student:id,name,email,role', 'course:id,title,teacher_id'])
+            ->with(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])
             ->latest();
 
         if ($request->filled('course_id')) {
@@ -64,21 +64,21 @@ class EnrollmentController extends Controller
 
         $status = $enrollment->wasRecentlyCreated ? Response::HTTP_CREATED : Response::HTTP_OK;
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), $status);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), $status);
     }
 
     public function show(Request $request, Enrollment $enrollment): JsonResponse
     {
         $this->authorize('view', $enrollment);
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
     }
 
     public function update(UpdateEnrollmentRequest $request, Enrollment $enrollment): JsonResponse
     {
         $enrollment->update($request->validated());
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,email,role', 'course:id,title,teacher_id'])), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
     }
 
     public function destroy(Enrollment $enrollment): JsonResponse

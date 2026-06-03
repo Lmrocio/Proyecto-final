@@ -1,30 +1,31 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Pencil, Plus, RefreshCcw, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Filter, Pencil, Plus, Search, Trash2, Users } from 'lucide-react'
 import Modal from '../../components/Modal'
 import { apiClient } from '../../services/apiClient'
-import { dataItems, formatDate, getErrorMessage, updateFormField } from './adminPageUtils'
+import { dataItems, formatDate, getErrorMessage, getUserFullName, normalizeSearchText, updateFormField } from './adminPageUtils'
 
-const initialCourseForm = { title: '', teacher_id: '', meeting_link: '', start_date: '2026-06-01', end_date: '2026-07-31', bonus_id: '' }
-const initialEnrollmentForm = { student_id: '', course_id: '', status: 'active' }
+const initialCourseForm = {
+  title: '',
+  description: '',
+  teacher_id: '',
+  meeting_link: '',
+  start_date: '2026-06-01',
+  end_date: '2026-07-31',
+  schedule: '',
+  bonus_id: '',
+}
 
 const CourseForm = ({ bonuses, form, onChange, onSubmit, teachers }) => (
   <form className="management__form management__grid" onSubmit={onSubmit}>
-    <label className="management__field"><span>Título</span><input name="title" value={form.title} onChange={onChange} required /></label>
-    <label className="management__field"><span>Profesor</span><select name="teacher_id" value={form.teacher_id} onChange={onChange} required><option value="">Selecciona profesor</option>{teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name}</option>)}</select></label>
+    <label className="management__field"><span>Nombre curso</span><input name="title" value={form.title} onChange={onChange} required /></label>
+    <label className="management__field"><span>Docente</span><select name="teacher_id" value={form.teacher_id} onChange={onChange} required><option value="">Selecciona docente</option>{teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{getUserFullName(teacher)}</option>)}</select></label>
     <label className="management__field"><span>Inicio</span><input name="start_date" type="date" value={form.start_date} onChange={onChange} required /></label>
     <label className="management__field"><span>Fin</span><input name="end_date" type="date" value={form.end_date} onChange={onChange} required /></label>
+    <label className="management__field"><span>Horarios</span><input name="schedule" value={form.schedule} onChange={onChange} placeholder="L/X 17:00-18:30" /></label>
+    <label className="management__field"><span>Bono asociado</span><select name="bonus_id" value={form.bonus_id} onChange={onChange}><option value="">Sin bono</option>{bonuses.map((bonus) => <option key={bonus.id} value={bonus.id}>{bonus.name}</option>)}</select></label>
     <label className="management__field"><span>Videollamada</span><input name="meeting_link" type="url" value={form.meeting_link} onChange={onChange} /></label>
-    <label className="management__field"><span>Bono</span><select name="bonus_id" value={form.bonus_id} onChange={onChange}><option value="">Sin bono</option>{bonuses.map((bonus) => <option key={bonus.id} value={bonus.id}>{bonus.name}</option>)}</select></label>
+    <label className="management__field management__field--wide"><span>Descripción</span><textarea name="description" rows="3" value={form.description} onChange={onChange} /></label>
     <button className="management__button management__button--primary" type="submit">Guardar curso</button>
-  </form>
-)
-
-const EnrollmentForm = ({ courses, form, onChange, onSubmit, students }) => (
-  <form className="management__form management__grid" onSubmit={onSubmit}>
-    <label className="management__field"><span>Alumno</span><select name="student_id" value={form.student_id} onChange={onChange} required><option value="">Selecciona alumno</option>{students.map((student) => <option key={student.id} value={student.id}>{student.name}</option>)}</select></label>
-    <label className="management__field"><span>Curso</span><select name="course_id" value={form.course_id} onChange={onChange} required><option value="">Selecciona curso</option>{courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}</select></label>
-    <label className="management__field"><span>Estado</span><select name="status" value={form.status} onChange={onChange}><option value="active">Activa</option><option value="inactive">Inactiva</option></select></label>
-    <button className="management__button management__button--primary" type="submit">Guardar matrícula</button>
   </form>
 )
 
@@ -33,17 +34,17 @@ const AdminCourses = () => {
   const [courses, setCourses] = useState([])
   const [enrollments, setEnrollments] = useState([])
   const [bonuses, setBonuses] = useState([])
-  const [activeTab, setActiveTab] = useState('courses')
-  const [modalType, setModalType] = useState(null)
+  const [modalMode, setModalMode] = useState(null)
   const [editingCourseId, setEditingCourseId] = useState(null)
   const [courseForm, setCourseForm] = useState(initialCourseForm)
-  const [enrollmentForm, setEnrollmentForm] = useState(initialEnrollmentForm)
+  const [studentListCourse, setStudentListCourse] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [teacherFilter, setTeacherFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [feedback, setFeedback] = useState('')
 
-  const teachers = users.filter((item) => item.role === 'teacher')
-  const students = users.filter((item) => item.role === 'student')
+  const teachers = useMemo(() => users.filter((item) => item.role === 'teacher'), [users])
 
   const loadCoursesData = useCallback(async () => {
     setIsLoading(true)
@@ -72,124 +73,162 @@ const AdminCourses = () => {
     Promise.resolve().then(loadCoursesData)
   }, [loadCoursesData])
 
+  const filteredCourses = useMemo(() => {
+    const normalizedSearch = normalizeSearchText(searchTerm)
+
+    return courses.filter((course) => {
+      const teacher = users.find((item) => item.id === course.teacher_id) ?? course.teacher
+      const haystack = normalizeSearchText(`${course.title} ${course.description ?? ''} ${course.schedule ?? ''} ${getUserFullName(teacher)}`)
+      const matchesSearch = !normalizedSearch || haystack.includes(normalizedSearch)
+      const matchesTeacher = teacherFilter === 'all' || course.teacher_id === teacherFilter
+
+      return matchesSearch && matchesTeacher
+    })
+  }, [courses, searchTerm, teacherFilter, users])
+
+  const studentsForCourse = (courseId) => enrollments
+    .filter((enrollment) => enrollment.course_id === courseId && enrollment.status === 'active')
+    .map((enrollment) => users.find((user) => user.id === enrollment.student_id) ?? enrollment.student)
+    .filter(Boolean)
+
   const openCreateCourse = () => {
     setCourseForm(initialCourseForm)
     setEditingCourseId(null)
-    setModalType('course')
+    setModalMode('course')
+    setFeedback('')
   }
 
   const openEditCourse = (course) => {
     setCourseForm({
       title: course.title ?? '',
+      description: course.description ?? '',
       teacher_id: course.teacher_id ?? '',
       meeting_link: course.meeting_link ?? '',
       start_date: course.start_date?.slice(0, 10) ?? '',
       end_date: course.end_date?.slice(0, 10) ?? '',
+      schedule: course.schedule ?? '',
       bonus_id: course.bonus_id ?? '',
     })
     setEditingCourseId(course.id)
-    setModalType('course')
+    setModalMode('course')
+    setFeedback('')
   }
 
-  const openCreateEnrollment = () => {
-    setEnrollmentForm(initialEnrollmentForm)
-    setModalType('enrollment')
-  }
-
-  const closeModal = () => {
-    setModalType(null)
+  const closeCourseModal = () => {
+    setModalMode(null)
     setEditingCourseId(null)
     setCourseForm(initialCourseForm)
-    setEnrollmentForm(initialEnrollmentForm)
   }
 
   const saveCourse = async (event) => {
     event.preventDefault()
 
     try {
-      const payload = { ...courseForm, bonus_id: courseForm.bonus_id || null, meeting_link: courseForm.meeting_link || null }
+      const payload = {
+        ...courseForm,
+        description: courseForm.description || null,
+        bonus_id: courseForm.bonus_id || null,
+        meeting_link: courseForm.meeting_link || null,
+        schedule: courseForm.schedule || null,
+      }
+
       if (editingCourseId) {
-        const { data } = await apiClient.put(`/courses/${editingCourseId}`, payload)
-        setCourses((currentCourses) => currentCourses.map((course) => (course.id === data.id ? data : course)))
+        await apiClient.put(`/courses/${editingCourseId}`, payload)
         setFeedback('Curso actualizado correctamente.')
       } else {
-        const { data } = await apiClient.post('/courses', payload)
-        setCourses((currentCourses) => [data, ...currentCourses])
+        await apiClient.post('/courses', payload)
         setFeedback('Curso creado correctamente.')
       }
-      closeModal()
+
+      closeCourseModal()
+      await loadCoursesData()
     } catch (requestError) {
       setFeedback(getErrorMessage(requestError, 'No se pudo guardar el curso.'))
     }
   }
 
-  const createEnrollment = async (event) => {
-    event.preventDefault()
-
-    try {
-      const { data } = await apiClient.post('/enrollments', enrollmentForm)
-      setEnrollments((currentEnrollments) => [data, ...currentEnrollments.filter((item) => item.id !== data.id)])
-      closeModal()
-      setFeedback('Matrícula guardada correctamente.')
-    } catch (requestError) {
-      setFeedback(getErrorMessage(requestError, 'No se pudo guardar la matrícula.'))
-    }
-  }
-
-  const deleteResource = async (resource, id, setter, successMessage) => {
-    if (!window.confirm('¿Eliminar este registro?')) {
+  const deleteCourse = async (course) => {
+    if (!window.confirm('¿Eliminar este curso?')) {
       return
     }
 
     try {
-      await apiClient.delete(`/${resource}/${id}`)
-      setter((currentItems) => currentItems.filter((item) => item.id !== id))
-      setFeedback(successMessage)
+      await apiClient.delete(`/courses/${course.id}`)
+      setCourses((currentCourses) => currentCourses.filter((item) => item.id !== course.id))
+      setFeedback('Curso eliminado correctamente.')
     } catch (requestError) {
-      setFeedback(getErrorMessage(requestError, 'No se pudo eliminar el registro.'))
-    }
-  }
-
-  const updateEnrollmentStatus = async (enrollment, statusValue) => {
-    try {
-      const { data } = await apiClient.put(`/enrollments/${enrollment.id}`, { status: statusValue })
-      setEnrollments((currentEnrollments) => currentEnrollments.map((item) => (item.id === data.id ? data : item)))
-      setFeedback('Estado de matrícula actualizado.')
-    } catch (requestError) {
-      setFeedback(getErrorMessage(requestError, 'No se pudo actualizar la matrícula.'))
+      setFeedback(getErrorMessage(requestError, 'No se pudo eliminar el curso.'))
     }
   }
 
   return (
     <section className="management management__page" aria-labelledby="admin-courses-title">
-      <header className="management__header">
-        <div><p className="management__eyebrow">Academia</p><h1 className="management__title" id="admin-courses-title">Cursos y matrículas</h1><p className="management__subtitle">Gestiona grupos, profesores asignados y matriculaciones activas.</p></div>
-        <div className="management__actions">
-          <button className="management__button management__button--secondary" type="button" onClick={loadCoursesData} disabled={isLoading}><RefreshCcw size={16} aria-hidden="true" />Actualizar</button>
-          <button className="management__button management__button--primary" type="button" onClick={activeTab === 'courses' ? openCreateCourse : openCreateEnrollment}><Plus size={16} aria-hidden="true" />{activeTab === 'courses' ? 'Nuevo curso' : 'Nueva matrícula'}</button>
-        </div>
-      </header>
+      <h1 className="u-visually-hidden" id="admin-courses-title">Cursos</h1>
+
+      <div className="management__toolbar">
+        <label className="management__search">
+          <Search size={18} aria-hidden="true" />
+          <input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Buscar curso" aria-label="Buscar curso" />
+        </label>
+        <label className="management__select-filter">
+          <Filter size={18} aria-hidden="true" />
+          <select value={teacherFilter} onChange={(event) => setTeacherFilter(event.target.value)} aria-label="Filtrar cursos por docente">
+            <option value="all">Todos los docentes</option>
+            {teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{getUserFullName(teacher)}</option>)}
+          </select>
+        </label>
+        <button className="management__button management__button--primary" type="button" onClick={openCreateCourse}><Plus size={16} aria-hidden="true" />Añadir curso</button>
+      </div>
 
       {feedback ? <p className="management__feedback" role="status">{feedback}</p> : null}
       {error ? <p className="management__notice" role="alert">{error}</p> : null}
 
       <section className="management__section" aria-busy={isLoading}>
-        <div className="management__tabs" role="tablist" aria-label="Gestión de cursos">
-          <button className={activeTab === 'courses' ? 'management__tab management__tab--active' : 'management__tab'} type="button" role="tab" aria-selected={activeTab === 'courses'} onClick={() => setActiveTab('courses')}>Cursos</button>
-          <button className={activeTab === 'enrollments' ? 'management__tab management__tab--active' : 'management__tab'} type="button" role="tab" aria-selected={activeTab === 'enrollments'} onClick={() => setActiveTab('enrollments')}>Matrículas</button>
-        </div>
+        <div className="management__table-wrap">
+          <table className="management__table">
+            <thead><tr><th>Nombre curso</th><th>Descripción</th><th>Fechas</th><th>Horarios</th><th>Docente</th><th>Alumnado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              {filteredCourses.map((course) => {
+                const teacher = users.find((item) => item.id === course.teacher_id) ?? course.teacher
+                const activeStudents = studentsForCourse(course.id)
 
-        {activeTab === 'courses' ? (
-          <div className="management__table-wrap"><table className="management__table"><thead><tr><th>Curso</th><th>Profesor</th><th>Fechas</th><th>Acciones</th></tr></thead><tbody>{courses.map((course) => <tr key={course.id}><td><strong>{course.title}</strong><p className="management__table-meta">{course.meeting_link ?? 'Sin videollamada'}</p></td><td>{course.teacher?.name ?? course.teacher_id}</td><td>{formatDate(course.start_date)} - {formatDate(course.end_date)}</td><td><div className="management__row-actions"><button className="management__button management__button--secondary" type="button" onClick={() => openEditCourse(course)}><Pencil size={15} aria-hidden="true" />Editar</button><button className="management__button management__button--danger" type="button" onClick={() => deleteResource('courses', course.id, setCourses, 'Curso eliminado.')}><Trash2 size={15} aria-hidden="true" />Eliminar</button></div></td></tr>)}</tbody></table></div>
-        ) : (
-          <div className="management__table-wrap"><table className="management__table"><thead><tr><th>Alumno</th><th>Curso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{enrollments.map((enrollment) => <tr key={enrollment.id}><td>{enrollment.student?.name ?? enrollment.student_id}</td><td>{enrollment.course?.title ?? enrollment.course_id}</td><td><select value={enrollment.status} onChange={(event) => updateEnrollmentStatus(enrollment, event.target.value)}><option value="active">Activa</option><option value="inactive">Inactiva</option></select></td><td><button className="management__button management__button--danger" type="button" onClick={() => deleteResource('enrollments', enrollment.id, setEnrollments, 'Matrícula eliminada.')}><Trash2 size={15} aria-hidden="true" />Eliminar</button></td></tr>)}</tbody></table></div>
-        )}
+                return (
+                  <tr key={course.id}>
+                    <td><strong>{course.title}</strong></td>
+                    <td>{course.description ?? '-'}</td>
+                    <td>{formatDate(course.start_date)} - {formatDate(course.end_date)}</td>
+                    <td>{course.schedule ?? '-'}</td>
+                    <td>{getUserFullName(teacher)}</td>
+                    <td><button className="management__link-button" type="button" onClick={() => setStudentListCourse(course)}><Users size={16} aria-hidden="true" />{course.students_count ?? activeStudents.length}</button></td>
+                    <td>
+                      <div className="management__row-actions">
+                        <button className="management__icon-action" type="button" title="Editar" aria-label={`Editar ${course.title}`} onClick={() => openEditCourse(course)}><Pencil size={18} aria-hidden="true" /></button>
+                        <button className="management__icon-action management__icon-action--danger" type="button" title="Eliminar" aria-label={`Eliminar ${course.title}`} onClick={() => deleteCourse(course)}><Trash2 size={18} aria-hidden="true" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+        {!isLoading && filteredCourses.length === 0 ? <p className="management__empty">No hay cursos registrados.</p> : null}
       </section>
 
-      <Modal isOpen={Boolean(modalType)} onClose={closeModal} title={modalType === 'enrollment' ? 'Nueva matrícula' : editingCourseId ? 'Editar curso' : 'Nuevo curso'}>
-        {modalType === 'enrollment'
-          ? <EnrollmentForm courses={courses} form={enrollmentForm} onChange={updateFormField(setEnrollmentForm)} onSubmit={createEnrollment} students={students} />
-          : <CourseForm bonuses={bonuses} form={courseForm} onChange={updateFormField(setCourseForm)} onSubmit={saveCourse} teachers={teachers} />}
+      <Modal isOpen={Boolean(modalMode)} onClose={closeCourseModal} title={editingCourseId ? 'Editar curso' : 'Añadir curso'}>
+        <CourseForm bonuses={bonuses} form={courseForm} onChange={updateFormField(setCourseForm)} onSubmit={saveCourse} teachers={teachers} />
+      </Modal>
+
+      <Modal isOpen={Boolean(studentListCourse)} onClose={() => setStudentListCourse(null)} title={`Alumnado de ${studentListCourse?.title ?? 'curso'}`}>
+        <div className="management__list">
+          {studentListCourse ? studentsForCourse(studentListCourse.id).map((student) => (
+            <article className="management__item" key={student.id}>
+              <h3 className="management__item-title">{getUserFullName(student)}</h3>
+              <p className="management__item-copy">{student.email} · {student.phone ?? 'Sin teléfono'}</p>
+            </article>
+          )) : null}
+          {studentListCourse && studentsForCourse(studentListCourse.id).length === 0 ? <p className="management__empty">No hay alumnos activos en este curso.</p> : null}
+        </div>
       </Modal>
     </section>
   )

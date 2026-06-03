@@ -2,14 +2,14 @@
 @forward './student-layout';
 
 .admin-layout {
-	--surface: #e7e1da;
-	--surface-strong: #d3c8bb;
-	--primary: #a1896e;
+	--surface: #f3f3f3;
+	--surface-strong: #d0d0d0;
+	--primary: #5f5f5f;
 	--primary-contrast: #ffffff;
-	--border-subtle: 1px solid #bfaf9c;
-	--text-main: #2e251c;
-	--text-muted: #ab967d;
-	--accent: #d88e45;
+	--border-subtle: 1px solid #b8b8b8;
+	--text-main: #151515;
+	--text-muted: #555555;
+	--accent: #8a8a8a;
 	--ok: #46AA03;
 	--danger: #BD2709;
 	--warning: #F7BB07;
@@ -17,7 +17,7 @@
 
 	min-height: 100vh;
 	display: grid;
-	grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+	grid-template-columns: minmax(13rem, 15.5rem) minmax(0, 1fr);
 	background: var(--surface);
 	color: var(--text-main);
 }
@@ -48,6 +48,7 @@
 }
 
 .admin-layout__brand {
+	font-size: clamp(1.75rem, 3vw, 2rem);
 	font-weight: 900;
 }
 
@@ -85,6 +86,17 @@
 	color: var(--text-main);
 }
 
+.admin-layout__profile div {
+	display: grid;
+	gap: 0.1rem;
+}
+
+.admin-layout__profile span:not(.admin-layout__profile-icon) {
+	color: var(--text-main);
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
 .admin-layout__profile-icon {
 	width: 2rem;
 	aspect-ratio: 1;
@@ -97,10 +109,10 @@
 
 .admin-layout__logout {
 	min-height: 2.65rem;
-	border: 1px solid var(--danger);
-	background: transparent;
+	border: var(--border-subtle);
+	background: var(--primary);
 	justify-content: center;
-	color: var(--danger);
+	color: var(--primary-contrast);
 	font-weight: 800;
 	transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }

@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('users', UserController::class);
 
         Route::get('/level-tests', [LevelTestController::class, 'index']);
+    Route::delete('/level-tests/{levelTest}', [LevelTestController::class, 'destroy']);
 
         Route::put('/admin/settings', [SiteConfigController::class, 'update']);
 

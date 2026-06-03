@@ -97,6 +97,13 @@ PROMPT;
         );
     }
 
+    public function destroy(LevelTest $levelTest): JsonResponse
+    {
+        $levelTest->delete();
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
     private function resolveCorrectionErrorMessage(LevelTestCorrectionException $exception): string
     {
         $message = $exception->getMessage();

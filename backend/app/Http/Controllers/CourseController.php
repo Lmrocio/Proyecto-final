@@ -20,7 +20,10 @@ class CourseController extends Controller
 
         $query = Course::query()
             ->visibleTo($user)
-            ->with(['teacher:id,name,email', 'bonus:id,name,type,price'])
+            ->with(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])
+            ->withCount([
+                'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
+            ])
             ->latest();
 
         if ($request->filled('teacher_id')) {
@@ -51,7 +54,9 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-        return response()->json(new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])), Response::HTTP_CREATED);
+        return response()->json(new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+            'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
+        ])), Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Course $course): JsonResponse
@@ -59,7 +64,9 @@ class CourseController extends Controller
         $this->authorize('view', $course);
 
         return response()->json(
-            new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])),
+            new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+                'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
+            ])),
             Response::HTTP_OK
         );
     }
@@ -89,7 +96,9 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        return response()->json(new CourseResource($course->load(['teacher:id,name,email', 'bonus:id,name,type,price'])), Response::HTTP_OK);
+        return response()->json(new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+            'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
+        ])), Response::HTTP_OK);
     }
 
     public function destroy(Course $course): JsonResponse

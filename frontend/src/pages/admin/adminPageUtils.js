@@ -7,6 +7,41 @@ export const updateFormField = (setter) => (event) => {
   setter((currentForm) => ({ ...currentForm, [name]: value }))
 }
 
+export const getUserFirstName = (user) => String(user?.first_name ?? user?.name?.split?.(/\s+/)?.[0] ?? '').trim()
+
+export const getUserLastName = (user) => {
+  const currentLastName = String(user?.last_name ?? '').trim()
+
+  if (currentLastName) {
+    return currentLastName
+  }
+
+  const [, derivedLastName = ''] = String(user?.name ?? '').trim().split(/\s+/, 2)
+
+  return derivedLastName
+}
+
+export const getUserFullName = (user) => {
+  const fullName = `${getUserFirstName(user)} ${getUserLastName(user)}`.trim()
+
+  return fullName || user?.name || '-'
+}
+
+export const getUserSortableName = (user) => {
+  const firstName = getUserFirstName(user)
+  const lastName = getUserLastName(user)
+
+  return lastName ? `${lastName}, ${firstName}` : firstName || user?.name || '-'
+}
+
+export const normalizeSearchText = (value) => String(value ?? '').trim().toLocaleLowerCase('es-ES')
+
+export const roleLabels = {
+  student: 'Alumno',
+  teacher: 'Docente',
+  admin: 'Administrador',
+}
+
 export const formatDate = (value) => {
   if (!value) {
     return '-'

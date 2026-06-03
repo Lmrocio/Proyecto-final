@@ -18,10 +18,12 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'teacher_id' => ['sometimes', 'string', 'uuid', 'exists:users,id'],
             'meeting_link' => ['nullable', 'url', 'max:500'],
             'start_date' => ['sometimes', 'date'],
             'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
+            'schedule' => ['nullable', 'string', 'max:255'],
             'bonus_id' => ['nullable', 'string', 'uuid', 'exists:bonuses,id'],
         ];
     }

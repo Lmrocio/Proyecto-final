@@ -19,6 +19,9 @@ class AdminDashboardController extends Controller
             'active_students' => User::query()
                 ->where('role', 'student')
                 ->count(),
+            'active_teachers' => User::query()
+                ->where('role', 'teacher')
+                ->count(),
             'active_courses' => Course::query()
                 ->whereDate('start_date', '<=', $today)
                 ->whereDate('end_date', '>=', $today)

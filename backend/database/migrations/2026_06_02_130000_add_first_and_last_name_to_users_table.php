@@ -7,16 +7,33 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    public $withinTransaction = false;
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table): void {
-            $table->string('first_name')->default('')->after('id');
-            $table->string('last_name')->default('')->after('first_name');
-            $table->index(['last_name', 'first_name']);
-        });
+        $addFirstName = !Schema::hasColumn('users', 'first_name');
+        $addLastName = !Schema::hasColumn('users', 'last_name');
+
+        if ($addFirstName || $addLastName) {
+            Schema::table('users', function (Blueprint $table): void {
+                if (!Schema::hasColumn('users', 'first_name')) {
+                    $table->string('first_name')->default('');
+                }
+
+                if (!Schema::hasColumn('users', 'last_name')) {
+                    $table->string('last_name')->default('');
+                }
+            });
+        }
+
+        if (!Schema::hasIndex('users', ['last_name', 'first_name'])) {
+            Schema::table('users', function (Blueprint $table): void {
+                $table->index(['last_name', 'first_name']);
+            });
+        }
 
         DB::table('users')
             ->select(['id', 'name'])
@@ -46,9 +63,20 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::hasIndex('users', ['last_name', 'first_name'])) {
+            Schema::table('users', function (Blueprint $table): void {
+                $table->dropIndex(['last_name', 'first_name']);
+            });
+        }
+
         Schema::table('users', function (Blueprint $table): void {
-            $table->dropIndex(['last_name', 'first_name']);
-            $table->dropColumn(['first_name', 'last_name']);
+            if (Schema::hasColumn('users', 'first_name')) {
+                $table->dropColumn('first_name');
+            }
+
+            if (Schema::hasColumn('users', 'last_name')) {
+                $table->dropColumn('last_name');
+            }
         });
     }
 };

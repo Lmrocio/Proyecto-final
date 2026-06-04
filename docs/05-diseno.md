@@ -34,8 +34,11 @@ El modelo de datos ha sido diseñado para cubrir de forma integral las necesidad
 | :--- | :--- | :--- | :--- |
 | id | UUID | PK | Identificador único universal. |
 | name | String | Not Null | Nombre completo del usuario. |
+| first_name | String | Nullable | Nombre de pila normalizado para búsqueda, ordenación y gestión administrativa. |
+| last_name | String | Nullable | Apellidos normalizados para listados académicos y exportaciones futuras. |
 | email | String | Unique, Not Null | Correo electrónico de acceso. |
 | role | Enum | admin, teacher, student | Rol para control de acceso (RBAC). |
+| is_active | Boolean | Default True, Indexed | Estado operativo del usuario. Permite desactivar la cuenta sin eliminar su historial académico ni administrativo. |
 | accessibility_settings | JSONB | Nullable | Configuración de UI (dislexia, daltonismo). |
 | profile_photo | String | Nullable | Ruta a la imagen de perfil. |
 

@@ -9,17 +9,18 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
     public function recipients(Request $request): JsonResponse
     {
-        $users = User::query()
-            ->whereKeyNot($request->user()?->id)
-            ->orderByRaw("LOWER(COALESCE(last_name, ''))")
-            ->orderByRaw("LOWER(COALESCE(first_name, name))")
-            ->get(['id', 'name', 'first_name', 'last_name', 'email', 'role']);
+        $columns = $this->hasSplitNameColumns()
+            ? ['id', 'name', 'first_name', 'last_name', 'email', 'role']
+            : ['id', 'name', 'email', 'role'];
+        $users = $this->applyUserOrdering(User::query()->whereKeyNot($request->user()?->id))
+            ->get($columns);
 
         return response()->json([
             'data' => UserResource::collection($users)->resolve($request),
@@ -28,10 +29,7 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()
-            ->orderByRaw("LOWER(COALESCE(last_name, ''))")
-            ->orderByRaw("LOWER(COALESCE(first_name, name))")
-            ->orderBy('created_at');
+        $query = $this->applyUserOrdering(User::query());
 
         if ($request->filled('role')) {
             $query->where('role', $request->string('role'));
@@ -62,6 +60,12 @@ class UserController extends Controller
     {
         $data = $this->normalizeNamePayload($request->validated());
 
+        if ($request->user()?->is($user) && array_key_exists('is_active', $data) && $data['is_active'] === false) {
+            return response()->json([
+                'message' => 'You cannot deactivate your own account.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         if (array_key_exists('password', $data)) {
             $data['password'] = Hash::make($data['password']);
         }
@@ -90,6 +94,7 @@ class UserController extends Controller
      */
     private function normalizeNamePayload(array $data): array
     {
+        $hasSplitNameColumns = $this->hasSplitNameColumns();
         $firstName = array_key_exists('first_name', $data)
             ? trim((string) ($data['first_name'] ?? ''))
             : null;
@@ -118,7 +123,39 @@ class UserController extends Controller
             $data['name'] = trim((string) ($firstName ?? '').' '.(string) ($lastName ?? ''));
         }
 
+        if (!$hasSplitNameColumns) {
+            unset($data['first_name'], $data['last_name']);
+        }
+
+        if (!$this->hasActiveStatusColumn()) {
+            unset($data['is_active']);
+        }
+
         return $data;
+    }
+
+    private function hasSplitNameColumns(): bool
+    {
+        return Schema::hasColumn('users', 'first_name') && Schema::hasColumn('users', 'last_name');
+    }
+
+    private function hasActiveStatusColumn(): bool
+    {
+        return Schema::hasColumn('users', 'is_active');
+    }
+
+    private function applyUserOrdering(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        if ($this->hasSplitNameColumns()) {
+            return $query
+                ->orderByRaw("LOWER(COALESCE(last_name, ''))")
+                ->orderByRaw("LOWER(COALESCE(first_name, name))")
+                ->orderBy('created_at');
+        }
+
+        return $query
+            ->orderByRaw('LOWER(name)')
+            ->orderBy('created_at');
     }
 
     /**

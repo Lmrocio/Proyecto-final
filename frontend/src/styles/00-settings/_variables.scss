@@ -11,6 +11,11 @@ $brand-success: #4baf08;
 $brand-info: #10abd5;
 $brand-alert: #f7bb07;
 
+$berry-900: #9f223d;
+$berry-700: #ca4763;
+$berry-300: #ee9cad;
+$berry-100: #ffdbe3;
+
 $font-main: 'Space Grotesk', sans-serif;
 $font-display: 'Fraunces', serif;
 
@@ -33,6 +38,11 @@ $bp-xl: 1200px;
   --status-success: #{$brand-success};
   --status-info: #{$brand-info};
   --status-warning: #{$brand-alert};
+
+  --berry-900: #{$berry-900};
+  --berry-700: #{$berry-700};
+  --berry-300: #{$berry-300};
+  --berry-100: #{$berry-100};
 
   --space-xs: 0.25rem;
   --space-s: 0.5rem;

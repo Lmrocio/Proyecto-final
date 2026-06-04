@@ -42,6 +42,7 @@ class RoleUsersSeeder extends Seeder
                     'last_name' => $data['last_name'],
                     'name' => trim($data['first_name'].' '.$data['last_name']),
                     'role' => $data['role'],
+                    'is_active' => true,
                     'password' => Hash::make('Password123!'),
                     'phone' => null,
                     'profile_photo' => null,

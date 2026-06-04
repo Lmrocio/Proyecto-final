@@ -11,14 +11,14 @@ const USER_TABS = [
   },
   {
     role: 'teacher',
-    label: 'Docentes',
+    label: 'Docente',
     createLabel: 'Añadir usuario',
     emptyText: 'No hay docentes registrados.',
     description: 'Gestiona las cuentas de profesores responsables de los grupos.',
   },
   {
     role: 'admin',
-    label: 'Administradores',
+    label: 'Administrador',
     createLabel: 'Añadir usuario',
     emptyText: 'No hay administradores registrados.',
     description: 'Gestiona las cuentas con permisos completos de administración.',

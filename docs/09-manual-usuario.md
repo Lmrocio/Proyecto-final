@@ -50,6 +50,7 @@ Esta funcionalidad está pensada como apoyo al diagnóstico inicial y no sustitu
 El administrador dispone del mayor nivel de control sobre la plataforma. Puede:
 
 *   Crear, consultar, editar y eliminar usuarios.
+*   Activar o desactivar usuarios sin eliminar su expediente. Esta opción permite conservar en la base de datos a alumnos que probablemente volverán a la academia, manteniendo su historial académico y administrativo disponible para una futura reactivación.
 *   Crear y gestionar cursos.
 *   Gestionar matrículas y bonos.
 *   Modificar la variante visual del sitio desde la configuración administrativa.

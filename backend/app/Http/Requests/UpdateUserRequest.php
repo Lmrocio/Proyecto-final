@@ -33,6 +33,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($routeUser->id),
             ],
             'role' => ['sometimes', 'in:admin,teacher,student'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['sometimes', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
             'phone' => ['nullable', 'string', 'max:30'],
             'profile_photo' => ['nullable', 'string', 'max:255'],

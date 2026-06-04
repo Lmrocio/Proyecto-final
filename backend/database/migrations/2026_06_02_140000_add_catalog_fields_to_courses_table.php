@@ -6,15 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    public $withinTransaction = false;
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('courses', function (Blueprint $table): void {
-            $table->text('description')->nullable()->after('title');
-            $table->string('schedule')->nullable()->after('end_date');
-        });
+        if (!Schema::hasColumn('courses', 'description') || !Schema::hasColumn('courses', 'schedule')) {
+            Schema::table('courses', function (Blueprint $table): void {
+                if (!Schema::hasColumn('courses', 'description')) {
+                    $table->text('description')->nullable();
+                }
+
+                if (!Schema::hasColumn('courses', 'schedule')) {
+                    $table->string('schedule')->nullable();
+                }
+            });
+        }
     }
 
     /**
@@ -23,7 +32,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('courses', function (Blueprint $table): void {
-            $table->dropColumn(['description', 'schedule']);
+            if (Schema::hasColumn('courses', 'description')) {
+                $table->dropColumn('description');
+            }
+
+            if (Schema::hasColumn('courses', 'schedule')) {
+                $table->dropColumn('schedule');
+            }
         });
     }
 };

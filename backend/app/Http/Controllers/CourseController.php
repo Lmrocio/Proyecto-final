@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\CourseContentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
 class CourseController extends Controller
@@ -20,7 +21,7 @@ class CourseController extends Controller
 
         $query = Course::query()
             ->visibleTo($user)
-            ->with(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])
+            ->with([$this->teacherRelation(), 'bonus:id,name,type,price'])
             ->withCount([
                 'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
             ])
@@ -54,7 +55,7 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-        return response()->json(new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+        return response()->json(new CourseResource($course->load([$this->teacherRelation(), 'bonus:id,name,type,price'])->loadCount([
             'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
         ])), Response::HTTP_CREATED);
     }
@@ -64,7 +65,7 @@ class CourseController extends Controller
         $this->authorize('view', $course);
 
         return response()->json(
-            new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+            new CourseResource($course->load([$this->teacherRelation(), 'bonus:id,name,type,price'])->loadCount([
                 'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
             ])),
             Response::HTTP_OK
@@ -96,7 +97,7 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        return response()->json(new CourseResource($course->load(['teacher:id,name,first_name,last_name,email', 'bonus:id,name,type,price'])->loadCount([
+        return response()->json(new CourseResource($course->load([$this->teacherRelation(), 'bonus:id,name,type,price'])->loadCount([
             'enrollments as active_students_count' => fn ($enrollmentQuery) => $enrollmentQuery->where('status', 'active'),
         ])), Response::HTTP_OK);
     }
@@ -106,5 +107,14 @@ class CourseController extends Controller
         $course->delete();
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    private function teacherRelation(): string
+    {
+        if (Schema::hasColumn('users', 'first_name') && Schema::hasColumn('users', 'last_name')) {
+            return 'teacher:id,name,first_name,last_name,email';
+        }
+
+        return 'teacher:id,name,email';
     }
 }

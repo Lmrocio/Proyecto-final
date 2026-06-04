@@ -29,6 +29,7 @@ const AdminLayout = () => {
       <aside className="admin-layout__sidebar" aria-label="Navegación de administración">
         <NavLink className="admin-layout__brand" to="/admin" end>
           <span>OpenClassy</span>
+          <small>Panel de control</small>
         </NavLink>
 
         <nav className="admin-layout__nav">
@@ -49,7 +50,7 @@ const AdminLayout = () => {
             </div>
           </div>
 
-          <button className="admin-layout__logout" type="button" onClick={handleLogout}>
+          <button className="admin-layout__logout" type="button" title="Cerrar sesión" onClick={handleLogout}>
             <LogOut size={16} aria-hidden="true" />
             Cerrar sesión
           </button>

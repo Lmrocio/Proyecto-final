@@ -65,7 +65,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            StudentUsersDemoSeeder::class,
             StudentDashboardDemoSeeder::class,
+            LevelTestDemoSeeder::class,
         ]);
     }
 

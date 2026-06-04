@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -31,6 +32,7 @@ class User extends Authenticatable
         'name',
         'email',
         'role',
+        'is_active',
         'accessibility_settings',
         'profile_photo',
         'phone',
@@ -57,6 +59,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'accessibility_settings' => 'array',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -64,16 +67,37 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::saving(function (self $user): void {
+            if (!self::hasActiveStatusColumn()) {
+                unset($user->attributes['is_active']);
+            }
+
             [$firstName, $lastName] = self::normalizeNameParts(
                 $user->first_name,
                 $user->last_name,
                 $user->name,
             );
 
+            if (!self::hasSplitNameColumns()) {
+                $user->name = trim($firstName.' '.$lastName);
+                unset($user->attributes['first_name'], $user->attributes['last_name']);
+
+                return;
+            }
+
             $user->first_name = $firstName;
             $user->last_name = $lastName;
             $user->name = trim($firstName.' '.$lastName);
         });
+    }
+
+    private static function hasSplitNameColumns(): bool
+    {
+        return Schema::hasColumn('users', 'first_name') && Schema::hasColumn('users', 'last_name');
+    }
+
+    private static function hasActiveStatusColumn(): bool
+    {
+        return Schema::hasColumn('users', 'is_active');
     }
 
     /**

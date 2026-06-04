@@ -17,7 +17,9 @@ class AdminDashboardSummaryApiTest extends DatabaseTestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $teacher = User::factory()->create(['role' => 'teacher']);
+        User::factory()->create(['role' => 'teacher', 'is_active' => false]);
         User::factory()->count(2)->create(['role' => 'student']);
+        User::factory()->create(['role' => 'student', 'is_active' => false]);
 
         Course::create([
             'title' => 'Curso activo',
@@ -65,8 +67,10 @@ class AdminDashboardSummaryApiTest extends DatabaseTestCase
             ->assertOk()
             ->assertJson([
                 'active_students' => 2,
+                'active_teachers' => 1,
                 'active_courses' => 1,
                 'monthly_leads' => 1,
+                'recent_level_test_leads' => 1,
             ]);
     }
 

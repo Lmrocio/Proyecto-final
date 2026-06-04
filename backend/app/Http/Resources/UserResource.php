@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'role' => $this->role,
+            'is_active' => (bool) ($this->is_active ?? true),
             'phone' => $this->phone,
             'profile_photo' => $this->profile_photo,
             'accessibility_settings' => $this->accessibility_settings,

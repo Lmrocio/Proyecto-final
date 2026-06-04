@@ -63,6 +63,23 @@ Justificacion funcional:
 - Mejora la calidad del dato para futuras funciones (filtros avanzados, exportaciones CSV, integraciones externas, etiquetas oficiales).
 - Evita una ruptura brusca del ecosistema, al mantener compatibilidad con name mientras se completa la transicion de frontend y clientes API.
 
+## Estado Operativo de Usuarios Activos e Inactivos
+
+Se incorpora el campo `is_active` en la tabla `users` para representar el estado operativo de una cuenta de forma independiente a sus matriculas academicas. Esta decision evita utilizar `enrollments.status` como indicador global del usuario, ya que una matricula activa o inactiva solo describe la relacion del alumno con un curso concreto, no la vigencia administrativa de su cuenta en la academia.
+
+Decisiones tecnicas aplicadas:
+
+- Persistencia no destructiva: un usuario inactivo permanece en base de datos con su historial, entregas, asistencia, mensajes y trazabilidad academica asociados.
+- Separacion de responsabilidades: `users.is_active` controla si la cuenta debe contarse y gestionarse como activa; `enrollments.status` mantiene el estado de acceso o participacion en un curso especifico.
+- Compatibilidad de despliegue: la API y el modelo `User` incluyen protecciones ante esquemas antiguos para que el sistema siga funcionando durante transiciones de migracion.
+- Visibilidad administrativa: el panel de usuarios permite activar o desactivar cuentas sin recurrir a eliminaciones irreversibles, y el dashboard calcula alumnado/docentes activos respetando este campo.
+
+Justificacion funcional:
+
+- En una academia es frecuente que un alumno pause su formacion y vuelva meses despues. Mantenerlo como inactivo conserva el contexto comercial y academico necesario para reactivarlo sin reconstruir su expediente.
+- La desactivacion reduce errores operativos frente al borrado: se evita perder datos historicos, se mantiene la integridad referencial y se facilita la auditoria del ciclo de vida del usuario.
+- El borrado queda reservado para casos administrativos concretos, mientras que el estado inactivo cubre bajas temporales, pausas de pago, descanso entre niveles o seguimientos pendientes de reincorporacion.
+
 ## Prueba de Nivel IA
 
 Se ha implementado el flujo público de evaluación de redacciones sobre la ruta `POST /api/level-tests`. El controlador mantiene el `CORRECTOR_SYSTEM_PROMPT` como constante privada y delega la lógica de negocio en `LevelTestCorrectionService`, respetando el patrón Service Layer: validación semántica, detección básica de idioma, llamada a OpenRouter, normalización del JSON y persistencia en `level_tests`.

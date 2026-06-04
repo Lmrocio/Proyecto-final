@@ -23,6 +23,7 @@ class StoreUserRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', 'in:admin,teacher,student'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['required', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
             'phone' => ['nullable', 'string', 'max:30'],
             'profile_photo' => ['nullable', 'string', 'max:255'],

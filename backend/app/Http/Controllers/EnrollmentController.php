@@ -9,6 +9,7 @@ use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnrollmentController extends Controller
@@ -19,7 +20,7 @@ class EnrollmentController extends Controller
 
         $query = Enrollment::query()
             ->visibleTo($user)
-            ->with(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])
+            ->with([$this->studentRelation(), 'course:id,title,teacher_id,bonus_id'])
             ->latest();
 
         if ($request->filled('course_id')) {
@@ -64,21 +65,21 @@ class EnrollmentController extends Controller
 
         $status = $enrollment->wasRecentlyCreated ? Response::HTTP_CREATED : Response::HTTP_OK;
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), $status);
+        return response()->json(new EnrollmentResource($enrollment->load([$this->studentRelation(), 'course:id,title,teacher_id,bonus_id'])), $status);
     }
 
     public function show(Request $request, Enrollment $enrollment): JsonResponse
     {
         $this->authorize('view', $enrollment);
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load([$this->studentRelation(), 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
     }
 
     public function update(UpdateEnrollmentRequest $request, Enrollment $enrollment): JsonResponse
     {
         $enrollment->update($request->validated());
 
-        return response()->json(new EnrollmentResource($enrollment->load(['student:id,name,first_name,last_name,email,role,phone', 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
+        return response()->json(new EnrollmentResource($enrollment->load([$this->studentRelation(), 'course:id,title,teacher_id,bonus_id'])), Response::HTTP_OK);
     }
 
     public function destroy(Enrollment $enrollment): JsonResponse
@@ -86,5 +87,14 @@ class EnrollmentController extends Controller
         $enrollment->delete();
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    private function studentRelation(): string
+    {
+        if (Schema::hasColumn('users', 'first_name') && Schema::hasColumn('users', 'last_name')) {
+            return 'student:id,name,first_name,last_name,email,role,phone';
+        }
+
+        return 'student:id,name,email,role,phone';
     }
 }

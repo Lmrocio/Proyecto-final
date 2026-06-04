@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'name' => trim($firstName.' '.$lastName),
             'email' => fake()->unique()->safeEmail(),
             'role' => fake()->randomElement(['admin', 'teacher', 'student']),
+            'is_active' => true,
             'accessibility_settings' => [
                 'high_contrast' => fake()->boolean(),
                 'font_size' => fake()->randomElement(['normal', 'large']),

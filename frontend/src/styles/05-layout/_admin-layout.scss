@@ -1,22 +1,9 @@
 .admin-layout {
-	--surface: #e7e1da;
-	--surface-strong: #d3c8bb;
-	--primary: #a1896e;
-	--primary-contrast: #ffffff;
-	--border-subtle: 1px solid #bfaf9c;
-	--text-main: #2e251c;
-	--text-muted: #ab967d;
-	--accent: #d88e45;
-	--ok: #46AA03;
-	--danger: #BD2709;
-	--warning: #F7BB07;
-	--info: #0497CD;
-
 	min-height: 100vh;
 	display: grid;
 	grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
 	background: var(--surface);
-	color: var(--text-main);
+	color: var(--text-primary);
 }
 
 .admin-layout__sidebar {
@@ -25,10 +12,10 @@
 	height: 100vh;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
-	gap: var(--space-3);
-	border-right: var(--border-subtle);
-	background: var(--surface-strong);
-	padding: var(--space-3);
+	gap: var(--space-l);
+	border-right: 1px solid var(--border-subtle);
+	background: var(--surface-background);
+	padding: var(--space-l);
 }
 
 .admin-layout__brand,
@@ -40,7 +27,7 @@
 	align-items: center;
 	gap: 0.65rem;
 	border-radius: var(--radius-sm);
-	color: var(--text-main);
+	color: var(--text-primary);
 	text-decoration: none;
 }
 
@@ -52,13 +39,13 @@
 .admin-layout__sidebar-footer {
 	display: grid;
 	align-content: start;
-	gap: var(--space-1);
+	gap: var(--space-s);
 }
 
 .admin-layout__link {
 	min-height: 2.85rem;
 	padding: 0 0.85rem;
-	color: var(--text-muted);
+	color: var(--text-secondary);
 	font-weight: 800;
 	transition: background-color 150ms ease, color 150ms ease;
 }
@@ -67,7 +54,7 @@
 .admin-layout__link:focus-visible,
 .admin-layout__link--active {
 	background: rgba(0, 0, 0, 0.05);
-	color: var(--text-main);
+	color: var(--text-primary);
 }
 
 .admin-layout__sidebar-footer {
@@ -79,7 +66,7 @@
 	align-items: center;
 	gap: 0.65rem;
 	padding: 0.45rem 0.65rem;
-	color: var(--text-main);
+	color: var(--text-primary);
 }
 
 .admin-layout__profile-icon {
@@ -88,24 +75,24 @@
 	display: inline-grid;
 	place-items: center;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--accent) 18%, var(--surface));
-	color: var(--text-main);
+	background: color-mix(in srgb, var(--text-secondary) 12%, var(--surface-primary));
+	color: var(--text-primary);
 }
 
 .admin-layout__logout {
 	min-height: 2.65rem;
-	border: 1px solid var(--danger);
+	border: 1px solid var(--status-error);
 	background: transparent;
 	justify-content: center;
-	color: var(--danger);
+	color: var(--status-error);
 	font-weight: 800;
 	transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .admin-layout__logout:hover,
 .admin-layout__logout:focus-visible {
-	border-color: var(--danger);
-	background-color: var(--danger);
+	border-color: var(--status-error);
+	background-color: var(--status-error);
 	color: #ffffff;
 }
 
@@ -113,7 +100,7 @@
 	min-width: 0;
 	display: grid;
 	align-content: start;
-	gap: var(--space-3);
+	gap: var(--space-l);
 	background: var(--surface);
 	padding: clamp(1.25rem, 3vw, 3rem);
 	overflow: auto;

@@ -1,5 +1,18 @@
 @use '../00-settings/variables' as *;
 
+html {
+  box-sizing: border-box;
+  font-family: $font-main;
+  background-color: var(--surface-background);
+  color: var(--text-primary);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 html,
 body,
 #root {
@@ -9,6 +22,16 @@ body,
 body {
   margin: 0;
   font-family: $font-main;
-  background: radial-gradient(circle at 10% 10%, #ccfbf1, var(--surface) 45%);
-  color: var(--text-main);
+  background-color: var(--surface-background);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
 }

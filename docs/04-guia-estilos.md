@@ -15,7 +15,7 @@
 
 El diseño ha sido realizado siguiendo una metodología de **Atomic Design**. El prototipo es interactivo y simula el flujo real de la aplicación.
 
-*   **Enlace al proyecto:** [FALTA]
+*   [Enlace al Figma](https://www.figma.com/design/fHSensreWQ63i2cvvi1co4/OpenClassy?node-id=0-1&p=f&t=Xglhn8taB7awhw2w-0)
 
 ---
 

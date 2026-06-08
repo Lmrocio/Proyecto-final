@@ -524,7 +524,7 @@ openclassy-client   client       running      0.0.0.0:5173->5173/tcp
 openclassy-nginx    nginx        running      0.0.0.0:8000->80/tcp
 ```
 
-[Captura 1. Salida de `docker compose ps` mostrando los 4 contenedores en estado `running`]
+<img width="1055" height="192" alt="image" src="https://github.com/user-attachments/assets/7dd86116-258c-469c-9c60-6a1f07f6e4e2" />
 
 **Paso 2: Verificar conectividad del backend vía Nginx**
 
@@ -541,7 +541,7 @@ Content-Type: application/json
 X-Powered-By: Laravel
 ```
 
-[Captura 2. Salida de `curl -I` mostrando HTTP 200 y los headers de Nginx y Laravel]
+<img width="1051" height="175" alt="image" src="https://github.com/user-attachments/assets/e21ad738-a7e6-4f12-9c17-6c399b5ca3c2" />
 
 **Paso 3: Verificar que el frontend carga**
 
@@ -567,7 +567,7 @@ Salida esperada:
 localhost:5432 - accepting connections
 ```
 
-[Captura 3. Salida de `pg_isready` confirmando que PostgreSQL acepta conexiones]
+<img width="1057" height="41" alt="image" src="https://github.com/user-attachments/assets/849d4e7f-5efb-4c85-80fd-19339a81e4e6" />
 
 **Paso 5: Verificar login desde la red Docker**
 
@@ -583,7 +583,7 @@ Salida esperada (token truncado):
 {"token":"eyJ...","user":{"id":"...","name":"...","email":"admin@openclassy.test","role":"admin"}}
 ```
 
-[Captura 4. Respuesta JSON del login con token y datos del usuario]
+<img width="1052" height="121" alt="image" src="https://github.com/user-attachments/assets/00136a53-1d87-4e04-96f8-aac4485cb5ac" />
 
 ### 7.2 Verificación en producción (Render)
 
@@ -600,13 +600,13 @@ HTTP/2 200
 content-type: application/json
 ```
 
-[Captura 5. Salida de `curl -I` contra el backend en Render mostrando HTTP/2 200]
+<img width="1052" height="281" alt="image" src="https://github.com/user-attachments/assets/47ae0883-b141-4de4-89dc-53e02ef91278" />
 
 **Paso 2: Verificar que el frontend consume el backend correcto**
 
 Al abrir la URL del frontend en el navegador, la pestaña **Network** de las DevTools debe mostrar peticiones a `open-classy-backend-eace.onrender.com`, no a `localhost`.
 
-[Captura 6. Pestaña Network de DevTools mostrando peticiones al dominio de Render]
+<img width="962" height="660" alt="image" src="https://github.com/user-attachments/assets/4c46692d-2f56-4313-b150-15491a4a8e1d" />
 
 **Paso 3: Verificar CORS**
 
@@ -624,7 +624,7 @@ access-control-allow-origin: https://open-classy-frontend-li8n.onrender.com
 access-control-allow-methods: POST
 ```
 
-[Captura 7. Respuesta CORS con los headers `access-control-allow-origin` correctos]
+<img width="1052" height="377" alt="image" src="https://github.com/user-attachments/assets/b6ada7d9-c6cf-4f36-9a3a-52c1d81f219c" />
 
 **Paso 4: Verificar que los secretos no están expuestos**
 

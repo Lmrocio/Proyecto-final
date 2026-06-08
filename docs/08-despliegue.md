@@ -131,9 +131,9 @@ URLs del despliegue:
 
 | Recurso | URL |
 | :--- | :--- |
-| Frontend público | `https://<url-frontend-render>.onrender.com` |
-| Backend público | `https://<url-backend-render>.onrender.com` |
-| API pública | `https://<url-backend-render>.onrender.com/api` |
+| Frontend público | `https://open-classy-frontend-li8n.onrender.com` |
+| Backend público | `https://open-classy-backend-eace.onrender.com` |
+| API pública | `https://open-classy-backend-eace.onrender.com/api` |
 
 Estas URLs se deben sustituir por las direcciones definitivas que aparecen en el panel de Render antes de la entrega final.
 
@@ -153,7 +153,7 @@ La variable más importante del frontend es `VITE_API_URL`, porque indica a la S
 Ejemplo:
 
 ```text
-VITE_API_URL=https://<url-backend-render>.onrender.com
+VITE_API_URL=https://open-classy-backend-eace.onrender.com
 ```
 
 ### 4.3 Configuración del backend en Render

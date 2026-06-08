@@ -416,6 +416,8 @@ docker:
 - Valida que los Dockerfiles compilan correctamente sin errores.
 - No ejecuta los contenedores, solo verifica que las imágenes se construyen.
 
+<img width="2527" height="692" alt="image" src="https://github.com/user-attachments/assets/ef26a32c-34f9-4c2a-ae04-ad76f643c2f2" />
+
 ### 5.2 Estructura de ramas
 
 ```text

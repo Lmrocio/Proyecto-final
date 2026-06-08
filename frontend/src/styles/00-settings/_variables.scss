@@ -1,0 +1,93 @@
+$white: #ffffff;
+$gray-100: #f6f6f6;
+$gray-200: #e9ecef;
+$gray-400: #adb5bd;
+$gray-600: #6c757d;
+$gray-800: #212529;
+$gray-900: #1a1a1a;
+
+$brand-error: #bd2709;
+$brand-success: #4baf08;
+$brand-info: #10abd5;
+$brand-alert: #f7bb07;
+
+$berry-900: #9f223d;
+$berry-700: #ca4763;
+$berry-300: #ee9cad;
+$berry-100: #ffdbe3;
+
+$font-main: 'Space Grotesk', sans-serif;
+$font-display: 'Fraunces', serif;
+
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1200px;
+
+:root {
+  --surface-primary: #{$white};
+  --surface-background: #{$gray-100};
+  --border-subtle: #{$gray-200};
+
+  --text-primary: #{$gray-800};
+  --text-secondary: #{$gray-600};
+  --text-placeholder: #{$gray-400};
+  --text-contrast: #{$gray-900};
+
+  --status-error: #{$brand-error};
+  --status-success: #{$brand-success};
+  --status-info: #{$brand-info};
+  --status-warning: #{$brand-alert};
+
+  --berry-900: #{$berry-900};
+  --berry-700: #{$berry-700};
+  --berry-300: #{$berry-300};
+  --berry-100: #{$berry-100};
+
+  --space-xs: 0.25rem;
+  --space-s: 0.5rem;
+  --space-m: 1rem;
+  --space-l: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  --shadow-l1: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-l2: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-l3: 0px 6px 4px rgba(0, 0, 0, 0.25);
+
+  --fs-display: clamp(2rem, 5vw, 3rem);
+  --fs-h1: clamp(1.75rem, 4vw, 2.5rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+
+  --radius-sm: 0.25rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  --space-1: var(--space-s);
+  --space-2: var(--space-m);
+  --space-3: var(--space-l);
+  --space-4: var(--space-xl);
+
+  --primary: var(--text-contrast);
+  --primary-contrast: var(--surface-primary);
+  --surface: var(--surface-primary);
+  --surface-strong: var(--surface-background);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-secondary);
+  --home-ink: var(--text-contrast);
+  --home-warm: var(--surface-background);
+  --home-warm-strong: color-mix(in srgb, var(--surface-background) 88%, var(--surface-primary));
+  --home-taupe: var(--text-placeholder);
+  --home-taupe-dark: var(--text-secondary);
+  --home-cream: var(--surface-primary);
+  --home-border: color-mix(in srgb, var(--text-primary) 12%, transparent);
+  --home-muted: var(--text-secondary);
+  --home-accent: var(--status-info);
+  --danger: var(--status-error);
+  --ok: var(--status-success);
+  --warning: var(--status-warning);
+  --info: var(--status-info);
+}

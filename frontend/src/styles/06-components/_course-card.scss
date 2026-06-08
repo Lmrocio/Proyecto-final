@@ -1,0 +1,39 @@
+@use '../00-settings/variables' as *;
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-2);
+}
+
+.course-card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
+  border: 0.0625rem solid color-mix(in srgb, var(--text-main) 10%, transparent);
+  box-shadow: 0 1rem 2rem color-mix(in srgb, var(--text-main) 12%, transparent);
+
+  &__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: 1.125rem;
+  }
+
+  &__meta {
+    color: var(--text-muted);
+  }
+
+  &__link {
+    width: fit-content;
+    font-weight: 600;
+    color: var(--primary);
+  }
+}

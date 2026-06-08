@@ -1,0 +1,551 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.student-messages {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+}
+
+.student-messages__toolbar {
+  display: grid;
+  grid-template-columns: minmax(14rem, 16.5rem) auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.student-messages__search-group,
+.student-messages__folder-actions,
+.student-messages__selection-bar,
+.student-messages__composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.student-messages__folder-actions {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.student-messages__search {
+  min-width: 0;
+  height: 2rem;
+  flex: 1;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--text-main) 12%, var(--surface-strong));
+  color: color-mix(in srgb, var(--text-main) 72%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.65rem;
+}
+
+.student-messages__search input {
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 0.78rem;
+}
+
+.student-messages__search input::placeholder {
+  color: color-mix(in srgb, var(--text-main) 64%, transparent);
+}
+
+.student-messages__icon-button,
+.student-messages__text-button,
+.student-messages__select-all,
+.student-messages__page-button,
+.student-messages__page-ellipsis,
+.student-messages__selection-action,
+.student-messages__notice-action,
+.student-messages__primary-action,
+.student-messages__secondary-action {
+  min-height: 2rem;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--text-main) 13%, var(--surface-strong));
+  color: var(--text-main);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.student-messages__icon-button,
+.student-messages__select-all,
+.student-messages__page-button,
+.student-messages__page-ellipsis {
+  width: 2rem;
+  padding: 0;
+}
+
+.student-messages__icon-button:hover,
+.student-messages__icon-button:focus-visible,
+.student-messages__text-button:hover,
+.student-messages__text-button:focus-visible,
+.student-messages__select-all:hover,
+.student-messages__select-all:focus-within,
+.student-messages__page-button:hover:not(:disabled),
+.student-messages__selection-action:hover,
+.student-messages__notice-action:hover,
+.student-messages__primary-action:hover,
+.student-messages__secondary-action:hover {
+  background: color-mix(in srgb, var(--primary) 20%, var(--surface-strong));
+  transform: translateY(-1px);
+}
+
+.student-messages__icon-button--active,
+.student-messages__text-button--active,
+.student-messages__page-button--active {
+  background: color-mix(in srgb, var(--primary) 32%, var(--surface-strong));
+}
+
+.student-messages__text-button {
+  padding: 0 0.65rem;
+  white-space: nowrap;
+}
+
+.student-messages__select-all {
+  position: relative;
+}
+
+.student-messages__select-all input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.student-messages__select-all input:disabled {
+  cursor: not-allowed;
+}
+
+.student-messages__select-all:has(input:disabled) {
+  opacity: 0.55;
+}
+
+.student-messages__selected-count {
+  min-width: 1.45rem;
+  height: 1.45rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-contrast);
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.student-messages__selection-bar,
+.student-messages__notice {
+  width: fit-content;
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface-strong));
+  color: var(--text-main);
+  padding: 0.45rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.student-messages__notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: color-mix(in srgb, var(--danger) 11%, var(--surface-strong));
+  color: var(--danger);
+}
+
+.student-messages__selection-action,
+.student-messages__notice-action,
+.student-messages__primary-action,
+.student-messages__secondary-action {
+  min-height: 1.75rem;
+  padding: 0 0.55rem;
+}
+
+.student-messages__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.student-messages__row {
+  min-width: 0;
+  min-height: 2rem;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--text-main) 11%, var(--surface-strong));
+  display: grid;
+  grid-template-columns: 1.9rem minmax(0, 1fr) 5.2rem 2rem;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.45rem;
+}
+
+.student-messages__row--unread {
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface-strong));
+}
+
+.student-messages__list--compact .student-messages__row {
+  min-height: 1.75rem;
+}
+
+.student-messages__row-check {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+}
+
+.student-messages__row-check input {
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: var(--primary);
+}
+
+.student-messages__message {
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  color: var(--text-main);
+  display: grid;
+  grid-template-columns: minmax(8rem, 9.5rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 0;
+  text-align: left;
+}
+
+.student-messages__sender,
+.student-messages__excerpt,
+.student-messages__date {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+
+.student-messages__sender {
+  font-weight: 650;
+}
+
+.student-messages__excerpt,
+.student-messages__date {
+  color: color-mix(in srgb, var(--text-main) 76%, transparent);
+}
+
+.student-messages__date {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.student-messages__star {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+}
+
+.student-messages__star:hover,
+.student-messages__star:focus-visible,
+.student-messages__star--active {
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface-strong));
+}
+
+.student-messages__star--active svg {
+  fill: currentColor;
+}
+
+.student-messages__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding-top: 2.25rem;
+}
+
+.student-messages__page-button,
+.student-messages__page-ellipsis {
+  width: 1.85rem;
+  min-height: 1.85rem;
+  font-size: 0.75rem;
+}
+
+.student-messages__page-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.student-messages__page-ellipsis {
+  pointer-events: none;
+}
+
+.student-messages__state {
+  padding: 1rem 0;
+}
+
+.student-messages__composer,
+.student-messages__settings {
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--text-main) 8%, var(--surface-strong));
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.student-messages__field,
+.student-messages__toggle {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.student-messages__field input,
+.student-messages__field textarea {
+  width: 100%;
+  border-radius: 0.45rem;
+  background: var(--surface-strong);
+  color: var(--text-main);
+  padding: 0.7rem 0.8rem;
+}
+
+.student-messages__field textarea {
+  resize: vertical;
+}
+
+.student-messages__composer-actions {
+  justify-content: flex-end;
+}
+
+.student-messages__primary-action {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.student-messages__toggle {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  width: fit-content;
+}
+
+.student-messages__toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary);
+}
+
+@include mx.media-down($bp-md) {
+  .student-messages__toolbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .student-messages__search-group,
+  .student-messages__folder-actions {
+    grid-column: 1 / -1;
+  }
+
+  .student-messages__folder-actions {
+    order: 3;
+  }
+
+  .student-messages__row {
+    grid-template-columns: 1.9rem minmax(0, 1fr) 2rem;
+    min-height: 3.15rem;
+  }
+
+  .student-messages__message {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.1rem;
+  }
+
+  .student-messages__date {
+    display: none;
+  }
+}
+
+@include mx.media-down($bp-sm) {
+  .student-messages__text-button {
+    flex: 1 1 auto;
+  }
+
+  .student-messages__notice,
+  .student-messages__selection-bar {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+.student-layout[data-variant='v1'] {
+  .student-messages {
+    background: var(--surface-strong);
+    border-radius: 0.5rem;
+    box-shadow: 0 1rem 2.5rem rgba(51, 61, 41, 0.15);
+    padding: clamp(1rem, 2vw, 1.5rem);
+    gap: 1rem;
+  }
+
+  .student-messages__search,
+  .student-messages__icon-button,
+  .student-messages__text-button,
+  .student-messages__select-all,
+  .student-messages__page-button,
+  .student-messages__page-ellipsis,
+  .student-messages__selection-action,
+  .student-messages__notice-action,
+  .student-messages__secondary-action,
+  .student-messages__star {
+    border-radius: 0.4rem;
+  }
+
+  .student-messages__search {
+    background: var(--surface-strong);
+    border: 1px solid rgba(57, 31, 8, 0.2);
+    color: var(--text-main);
+  }
+
+  .student-messages__search input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .student-messages__icon-button,
+  .student-messages__text-button,
+  .student-messages__select-all,
+  .student-messages__page-button,
+  .student-messages__page-ellipsis,
+  .student-messages__selection-action,
+  .student-messages__notice-action,
+  .student-messages__secondary-action {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid rgba(57, 31, 8, 0.15);
+  }
+
+  .student-messages__icon-button:hover,
+  .student-messages__icon-button:focus-visible,
+  .student-messages__text-button:hover,
+  .student-messages__text-button:focus-visible,
+  .student-messages__select-all:hover,
+  .student-messages__select-all:focus-within,
+  .student-messages__page-button:hover:not(:disabled),
+  .student-messages__selection-action:hover,
+  .student-messages__notice-action:hover,
+  .student-messages__secondary-action:hover {
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface-strong));
+    transform: none;
+  }
+
+  .student-messages__icon-button--active,
+  .student-messages__text-button--active,
+  .student-messages__page-button--active {
+    background: var(--primary);
+    color: var(--primary-contrast);
+    border-color: var(--primary);
+  }
+
+  .student-messages__primary-action {
+    background: var(--primary);
+    color: var(--primary-contrast);
+    border: none;
+    border-radius: 0.5rem;
+  }
+
+  .student-messages__primary-action:hover,
+  .student-messages__primary-action:focus-visible {
+    background: color-mix(in srgb, var(--primary) 88%, #000000);
+    transform: none;
+  }
+
+  .student-messages__selected-count {
+    border-radius: 0.3rem;
+  }
+
+  .student-messages__selection-bar,
+  .student-messages__notice {
+    border-radius: 0.4rem;
+    background: transparent;
+    border: 1px solid rgba(57, 31, 8, 0.15);
+  }
+
+  .student-messages__list {
+    gap: 0;
+  }
+
+  .student-messages__row,
+  .student-messages__row--unread {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(57, 31, 8, 0.15);
+    border-radius: 0;
+    padding: 0.55rem 0.45rem;
+  }
+
+  .student-messages__row--unread {
+    background: color-mix(in srgb, var(--surface-strong) 60%, var(--surface));
+  }
+
+  .student-messages__row:last-child {
+    border-bottom: none;
+  }
+
+  .student-messages__row-check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 3px;
+    border: 1px solid rgba(57, 31, 8, 0.4);
+    background: var(--surface-strong);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .student-messages__row-check input:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .student-messages__row-check input:checked::after {
+    content: '';
+    width: 0.3rem;
+    height: 0.55rem;
+    border-right: 2px solid var(--primary-contrast);
+    border-bottom: 2px solid var(--primary-contrast);
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  .student-messages__sender {
+    color: var(--text-main);
+  }
+
+  .student-messages__composer,
+  .student-messages__settings {
+    background: transparent;
+    border: 1px solid rgba(57, 31, 8, 0.15);
+    border-radius: 0.5rem;
+  }
+
+  .student-messages__field input,
+  .student-messages__field textarea {
+    border: 1px solid rgba(57, 31, 8, 0.2);
+    border-radius: 0.4rem;
+    background: var(--surface-strong);
+  }
+
+  .student-messages__page-button:disabled {
+    border-color: rgba(57, 31, 8, 0.1);
+  }
+}

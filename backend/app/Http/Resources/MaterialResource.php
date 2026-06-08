@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class MaterialResource extends JsonResource
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'course_id' => $this->course_id,
+            'title' => $this->title,
+            'unit_name' => $this->unit_name,
+            'type' => $this->type,
+            'path' => $this->path,
+            'size' => $this->size,
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
+            'course' => $this->whenLoaded('course', fn (): array => [
+                'id' => $this->course->id,
+                'title' => $this->course->title,
+                'teacher_id' => $this->course->teacher_id,
+            ]),
+        ];
+    }
+}

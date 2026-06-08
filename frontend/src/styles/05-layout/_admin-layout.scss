@@ -1,0 +1,202 @@
+.admin-layout {
+	min-height: 100vh;
+	display: grid;
+	grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+	background: var(--surface);
+	color: var(--text-primary);
+}
+
+.admin-layout__sidebar {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	gap: var(--space-l);
+	border-right: 1px solid var(--border-subtle);
+	background: var(--surface-background);
+	padding: var(--space-l);
+}
+
+.admin-layout__brand,
+.admin-layout__link,
+.admin-layout__logout,
+.admin-layout__refresh,
+.admin-layout__icon-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	border-radius: var(--radius-sm);
+	color: var(--text-primary);
+	text-decoration: none;
+}
+
+.admin-layout__brand {
+	font-weight: 900;
+}
+
+.admin-layout__nav,
+.admin-layout__sidebar-footer {
+	display: grid;
+	align-content: start;
+	gap: var(--space-s);
+}
+
+.admin-layout__link {
+	min-height: 2.85rem;
+	padding: 0 0.85rem;
+	color: var(--text-secondary);
+	font-weight: 800;
+	transition: background-color 150ms ease, color 150ms ease;
+}
+
+.admin-layout__link:hover,
+.admin-layout__link:focus-visible,
+.admin-layout__link--active {
+	background: rgba(0, 0, 0, 0.05);
+	color: var(--text-primary);
+}
+
+.admin-layout__sidebar-footer {
+	align-self: end;
+}
+
+.admin-layout__profile {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	padding: 0.45rem 0.65rem;
+	color: var(--text-primary);
+}
+
+.admin-layout__profile-icon {
+	width: 2rem;
+	aspect-ratio: 1;
+	display: inline-grid;
+	place-items: center;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--text-secondary) 12%, var(--surface-primary));
+	color: var(--text-primary);
+}
+
+.admin-layout__logout {
+	min-height: 2.65rem;
+	border: 1px solid var(--status-error);
+	background: transparent;
+	justify-content: center;
+	color: var(--status-error);
+	font-weight: 800;
+	transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.admin-layout__logout:hover,
+.admin-layout__logout:focus-visible {
+	border-color: var(--status-error);
+	background-color: var(--status-error);
+	color: #ffffff;
+}
+
+.admin-layout__main {
+	min-width: 0;
+	display: grid;
+	align-content: start;
+	gap: var(--space-l);
+	background: var(--surface);
+	padding: clamp(1.25rem, 3vw, 3rem);
+	overflow: auto;
+}
+
+.admin-layout__topbar {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-1);
+}
+
+.admin-layout__search {
+	min-height: 2.75rem;
+	width: min(100%, 22rem);
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-md);
+	background: color-mix(in srgb, #ffffff 48%, var(--surface));
+	color: var(--text-muted);
+	padding: 0 0.9rem;
+}
+
+.admin-layout__search:focus-within {
+	border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.admin-layout__search-input {
+	min-width: 0;
+	width: 100%;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--text-main);
+	font: inherit;
+}
+
+.admin-layout__search-input::placeholder {
+	color: var(--text-muted);
+}
+
+.admin-layout__icon-button,
+.admin-layout__refresh {
+	min-height: 2.75rem;
+	border: 1px solid transparent;
+	background: color-mix(in srgb, #ffffff 48%, var(--surface));
+	justify-content: center;
+	font-weight: 800;
+	transition: background-color 150ms ease, color 150ms ease, opacity 150ms ease;
+}
+
+.admin-layout__icon-button {
+	width: 2.75rem;
+	padding: 0;
+}
+
+.admin-layout__refresh {
+	padding: 0 1rem;
+}
+
+.admin-layout__icon-button:hover,
+.admin-layout__icon-button:focus-visible,
+.admin-layout__refresh:hover,
+.admin-layout__refresh:focus-visible {
+	background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+	color: var(--text-main);
+}
+
+.admin-layout__refresh:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+@media (max-width: 64em) {
+	.admin-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.admin-layout__sidebar {
+		position: static;
+		height: auto;
+		grid-template-rows: auto;
+	}
+
+	.admin-layout__nav {
+		grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+	}
+
+	.admin-layout__topbar {
+		justify-content: stretch;
+		flex-wrap: wrap;
+	}
+
+	.admin-layout__search {
+		width: 100%;
+	}
+}

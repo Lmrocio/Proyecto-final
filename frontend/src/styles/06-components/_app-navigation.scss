@@ -1,0 +1,23 @@
+@use '../01-tools/mixins' as mx;
+
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.app-nav__link {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--surface) 85%, var(--text-main));
+  transition: transform 0.2s ease, background 0.2s ease;
+  @include mx.focus-ring;
+
+  &:hover {
+    transform: translateY(-0.08rem);
+    background: color-mix(in srgb, var(--surface) 70%, var(--text-main));
+  }
+}

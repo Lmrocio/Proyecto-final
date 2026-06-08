@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
+
+class StoreUserRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user()?->role === 'admin';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'first_name' => ['required_without:name', 'string', 'max:255'],
+            'last_name' => ['required_without:name', 'string', 'max:255'],
+            'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'role' => ['required', 'in:admin,teacher,student'],
+            'is_active' => ['sometimes', 'boolean'],
+            'password' => ['required', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'profile_photo' => ['nullable', 'string', 'max:255'],
+            'accessibility_settings' => ['nullable', 'array'],
+        ];
+    }
+}

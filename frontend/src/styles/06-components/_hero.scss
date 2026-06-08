@@ -1,0 +1,21 @@
+@use '../00-settings/variables' as *;
+
+.hero {
+  display: grid;
+  gap: var(--space-1);
+
+  &__kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  &__title {
+    font-family: $font-display;
+  }
+
+  &__subtitle {
+    color: var(--text-muted);
+  }
+}

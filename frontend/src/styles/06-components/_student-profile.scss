@@ -1,0 +1,243 @@
+@use '../00-settings/variables' as *;
+
+.student-layout[data-variant='v1'] .student-profile {
+  display: grid;
+  gap: var(--space-3);
+  color: var(--text-main);
+}
+
+.student-layout[data-variant='v1'] .student-profile__header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.student-layout[data-variant='v1'] .student-profile__eyebrow,
+.student-layout[data-variant='v1'] .student-profile__course,
+.student-layout[data-variant='v1'] .student-profile__danger-copy,
+.student-layout[data-variant='v1'] .student-profile__field span {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.student-layout[data-variant='v1'] .student-profile__eyebrow,
+.student-layout[data-variant='v1'] .student-profile__field span {
+  font-weight: 700;
+}
+
+.student-layout[data-variant='v1'] .student-profile__title,
+.student-layout[data-variant='v1'] .student-profile__card-title {
+  margin: 0;
+  font-family: $font-display;
+  color: var(--text-main);
+}
+
+.student-layout[data-variant='v1'] .student-profile__title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.student-layout[data-variant='v1'] .student-profile__card-title {
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.student-layout[data-variant='v1'] .student-profile__shell {
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  padding: var(--space-3);
+}
+
+.student-layout[data-variant='v1'] .student-profile__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.student-layout[data-variant='v1'] .student-profile__column,
+.student-layout[data-variant='v1'] .student-profile__form,
+.student-layout[data-variant='v1'] .student-profile__settings,
+.student-layout[data-variant='v1'] .student-profile__danger-actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.student-layout[data-variant='v1'] .student-profile__card,
+.student-layout[data-variant='v1'] .student-profile__danger {
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.5rem;
+  background: var(--surface-strong);
+  padding: var(--space-3);
+}
+
+.student-layout[data-variant='v1'] .student-profile__card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.student-layout[data-variant='v1'] .student-profile__identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.student-layout[data-variant='v1'] .student-profile__avatar {
+  inline-size: 5rem;
+  block-size: 5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: $font-display;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.student-layout[data-variant='v1'] .student-profile__name {
+  margin: 0.45rem 0 0;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.student-layout[data-variant='v1'] .student-profile__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.student-layout[data-variant='v1'] .student-profile__input {
+  inline-size: 100%;
+  min-block-size: 2.8rem;
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--text-main);
+  padding: 0.7rem 0.85rem;
+}
+
+.student-layout[data-variant='v1'] .student-profile__input:focus-visible {
+  outline: 0.18rem solid color-mix(in srgb, var(--primary) 32%, transparent);
+  outline-offset: 0.15rem;
+}
+
+.student-layout[data-variant='v1'] .student-profile__select {
+  appearance: auto;
+}
+
+.student-layout[data-variant='v1'] .student-profile__button {
+  min-block-size: 2.7rem;
+  width: fit-content;
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  font-weight: 800;
+}
+
+.student-layout[data-variant='v1'] .student-profile__button--primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.student-layout[data-variant='v1'] .student-profile__button--outline,
+.student-layout[data-variant='v1'] .student-profile__button--danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+.student-layout[data-variant='v1'] .student-profile__toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-main);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.student-layout[data-variant='v1'] .student-profile__toggle-input {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.student-layout[data-variant='v1'] .student-profile__switch {
+  inline-size: 2.8rem;
+  block-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--text-main) 22%, var(--surface));
+  padding: 0.15rem;
+  transition: background-color 160ms ease;
+}
+
+.student-layout[data-variant='v1'] .student-profile__switch-thumb {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+  border-radius: 0.25rem;
+  background: var(--surface-strong);
+  box-shadow: 0 0.15rem 0.35rem rgba(51, 61, 41, 0.2);
+  transform: translateX(0);
+  transition: transform 160ms ease;
+}
+
+.student-layout[data-variant='v1'] .student-profile__toggle-input:checked + .student-profile__switch {
+  background: var(--primary);
+}
+
+.student-layout[data-variant='v1'] .student-profile__toggle-input:checked + .student-profile__switch .student-profile__switch-thumb {
+  transform: translateX(1.3rem);
+}
+
+.student-layout[data-variant='v1'] .student-profile__toggle-input:focus-visible + .student-profile__switch {
+  outline: 0.18rem solid color-mix(in srgb, var(--primary) 34%, transparent);
+  outline-offset: 0.15rem;
+}
+
+.student-layout[data-variant='v1'] .student-profile__danger {
+  display: grid;
+  gap: var(--space-3);
+  background: color-mix(in srgb, var(--danger) 9%, var(--surface));
+  border-color: color-mix(in srgb, var(--danger) 35%, rgba(57, 31, 8, 0.15));
+}
+
+.student-layout[data-variant='v1'] .student-profile__feedback {
+  justify-self: start;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--primary) 9%, var(--surface));
+  color: var(--primary);
+  padding: 0.7rem 0.9rem;
+  font-weight: 800;
+}
+
+@media (max-width: 48em) {
+  .student-layout[data-variant='v1'] .student-profile__shell {
+    padding: var(--space-2);
+  }
+
+  .student-layout[data-variant='v1'] .student-profile__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 36em) {
+  .student-layout[data-variant='v1'] .student-profile__identity {
+    grid-template-columns: 1fr;
+  }
+
+  .student-layout[data-variant='v1'] .student-profile__button {
+    width: 100%;
+  }
+}

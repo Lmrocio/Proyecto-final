@@ -1,0 +1,21 @@
+@use '../01-tools/mixins' as mx;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: 1.2;
+  color: var(--text-main);
+}
+
+h1 {
+  @include mx.fluid-type(2rem, 2.75rem);
+}
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}

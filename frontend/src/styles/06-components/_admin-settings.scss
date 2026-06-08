@@ -1,0 +1,105 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.settings {
+  min-height: 100vh;
+  width: min(72rem, 100% - var(--space-4));
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+  display: grid;
+  gap: var(--space-3);
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__title {
+    font-family: $font-display;
+  }
+
+  &__subtitle {
+    color: var(--text-muted);
+  }
+
+  &__link {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--primary-contrast);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  &__panel {
+    @include mx.glass-card;
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  &__grid {
+    display: grid;
+    gap: var(--space-2);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  &__card {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    background: var(--surface-strong);
+    border: 0.0625rem solid color-mix(in srgb, var(--text-main) 10%, transparent);
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover:enabled {
+      transform: translateY(-0.1rem);
+      box-shadow: 0 1rem 2rem color-mix(in srgb, var(--text-main) 12%, transparent);
+    }
+
+    &--active {
+      border-color: var(--primary);
+      box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+  }
+
+  &__card-title {
+    font-weight: 600;
+  }
+
+  &__card-text {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  &__card-meta {
+    font-size: 0.875rem;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  &__status {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--ok) 15%, transparent);
+    border: 0.0625rem solid color-mix(in srgb, var(--ok) 35%, transparent);
+
+    &--error {
+      background: color-mix(in srgb, var(--danger) 15%, transparent);
+      border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+    }
+  }
+}

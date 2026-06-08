@@ -1,0 +1,159 @@
+@use '../00-settings/variables' as *;
+
+// Included via 06-components/_index.scss imported by styles/main.scss.
+
+.student-sidebar {
+  background: var(--student-sidebar-bg);
+  border-right: var(--student-sidebar-border);
+  backdrop-filter: var(--student-sidebar-backdrop);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  display: grid;
+  grid-template-rows: var(--student-sidebar-calendar-height) var(--student-sidebar-tasks-height);
+  align-content: start;
+  gap: 1.5rem;
+  overflow: hidden;
+}
+
+.tasks-list {
+  background: var(--student-panel-bg);
+  border: var(--student-panel-border);
+  backdrop-filter: var(--student-panel-backdrop);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 0;
+  height: 100%;
+  box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.08);
+}
+
+.tasks-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tasks-list__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.tasks-list__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.tasks-list__item {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, rgba(15, 23, 42, 0.08));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.tasks-list__name {
+  min-width: 0;
+  font-weight: 600;
+  color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.tasks-list__meta,
+.tasks-list__course,
+.tasks-list__state {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tasks-list__course {
+  font-weight: 600;
+}
+
+.tasks-list__subtitle {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.tasks-list__empty {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.tasks-list__empty p,
+.tasks-list__state p {
+  margin: 0;
+}
+
+.tasks-list__state--error {
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+  color: var(--danger);
+  min-height: 0;
+  overflow: auto;
+}
+
+.tasks-list__link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+  color: var(--text-main);
+  width: fit-content;
+}
+
+.tasks-list__retry {
+  width: fit-content;
+  border: none;
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+}
+
+.student-layout[data-variant='v1'] .tasks-list {
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  color: var(--text-main);
+  padding: 0;
+}
+
+.student-layout[data-variant='v1'] .tasks-list__item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(57, 31, 8, 0.2);
+  border-radius: 0;
+  padding: 0.8rem 0;
+}
+
+.student-layout[data-variant='v1'] .tasks-list__item:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 68rem) {
+  .student-sidebar {
+    grid-template-rows: none;
+  }
+}

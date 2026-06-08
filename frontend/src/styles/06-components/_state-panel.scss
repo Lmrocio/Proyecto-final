@@ -1,0 +1,7 @@
+@use '../01-tools/mixins' as mx;
+
+.state-panel {
+  @include mx.glass-card;
+  border-radius: var(--radius);
+  padding: var(--space-2);
+}

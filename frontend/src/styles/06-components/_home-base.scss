@@ -1,0 +1,50 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.home-page {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 30%),
+    linear-gradient(180deg, #d7cabd 0%, #eee5da 18%, #f6f1eb 42%, #fbf8f4 100%);
+  color: var(--home-ink);
+}
+
+.home-grid {
+  width: min(88rem, calc(100% - 2.5rem));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.home-placeholder {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(217, 204, 192, 0.75));
+  border: 1px solid var(--home-border);
+}
+
+.home-placeholder::before,
+.home-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 49.2%, rgba(34, 31, 29, 0.14) 50%, transparent 50.8%);
+}
+
+.home-placeholder::after {
+  background: linear-gradient(45deg, transparent 49.2%, rgba(34, 31, 29, 0.14) 50%, transparent 50.8%);
+}
+
+@include mx.media-down($bp-lg) {
+  .home-grid {
+    width: min(100%, calc(100% - 2rem));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@include mx.media-down($bp-md) {
+  .home-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

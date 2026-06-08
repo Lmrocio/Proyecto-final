@@ -1,0 +1,151 @@
+@use '../00-settings/variables' as *;
+
+.student-layout[data-variant='v1'] .student-grades {
+  display: grid;
+  gap: var(--space-3);
+  color: var(--text-main);
+}
+
+.student-layout[data-variant='v1'] .student-grades__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.student-layout[data-variant='v1'] .student-grades__eyebrow,
+.student-layout[data-variant='v1'] .student-grades__filter span,
+.student-layout[data-variant='v1'] .student-grades__stat-label {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.student-layout[data-variant='v1'] .student-grades__title {
+  margin: 0.2rem 0 0;
+  color: var(--text-main);
+  font-family: $font-display;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.student-layout[data-variant='v1'] .student-grades__filter {
+  min-inline-size: min(100%, 16rem);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.student-layout[data-variant='v1'] .student-grades__select {
+  min-block-size: 2.7rem;
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--text-main);
+  padding: 0.6rem 0.75rem;
+}
+
+.student-layout[data-variant='v1'] .student-grades__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.student-layout[data-variant='v1'] .student-grades__stat,
+.student-layout[data-variant='v1'] .student-grades__table-card {
+  border: 1px solid rgba(57, 31, 8, 0.15);
+  border-radius: 0.5rem;
+  background: var(--surface-strong);
+}
+
+.student-layout[data-variant='v1'] .student-grades__stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-block-size: 4.4rem;
+  padding: var(--space-2);
+}
+
+.student-layout[data-variant='v1'] .student-grades__stat-value {
+  color: var(--text-main);
+  font-family: $font-display;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.student-layout[data-variant='v1'] .student-grades__table-card {
+  overflow: hidden;
+}
+
+.student-layout[data-variant='v1'] .student-grades__table-scroll {
+  overflow-x: auto;
+}
+
+.student-layout[data-variant='v1'] .student-grades__table {
+  inline-size: 100%;
+  min-inline-size: 44rem;
+  border-collapse: collapse;
+  color: var(--text-main);
+}
+
+.student-layout[data-variant='v1'] .student-grades__table th,
+.student-layout[data-variant='v1'] .student-grades__table td {
+  border: 0;
+  border-bottom: 1px solid rgba(57, 31, 8, 0.15);
+  padding: 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.student-layout[data-variant='v1'] .student-grades__table th {
+  color: var(--text-main);
+  font-weight: 900;
+}
+
+.student-layout[data-variant='v1'] .student-grades__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.student-layout[data-variant='v1'] .student-grades__footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(57, 31, 8, 0.15);
+  padding: var(--space-2);
+}
+
+.student-layout[data-variant='v1'] .student-grades__button {
+  min-block-size: 2.7rem;
+  border: 1px solid var(--primary);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--primary);
+  padding: 0 1rem;
+  font-weight: 900;
+}
+
+@media (max-width: 48em) {
+  .student-layout[data-variant='v1'] .student-grades__header {
+    display: grid;
+    align-items: start;
+  }
+
+  .student-layout[data-variant='v1'] .student-grades__filter {
+    min-inline-size: 100%;
+  }
+
+  .student-layout[data-variant='v1'] .student-grades__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 36em) {
+  .student-layout[data-variant='v1'] .student-grades__stat {
+    display: grid;
+  }
+
+  .student-layout[data-variant='v1'] .student-grades__button {
+    width: 100%;
+  }
+}

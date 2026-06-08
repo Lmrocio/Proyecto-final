@@ -1,0 +1,16 @@
+@use '../01-tools/mixins' as mx;
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  @include mx.focus-ring;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  border: 0;
+  outline: none;
+}

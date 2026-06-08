@@ -1,0 +1,87 @@
+@use '../00-settings/variables' as *;
+@use '../01-tools/mixins' as mx;
+
+.home-features {
+  padding: 1rem 0 4rem;
+}
+
+.home-features__grid {
+  align-items: center;
+}
+
+.home-features__visual {
+  grid-column: 1 / span 6;
+  position: relative;
+  min-height: 27rem;
+  border-radius: 2rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(221, 209, 197, 0.95));
+  border: 1px solid rgba(34, 31, 29, 0.1);
+  overflow: hidden;
+}
+
+.home-features__visual-line {
+  position: absolute;
+  inset: 0;
+}
+
+.home-features__visual-line::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid rgba(34, 31, 29, 0.16);
+}
+
+.home-features__visual-line--first {
+  transform: rotate(35deg);
+}
+
+.home-features__visual-line--second {
+  transform: rotate(-35deg);
+}
+
+.home-features__list-block {
+  grid-column: 8 / -1;
+}
+
+.home-features__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.home-features__item {
+  min-height: 5rem;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(34, 31, 29, 0.08);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.15rem;
+}
+
+.home-features__icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: rgba(109, 94, 85, 0.12);
+  display: grid;
+  place-items: center;
+  color: var(--home-taupe-dark);
+}
+
+.home-features__text {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+@include mx.media-down($bp-lg) {
+  .home-features__visual,
+  .home-features__list-block {
+    grid-column: 1 / -1;
+  }
+}

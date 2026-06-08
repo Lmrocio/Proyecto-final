@@ -1,0 +1,135 @@
+@use '../00-settings/variables' as *;
+
+.dropdown-panel {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  z-index: 30;
+  width: min(18rem, calc(100vw - 2rem));
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-main);
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.dropdown-panel__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-1);
+}
+
+.dropdown-panel__action,
+.dropdown-panel__icon-link,
+.dropdown-panel__nav-link {
+  text-decoration: none;
+}
+
+.dropdown-panel__action {
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: var(--primary-contrast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+  min-height: 2.5rem;
+  padding: var(--space-1) var(--space-2);
+}
+
+.dropdown-panel__icon-link {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  color: var(--text-main);
+  display: grid;
+  place-items: center;
+}
+
+.dropdown-panel__nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.dropdown-panel__nav-link {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  min-height: 2.5rem;
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+}
+
+.dropdown-panel__nav-link:hover,
+.dropdown-panel__nav-link:focus-visible,
+.dropdown-panel__icon-link:hover,
+.dropdown-panel__icon-link:focus-visible {
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface-strong));
+  outline: none;
+}
+
+.dropdown-panel__action:hover,
+.dropdown-panel__action:focus-visible {
+  background: color-mix(in srgb, var(--primary) 88%, #000000);
+  outline: none;
+}
+
+.dropdown-panel__nav-link--simple {
+  justify-content: flex-start;
+}
+
+.dropdown-panel__nav-link--danger {
+  color: var(--danger);
+}
+
+.dropdown-panel__profile-header {
+  display: grid;
+  gap: 0.25rem;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid color-mix(in srgb, var(--text-main) 10%, transparent);
+}
+
+.dropdown-panel__eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dropdown-panel__profile-name,
+.dropdown-panel__profile-meta {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.dropdown-panel__profile-name {
+  font-size: 0.96rem;
+}
+
+.dropdown-panel__profile-meta {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+// Variant v3 keeps the original glass aesthetic
+.student-layout[data-variant='v3'] .dropdown-panel {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(0.75rem);
+}

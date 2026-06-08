@@ -1,0 +1,67 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use '../00-settings/variables' as *;
+@use './functions' as f;
+
+$breakpoints: (
+  sm: $bp-sm,
+  md: $bp-md,
+  lg: $bp-lg,
+  xl: $bp-xl,
+);
+
+@function resolve-breakpoint($breakpoint) {
+  @if meta.type-of($breakpoint) == 'string' and map.has-key($breakpoints, $breakpoint) {
+    @return map.get($breakpoints, $breakpoint);
+  }
+
+  @return $breakpoint;
+}
+
+@mixin media-up($breakpoint) {
+  @media (min-width: resolve-breakpoint($breakpoint)) {
+    @content;
+  }
+}
+
+@mixin media-down($breakpoint) {
+  @media (max-width: calc(resolve-breakpoint($breakpoint) - 0.02px)) {
+    @content;
+  }
+}
+
+@mixin container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: f.rem(2) solid var(--text-contrast);
+    outline-offset: f.rem(2);
+  }
+}
+
+@mixin glass-card {
+  background: color-mix(in srgb, var(--surface-primary) 96%, transparent);
+  border: f.rem(1) solid color-mix(in srgb, var(--border-subtle) 85%, transparent);
+}
+
+@mixin glass-card-blur {
+  background: color-mix(in srgb, var(--surface-primary) 70%, transparent);
+  border: f.rem(1) solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(f.rem(10));
+}
+
+@mixin fluid-type($min, $max) {
+  font-size: clamp($min, 2vw, $max);
+}

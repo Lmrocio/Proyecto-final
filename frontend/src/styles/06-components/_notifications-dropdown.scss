@@ -1,0 +1,185 @@
+@use '../00-settings/variables' as *;
+
+.notifications-dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  z-index: 30;
+  width: min(24rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100vh - 6rem));
+  overflow: hidden;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-main);
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.notifications-dropdown__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.notifications-dropdown__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.notifications-dropdown__mark-all,
+.notifications-dropdown__retry {
+  border: none;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+  color: var(--text-main);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.65rem;
+}
+
+.notifications-dropdown__mark-all:disabled,
+.notifications-dropdown__retry:disabled,
+.notifications-dropdown__icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.notifications-dropdown__search {
+  min-width: 0;
+  height: 2.55rem;
+  border: var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 0.8rem;
+}
+
+.notifications-dropdown__search input {
+  min-width: 0;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+}
+
+.notifications-dropdown__list {
+  max-height: 22rem;
+  overflow: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.notifications-dropdown__item {
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid rgba(57, 31, 8, 0.2);
+  border-radius: 0;
+  background: transparent;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 0.85rem;
+}
+
+.notifications-dropdown__item:last-child {
+  border-bottom: none;
+}
+
+.notifications-dropdown__item--unread {
+  box-shadow: inset 0.22rem 0 0 var(--ok);
+}
+
+.notifications-dropdown__content {
+  min-width: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.notifications-dropdown__item-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.notifications-dropdown__body {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.notifications-dropdown__actions {
+  display: inline-flex;
+  align-items: start;
+  gap: 0.35rem;
+}
+
+.notifications-dropdown__icon {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  color: var(--text-main);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.notifications-dropdown__icon--danger {
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  color: var(--danger);
+}
+
+.notifications-dropdown__state {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.notifications-dropdown__state--error {
+  display: grid;
+  gap: 0.65rem;
+  color: var(--danger);
+}
+
+.notifications-dropdown__state--error p {
+  margin: 0;
+}
+
+.notifications-dropdown__retry {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+@media (max-width: 42rem) {
+  .notifications-dropdown {
+    right: -5.25rem;
+  }
+}
+// Variant v3 keeps the glass aesthetic
+.student-layout[data-variant='v3'] .notifications-dropdown {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(0.75rem);
+}

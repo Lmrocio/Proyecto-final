@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.render
     container_name: openclassy-app
     environment:
       APP_NAME: OpenClassy
